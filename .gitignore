@@ -1,0 +1,10 @@
+.venv/
+__pycache__/
+*.pyc
+dump.rdb
+/cache/
+
+# Secrets: every .env variant is ignored except the committed template.
+.env
+.env*
+!.env.example

@@ -1,0 +1,267 @@
+{
+  "documents": [
+    {
+      "id": "doc-0101",
+      "title": "Northwind Engineering Handbook",
+      "path": "wiki/handbook.md",
+      "kind": "wiki",
+      "updated_at": 1788825600,
+      "text": "Northwind Logistics runs eight core systems. Tier 1 systems are Dispatch Router (owner: Tomas Okafor), Warehouse WMS (owner: Mei Lin Hart), Cold Chain Monitor (owner: Priya Raman) and Finance Ledger (owner: Daniel Brandt). Tier 2 systems are Driver App (owner: Sofia Alvarez), Carrier Billing (owner: Grace Mensah) and Customs Gateway (owner: Hamid Rezaei). Fleet Telematics (owner: Jonas Weber) is the only tier 3 system. Every system has exactly one owning engineer, who approves changes to its runbook. Architecture decisions are recorded as ADRs under docs/adr and are never edited after acceptance; a later ADR supersedes an earlier one instead."
+    },
+    {
+      "id": "doc-0104",
+      "title": "Dispatch Router Runbook",
+      "path": "runbooks/dispatch/router.md",
+      "kind": "runbook",
+      "updated_at": 1768348800,
+      "text": "Use this runbook when the ROUTER_DEGRADED alert fires. If the routing API does not respond within 10 seconds, Dispatch Router falls back to manual dispatch and pages the dispatch on-call. Manual dispatch is done from the Dispatch Console: assign open loads by lane priority, oldest pickup window first. Return to automatic routing once three consecutive health checks pass. Do not restart the router during the 06:00 to 09:00 morning wave unless the Dispatch Router owner approves it."
+    },
+    {
+      "id": "doc-0109",
+      "title": "Driver App README",
+      "path": "repos/driver-app/README.md",
+      "kind": "readme",
+      "updated_at": 1791244800,
+      "text": "Driver App v4.3 is the Android and iOS app used by every Northwind driver. Hours of service: following ADR-30, drivers are blocked from accepting new loads after 11 hours of driving in a shift. Driving time is read from Fleet Telematics. Proof of delivery requires a photo; the signature step is optional since v4.2. Offline mode queues status updates for up to 12 hours and replays them in order when the device reconnects. Build with ./gradlew assembleRelease; see CONTRIBUTING.md for signing keys."
+    },
+    {
+      "id": "doc-0112",
+      "title": "Dispatch Router README",
+      "path": "repos/dispatch-router/README.md",
+      "kind": "readme",
+      "updated_at": 1773014400,
+      "text": "Dispatch Router assigns loads to carriers and drivers. For each open load it calls the routing API with a 10 second timeout and scores candidate drivers on deadhead miles, remaining driving time and lane history. Assignments are pushed to the Driver App within 30 seconds. Cross-border legs are held until Customs Gateway reports the declaration as filed. Run locally with make dev; integration tests replay recorded routing API responses from ./testdata."
+    },
+    {
+      "id": "doc-0118",
+      "title": "Carrier Billing FAQ",
+      "path": "wiki/carrier-billing/faq.md",
+      "kind": "wiki",
+      "updated_at": 1788825600,
+      "text": "How long do we have to dispute a carrier invoice? Carrier invoices can be disputed within 30 days of delivery. After that the invoice is auto-approved and paid in the next payment run. Who handles disputes? The Carrier Billing team, through the disputes queue. What evidence is needed? A proof of delivery photo, the rate confirmation, and any accessorial approvals. Can a dispute be reopened? Only with sign-off from the Carrier Billing owner."
+    },
+    {
+      "id": "doc-0123",
+      "title": "Finance Ops: Month-End Close",
+      "path": "runbooks/finance/month-end-close.md",
+      "kind": "runbook",
+      "updated_at": 1787097600,
+      "text": "Step 4: carrier accruals. Under ADR-55, the dispute window for carrier invoices is 45 days from the invoice date, so any carrier invoice younger than 45 days stays accrued rather than paid. Step 5: reconcile the Finance Ledger against the Carrier Billing export and post variances above 500 USD to the suspense account. Step 6: lock the period in Finance Ledger no later than the third business day."
+    },
+    {
+      "id": "doc-0127",
+      "title": "Customs Gateway Spec",
+      "path": "specs/customs/gateway.md",
+      "kind": "spec",
+      "updated_at": 1739836800,
+      "text": "Customs Gateway files import declarations automatically 24 hours before scheduled arrival, using the commercial invoice and packing list attached to the shipment. Filing status is mirrored to Dispatch Router so that loads with unfiled declarations cannot be dispatched on cross-border legs. Rejected filings are retried once after 15 minutes and then routed to the brokerage team."
+    },
+    {
+      "id": "doc-0131",
+      "title": "WMS Operations Guide",
+      "path": "wiki/warehouse/wms-operations.md",
+      "kind": "wiki",
+      "updated_at": 1782950400,
+      "text": "Cycle counts run nightly for A-class SKUs. B-class and C-class schedules follow the Inventory Accuracy Standard. Count tasks are generated by Warehouse WMS at 22:00 local time and must be closed before the 06:00 wave release. Pickers may not be assigned count tasks in the same aisle they are picking. Use the WMS handheld, not paper sheets; paper counts are not reconciled."
+    },
+    {
+      "id": "doc-0134",
+      "title": "Inventory Accuracy Standard",
+      "path": "specs/warehouse/inventory-accuracy.md",
+      "kind": "spec",
+      "updated_at": 1754352000,
+      "text": "A-class SKUs are cycle counted weekly; B-class SKUs are counted monthly and C-class SKUs quarterly. Target inventory record accuracy is 99.5 percent for A-class and 98 percent overall. A variance above 2 percent on any location triggers a recount by a second counter. Write-offs above 1,000 USD require approval from the Warehouse WMS owner."
+    },
+    {
+      "id": "doc-0141",
+      "title": "Cold Chain Excursion Runbook",
+      "path": "runbooks/cold-chain/excursion-response.md",
+      "kind": "runbook",
+      "updated_at": 1790640000,
+      "text": "Use this runbook when Cold Chain Monitor raises a REEFER_EXCURSION alert. Per ADR-41, reefer loads that stay above 8 degrees C for more than 30 minutes are rejected at the receiving dock. Shorter excursions are logged and the load is released. Before rejecting, confirm the sensor is not faulty by comparing the reefer probe with the trailer's secondary logger in Fleet Telematics. If the two disagree by more than 1.5 degrees, open a hardware ticket and treat the probe reading as untrusted. Rejected loads are flagged in Warehouse WMS and the carrier is notified automatically."
+    },
+    {
+      "id": "doc-0152",
+      "title": "Cold Chain Policy v3",
+      "path": "specs/cold-chain/policy-v3.md",
+      "kind": "spec",
+      "updated_at": 1773014400,
+      "text": "This policy implements ADR-88, which supersedes ADR-63. A reefer load is rejected once it has spent 15 minutes above 8 degrees C at any point after pickup. The limit applies to pharmaceutical and fresh-produce loads alike. Cold Chain Monitor evaluates excursions continuously, and the Driver App shows the driver a countdown as soon as an excursion begins. Carrier Billing applies the contractual chargeback for every rejected load. Exceptions require written approval from the Cold Chain Platform Lead."
+    },
+    {
+      "id": "doc-0160",
+      "title": "ADR-41: Reefer excursion tolerance",
+      "path": "docs/adr/ADR-41-reefer-excursion-tolerance.md",
+      "kind": "spec",
+      "updated_at": 1677715200,
+      "text": "Status: superseded by ADR-63. Context: dock staff were rejecting reefer loads for brief door-open temperature spikes, causing avoidable chargebacks. Decision: tolerate reefer excursions above 8 degrees C for up to 30 minutes before rejecting the load. Consequences: fewer false rejections; some product risk accepted."
+    },
+    {
+      "id": "doc-0161",
+      "title": "ADR-63: Tighter excursion tolerance for pharma",
+      "path": "docs/adr/ADR-63-pharma-excursion-tolerance.md",
+      "kind": "spec",
+      "updated_at": 1718064000,
+      "text": "Status: superseded by ADR-88. Supersedes ADR-41. Context: a pharmaceutical customer audit found 30 minutes too permissive for vaccines. Decision: pharmaceutical loads are rejected after 20 minutes above 8 degrees C; all other reefer loads keep the 30 minute tolerance from ADR-41."
+    },
+    {
+      "id": "doc-0162",
+      "title": "ADR-88: Single excursion limit for all reefer loads",
+      "path": "docs/adr/ADR-88-single-excursion-limit.md",
+      "kind": "spec",
+      "updated_at": 1763596800,
+      "text": "Status: accepted. Supersedes ADR-63. Context: two different tolerances confused dock staff and failed a food-safety audit. Decision: every reefer load is rejected after 15 minutes above 8 degrees C, regardless of cargo type. Consequences: Cold Chain Policy v3 and the excursion runbook must be updated to match."
+    },
+    {
+      "id": "doc-0170",
+      "title": "Fleet Safety Policy",
+      "path": "specs/fleet/safety-policy.md",
+      "kind": "spec",
+      "updated_at": 1779321600,
+      "text": "This policy implements ADR-74, which supersedes ADR-30. No driver may drive more than 10 hours in a shift, and the Driver App must block load acceptance once that limit is reached. Fleet Telematics is the system of record for driving time. Every delivery requires a proof of delivery photo and a customer signature. Drivers must log a pre-trip inspection before the first load of each shift."
+    },
+    {
+      "id": "doc-0175",
+      "title": "On-call Rotation and Escalation",
+      "path": "runbooks/oncall/rotation.md",
+      "kind": "runbook",
+      "updated_at": 1782950400,
+      "text": "Tier 1 systems have a 15 minute acknowledgement target, tier 2 systems 30 minutes, and tier 3 systems next business day. Rotations change every Monday at 09:00 UTC. After two missed pages the alert escalates to the system owner, and after a third to the Head of Platform. Handover notes go in the #oncall-handover channel before the rotation changes."
+    },
+    {
+      "id": "doc-0180",
+      "title": "Fleet Telematics Ingest README",
+      "path": "repos/fleet-telematics/README.md",
+      "kind": "readme",
+      "updated_at": 1768348800,
+      "text": "Telematics units report GPS position every 30 seconds while moving and every 10 minutes while parked. Driving time is computed from ignition-on events and exported to the Driver App every 5 minutes. Reefer secondary loggers report temperature every 60 seconds and are retained for 400 days. The ingest worker is idempotent on (unit_id, ts), so replays are safe."
+    },
+    {
+      "id": "doc-0184",
+      "title": "Driver Onboarding Guide",
+      "path": "wiki/fleet/driver-onboarding.md",
+      "kind": "wiki",
+      "updated_at": 1773014400,
+      "text": "Day one: collect your fuel card and tablet from the depot office, install the Driver App and sign in with your Northwind ID. Day two: ride along with a senior driver on a regional lane. Pre-trip inspections are logged in the Driver App before the first load of the day. Fuel purchases outside the approved network need a receipt photo uploaded within 24 hours."
+    },
+    {
+      "id": "doc-0188",
+      "title": "Returns and Damage Claims Process",
+      "path": "wiki/customer-ops/returns-and-claims.md",
+      "kind": "wiki",
+      "updated_at": 1779321600,
+      "text": "Customers must raise damage claims within 7 days of delivery. Claims for temperature-sensitive goods must attach the Cold Chain Monitor excursion report for the load. Claims under 250 USD are approved automatically; larger claims go to the customer operations lead. Returned pallets are received at the returns dock and inspected within 48 hours."
+    },
+    {
+      "id": "doc-0193",
+      "title": "Warehouse Dock Scheduling",
+      "path": "runbooks/warehouse/dock-scheduling.md",
+      "kind": "runbook",
+      "updated_at": 1787097600,
+      "text": "Carriers book dock appointments in Warehouse WMS at least 24 hours in advance. Appointments are two-hour slots. A carrier arriving more than 45 minutes late is moved to the next open slot and the miss is recorded against their scorecard. Reefer trailers get priority doors 1 to 4 so that cold chain loads are unloaded first."
+    }
+  ],
+  "messages": [
+    {
+      "id": "msg-0005120",
+      "channel": "#cold-chain-ops",
+      "sent_at": 1790604000,
+      "text": "dock leads: we are still on 30 minutes above 8 degrees before a reefer load gets rejected, runbook updated to say so"
+    },
+    {
+      "id": "msg-0009412",
+      "channel": "#dispatch-oncall",
+      "sent_at": 1791244800,
+      "text": "heads up: we cut the router timeout to 4s last sprint and it now retries on the backup solver automatically. no more manual dispatch fallback, the console path is dead"
+    },
+    {
+      "id": "msg-0008873",
+      "channel": "#customs-brokerage",
+      "sent_at": 1788825600,
+      "text": "reminder: gateway auto-filing has been off since the August cutover, brokerage team is filing every declaration by hand until the new certificate lands"
+    }
+  ],
+  "tickets": [
+    {
+      "id": "tkt-inc-2291",
+      "ref": "INC-2291",
+      "title": "Reefer load rejected at 18 minutes, carrier disputes chargeback",
+      "text": "Load NW-55812 was rejected at dock 3 after 18 minutes above 8 degrees C. The carrier disputes the chargeback and cites the 30 minute limit in the excursion runbook. Policy v3 says 15 minutes; chargeback upheld.",
+      "state": "closed",
+      "closed_at": 1790985600
+    }
+  ],
+  "planted_contradictions": [
+    {
+      "id": "plant-1",
+      "kind": "superseded",
+      "subject_ref": "reefer-excursion-limit",
+      "a": { "source_id": "doc-0141", "evidence_span": "above 8 degrees C for more than 30 minutes are rejected" },
+      "b": { "source_id": "doc-0152", "evidence_span": "rejected once it has spent 15 minutes above 8 degrees C" },
+      "note": "Demo case 2. The runbook has the NEWER updated_at but cites ADR-41, which ADR-88 supersedes via ADR-63. Timestamp logic picks the wrong winner; SUPERSEDES traversal picks the right one. ADR-41/63/88 themselves disagree with each other by design; that is history, not a conflict."
+    },
+    {
+      "id": "plant-2",
+      "kind": "direct",
+      "subject_ref": "carrier-invoice-dispute-window",
+      "a": { "source_id": "doc-0118", "evidence_span": "disputed within 30 days of delivery" },
+      "b": {
+        "source_id": "doc-0123",
+        "evidence_span": "dispute window for carrier invoices is 45 days from the invoice date"
+      },
+      "note": "Both the number and the start event differ (delivery vs invoice date)."
+    },
+    {
+      "id": "plant-3",
+      "kind": "direct",
+      "subject_ref": "a-class-cycle-count",
+      "a": { "source_id": "doc-0131", "evidence_span": "Cycle counts run nightly for A-class SKUs" },
+      "b": { "source_id": "doc-0134", "evidence_span": "A-class SKUs are cycle counted weekly" },
+      "note": "Same predicate (cycle_count_frequency), different object."
+    },
+    {
+      "id": "plant-4",
+      "kind": "superseded",
+      "subject_ref": "driver-hours-limit",
+      "a": { "source_id": "doc-0109", "evidence_span": "blocked from accepting new loads after 11 hours of driving" },
+      "b": { "source_id": "doc-0170", "evidence_span": "No driver may drive more than 10 hours in a shift" },
+      "note": "Second newer-doc-is-wrong case: README updated after the policy but still cites superseded ADR-30."
+    },
+    {
+      "id": "plant-5",
+      "kind": "direct",
+      "subject_ref": "proof-of-delivery",
+      "a": { "source_id": "doc-0109", "evidence_span": "the signature step is optional since v4.2" },
+      "b": {
+        "source_id": "doc-0170",
+        "evidence_span": "Every delivery requires a proof of delivery photo and a customer signature"
+      },
+      "note": "Opposite polarity on the same predicate (signature_required)."
+    },
+    {
+      "id": "plant-6",
+      "kind": "undocumented",
+      "subject_ref": "dispatch-router",
+      "a": {
+        "source_id": "doc-0104",
+        "evidence_span": "does not respond within 10 seconds, Dispatch Router falls back to manual dispatch"
+      },
+      "b": {
+        "source_id": "msg-0009412",
+        "evidence_span": "cut the router timeout to 4s last sprint and it now retries on the backup solver automatically"
+      },
+      "note": "Practice changed in chat; no document records it."
+    },
+    {
+      "id": "plant-7",
+      "kind": "undocumented",
+      "subject_ref": "customs-gateway",
+      "a": {
+        "source_id": "doc-0127",
+        "evidence_span": "files import declarations automatically 24 hours before scheduled arrival"
+      },
+      "b": { "source_id": "msg-0008873", "evidence_span": "gateway auto-filing has been off since the August cutover" },
+      "note": "Spec describes automation that is switched off in practice."
+    }
+  ]
+}

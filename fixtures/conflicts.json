@@ -1,0 +1,280 @@
+{
+  "conflicts": [
+    {
+      "id": "conflict-01",
+      "kind": "superseded",
+      "status": "open",
+      "blast_radius": 16.5,
+      "found_at": 1791947520,
+      "entity": { "id": "reefer-excursion-limit", "name": "Reefer Excursion Limit", "type": "policy" },
+      "claims": [
+        {
+          "side": "a",
+          "id": "21090168-9468-582b-b406-85f5902f447a",
+          "text": "Reefer loads that stay above 8 degrees C for more than 30 minutes are rejected at the receiving dock.",
+          "confidence": 0.93,
+          "evidence_span": "above 8 degrees C for more than 30 minutes are rejected",
+          "state": "superseded",
+          "source": {
+            "doc_id": "doc-0141",
+            "title": "Cold Chain Excursion Runbook",
+            "path": "runbooks/cold-chain/excursion-response.md",
+            "updated_at": 1790640000
+          }
+        },
+        {
+          "side": "b",
+          "id": "b38d2eee-9254-5b23-8c3a-8774ae253322",
+          "text": "A reefer load is rejected once it has spent 15 minutes above 8 degrees C at any point after pickup.",
+          "confidence": 0.95,
+          "evidence_span": "rejected once it has spent 15 minutes above 8 degrees C",
+          "state": "live",
+          "source": {
+            "doc_id": "doc-0152",
+            "title": "Cold Chain Policy v3",
+            "path": "specs/cold-chain/policy-v3.md",
+            "updated_at": 1773014400
+          }
+        }
+      ],
+      "impact": {
+        "doc_count": 2,
+        "system_count": 5,
+        "systems": ["Cold Chain Monitor", "Warehouse WMS", "Fleet Telematics", "Driver App", "Carrier Billing"]
+      },
+      "owner": { "id": "person-priya-raman", "name": "Priya Raman", "role": "Cold Chain Platform Lead" }
+    },
+    {
+      "id": "conflict-02",
+      "kind": "direct",
+      "status": "open",
+      "blast_radius": 12.5,
+      "found_at": 1791960000,
+      "entity": { "id": "carrier-invoice-dispute-window", "name": "Carrier Invoice Dispute Window", "type": "policy" },
+      "claims": [
+        {
+          "side": "a",
+          "id": "47ea5070-b833-5ed6-9387-95a300f24dae",
+          "text": "Carrier invoices can be disputed within 30 days of delivery.",
+          "confidence": 0.94,
+          "evidence_span": "disputed within 30 days of delivery",
+          "state": "contradicted",
+          "source": {
+            "doc_id": "doc-0118",
+            "title": "Carrier Billing FAQ",
+            "path": "wiki/carrier-billing/faq.md",
+            "updated_at": 1788825600
+          }
+        },
+        {
+          "side": "b",
+          "id": "85b59787-7410-57c2-b7ca-7f4bf87f32dd",
+          "text": "The dispute window for carrier invoices is 45 days from the invoice date.",
+          "confidence": 0.9,
+          "evidence_span": "dispute window for carrier invoices is 45 days from the invoice date",
+          "state": "contradicted",
+          "source": {
+            "doc_id": "doc-0123",
+            "title": "Finance Ops: Month-End Close",
+            "path": "runbooks/finance/month-end-close.md",
+            "updated_at": 1787097600
+          }
+        }
+      ],
+      "impact": {
+        "doc_count": 2,
+        "system_count": 2,
+        "systems": ["Carrier Billing", "Finance Ledger"]
+      },
+      "owner": { "id": "person-grace-mensah", "name": "Grace Mensah", "role": "Billing Engineering Lead" }
+    },
+    {
+      "id": "conflict-04",
+      "kind": "superseded",
+      "status": "open",
+      "blast_radius": 8.5,
+      "found_at": 1791966660,
+      "entity": { "id": "driver-hours-limit", "name": "Driver Hours Limit", "type": "policy" },
+      "claims": [
+        {
+          "side": "a",
+          "id": "43c98b4c-f763-5422-87c3-cb592b91505f",
+          "text": "Drivers are blocked from accepting new loads after 11 hours of driving in a shift.",
+          "confidence": 0.92,
+          "evidence_span": "blocked from accepting new loads after 11 hours of driving",
+          "state": "superseded",
+          "source": {
+            "doc_id": "doc-0109",
+            "title": "Driver App README",
+            "path": "repos/driver-app/README.md",
+            "updated_at": 1791244800
+          }
+        },
+        {
+          "side": "b",
+          "id": "1be40b6f-4152-57ab-9a36-b297db1c3ac9",
+          "text": "No driver may drive more than 10 hours in a shift.",
+          "confidence": 0.97,
+          "evidence_span": "No driver may drive more than 10 hours in a shift",
+          "state": "live",
+          "source": {
+            "doc_id": "doc-0170",
+            "title": "Fleet Safety Policy",
+            "path": "specs/fleet/safety-policy.md",
+            "updated_at": 1779321600
+          }
+        }
+      ],
+      "impact": {
+        "doc_count": 2,
+        "system_count": 2,
+        "systems": ["Driver App", "Fleet Telematics"]
+      },
+      "owner": { "id": "person-sofia-alvarez", "name": "Sofia Alvarez", "role": "Mobile Engineering Lead" }
+    },
+    {
+      "id": "conflict-03",
+      "kind": "undocumented",
+      "status": "open",
+      "blast_radius": 7.0,
+      "found_at": 1791961500,
+      "entity": { "id": "dispatch-router", "name": "Dispatch Router", "type": "system" },
+      "claims": [
+        {
+          "side": "a",
+          "id": "0f534c41-ff22-5bed-91ae-9f32d31ffc5f",
+          "text": "If the routing API does not respond within 10 seconds, Dispatch Router falls back to manual dispatch.",
+          "confidence": 0.91,
+          "evidence_span": "does not respond within 10 seconds, Dispatch Router falls back to manual dispatch",
+          "state": "contradicted",
+          "source": {
+            "doc_id": "doc-0104",
+            "title": "Dispatch Router Runbook",
+            "path": "runbooks/dispatch/router.md",
+            "updated_at": 1768348800
+          }
+        },
+        {
+          "side": "b",
+          "id": "275ed404-d25a-5d19-aa31-953c5a7dd930",
+          "text": "Dispatch Router retries on the backup solver after a 4 second timeout instead of falling back to manual dispatch.",
+          "confidence": 0.78,
+          "evidence_span": "cut the router timeout to 4s last sprint and it now retries on the backup solver automatically",
+          "state": "live",
+          "source": {
+            "doc_id": "msg-0009412",
+            "title": "#dispatch-oncall",
+            "path": "slack/#dispatch-oncall",
+            "updated_at": 1791244800
+          }
+        }
+      ],
+      "impact": {
+        "doc_count": 1,
+        "system_count": 1,
+        "systems": ["Dispatch Router"]
+      },
+      "owner": { "id": "person-tomas-okafor", "name": "Tomas Okafor", "role": "Dispatch Platform Lead" }
+    },
+    {
+      "id": "conflict-05",
+      "kind": "direct",
+      "status": "open",
+      "blast_radius": 7.0,
+      "found_at": 1791971880,
+      "entity": { "id": "a-class-cycle-count", "name": "A-Class Cycle Count", "type": "process" },
+      "claims": [
+        {
+          "side": "a",
+          "id": "eb07d19e-9eb9-5d5e-828b-a795a20dc3be",
+          "text": "Cycle counts run nightly for A-class SKUs.",
+          "confidence": 0.96,
+          "evidence_span": "Cycle counts run nightly for A-class SKUs",
+          "state": "contradicted",
+          "source": {
+            "doc_id": "doc-0131",
+            "title": "WMS Operations Guide",
+            "path": "wiki/warehouse/wms-operations.md",
+            "updated_at": 1782950400
+          }
+        },
+        {
+          "side": "b",
+          "id": "c974ecef-3f19-530e-9260-c013c37f56c7",
+          "text": "A-class SKUs are cycle counted weekly.",
+          "confidence": 0.95,
+          "evidence_span": "A-class SKUs are cycle counted weekly",
+          "state": "contradicted",
+          "source": {
+            "doc_id": "doc-0134",
+            "title": "Inventory Accuracy Standard",
+            "path": "specs/warehouse/inventory-accuracy.md",
+            "updated_at": 1754352000
+          }
+        }
+      ],
+      "impact": {
+        "doc_count": 2,
+        "system_count": 1,
+        "systems": ["Warehouse WMS"]
+      },
+      "owner": { "id": "person-mei-lin-hart", "name": "Mei Lin Hart", "role": "Warehouse Systems Lead" }
+    },
+    {
+      "id": "conflict-06",
+      "kind": "undocumented",
+      "status": "open",
+      "blast_radius": 5.0,
+      "found_at": 1791976800,
+      "entity": { "id": "customs-gateway", "name": "Customs Gateway", "type": "system" },
+      "claims": [
+        {
+          "side": "a",
+          "id": "5ea64465-e9f5-5a33-959b-bcd9d968e2ec",
+          "text": "Customs Gateway files import declarations automatically 24 hours before scheduled arrival.",
+          "confidence": 0.93,
+          "evidence_span": "files import declarations automatically 24 hours before scheduled arrival",
+          "state": "contradicted",
+          "source": {
+            "doc_id": "doc-0127",
+            "title": "Customs Gateway Spec",
+            "path": "specs/customs/gateway.md",
+            "updated_at": 1739836800
+          }
+        },
+        {
+          "side": "b",
+          "id": "ce1a50b2-0276-5b4a-aef5-ebf99afa80ad",
+          "text": "Customs Gateway auto-filing is switched off and the brokerage team files every declaration by hand.",
+          "confidence": 0.81,
+          "evidence_span": "gateway auto-filing has been off since the August cutover",
+          "state": "live",
+          "source": {
+            "doc_id": "msg-0008873",
+            "title": "#customs-brokerage",
+            "path": "slack/#customs-brokerage",
+            "updated_at": 1788825600
+          }
+        }
+      ],
+      "impact": {
+        "doc_count": 1,
+        "system_count": 1,
+        "systems": ["Customs Gateway"]
+      },
+      "owner": { "id": "person-hamid-rezaei", "name": "Hamid Rezaei", "role": "Trade Compliance Engineer" }
+    }
+  ],
+  "total": 6,
+  "stats": {
+    "claims": 1844,
+    "documents": 212,
+    "entities": 286,
+    "naive_pair_count": 1699246,
+    "collapsed_pair_count": 4871,
+    "prefiltered_pair_count": 312,
+    "judged_pair_count": 296,
+    "conflicts_open": 6,
+    "conflicts_resolved": 3
+  }
+}

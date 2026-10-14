@@ -1,0 +1,11 @@
+{
+  "claims": 1844,
+  "documents": 212,
+  "entities": 286,
+  "naive_pair_count": 1699246,
+  "collapsed_pair_count": 4871,
+  "prefiltered_pair_count": 312,
+  "judged_pair_count": 296,
+  "conflicts_open": 6,
+  "conflicts_resolved": 3
+}

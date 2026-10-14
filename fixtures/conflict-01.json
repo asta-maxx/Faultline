@@ -1,0 +1,110 @@
+{
+  "conflict": {
+    "id": "conflict-01",
+    "kind": "superseded",
+    "status": "open",
+    "blast_radius": 16.5,
+    "found_at": 1791947520,
+    "entity": { "id": "reefer-excursion-limit", "name": "Reefer Excursion Limit", "type": "policy" },
+    "claims": [
+      {
+        "side": "a",
+        "id": "21090168-9468-582b-b406-85f5902f447a",
+        "text": "Reefer loads that stay above 8 degrees C for more than 30 minutes are rejected at the receiving dock.",
+        "confidence": 0.93,
+        "evidence_span": "above 8 degrees C for more than 30 minutes are rejected",
+        "state": "superseded",
+        "source": {
+          "doc_id": "doc-0141",
+          "title": "Cold Chain Excursion Runbook",
+          "path": "runbooks/cold-chain/excursion-response.md",
+          "updated_at": 1790640000
+        }
+      },
+      {
+        "side": "b",
+        "id": "b38d2eee-9254-5b23-8c3a-8774ae253322",
+        "text": "A reefer load is rejected once it has spent 15 minutes above 8 degrees C at any point after pickup.",
+        "confidence": 0.95,
+        "evidence_span": "rejected once it has spent 15 minutes above 8 degrees C",
+        "state": "live",
+        "source": {
+          "doc_id": "doc-0152",
+          "title": "Cold Chain Policy v3",
+          "path": "specs/cold-chain/policy-v3.md",
+          "updated_at": 1773014400
+        }
+      }
+    ],
+    "impact": {
+      "doc_count": 2,
+      "system_count": 5,
+      "systems": ["Cold Chain Monitor", "Warehouse WMS", "Fleet Telematics", "Driver App", "Carrier Billing"]
+    },
+    "owner": { "id": "person-priya-raman", "name": "Priya Raman", "role": "Cold Chain Platform Lead" }
+  },
+  "path": {
+    "nodes": [
+      {
+        "id": "21090168-9468-582b-b406-85f5902f447a",
+        "label": "Reject after 30 min above 8 C",
+        "type": "claim",
+        "state": "superseded"
+      },
+      {
+        "id": "b38d2eee-9254-5b23-8c3a-8774ae253322",
+        "label": "Reject after 15 min above 8 C",
+        "type": "claim",
+        "state": "live"
+      },
+      { "id": "doc-0141", "label": "Cold Chain Excursion Runbook", "type": "document" },
+      { "id": "doc-0152", "label": "Cold Chain Policy v3", "type": "document" },
+      { "id": "cold-chain-monitor", "label": "Cold Chain Monitor", "type": "system" },
+      { "id": "warehouse-wms", "label": "Warehouse WMS", "type": "system" },
+      { "id": "fleet-telematics", "label": "Fleet Telematics", "type": "system" },
+      { "id": "driver-app", "label": "Driver App", "type": "system" },
+      { "id": "carrier-billing", "label": "Carrier Billing", "type": "system" },
+      {
+        "id": "dec-adr-41",
+        "label": "ADR-41: Reefer excursion tolerance",
+        "type": "decision",
+        "state": "superseded"
+      },
+      {
+        "id": "dec-adr-63",
+        "label": "ADR-63: Tighter excursion tolerance for pharma",
+        "type": "decision",
+        "state": "superseded"
+      },
+      {
+        "id": "dec-adr-88",
+        "label": "ADR-88: Single excursion limit for all reefer loads",
+        "type": "decision",
+        "state": "live"
+      },
+      { "id": "msg-0005120", "label": "#cold-chain-ops", "type": "message" },
+      { "id": "tkt-inc-2291", "label": "INC-2291", "type": "ticket" }
+    ],
+    "edges": [
+      { "source": "doc-0141", "target": "21090168-9468-582b-b406-85f5902f447a", "type": "ASSERTS" },
+      { "source": "doc-0152", "target": "b38d2eee-9254-5b23-8c3a-8774ae253322", "type": "ASSERTS" },
+      {
+        "source": "21090168-9468-582b-b406-85f5902f447a",
+        "target": "b38d2eee-9254-5b23-8c3a-8774ae253322",
+        "type": "CONTRADICTS"
+      },
+      { "source": "doc-0141", "target": "cold-chain-monitor", "type": "GOVERNS" },
+      { "source": "doc-0141", "target": "warehouse-wms", "type": "GOVERNS" },
+      { "source": "doc-0141", "target": "fleet-telematics", "type": "GOVERNS" },
+      { "source": "doc-0152", "target": "cold-chain-monitor", "type": "GOVERNS" },
+      { "source": "doc-0152", "target": "driver-app", "type": "GOVERNS" },
+      { "source": "doc-0152", "target": "carrier-billing", "type": "GOVERNS" },
+      { "source": "doc-0141", "target": "dec-adr-41", "type": "CITES" },
+      { "source": "doc-0152", "target": "dec-adr-88", "type": "CITES" },
+      { "source": "dec-adr-63", "target": "dec-adr-41", "type": "SUPERSEDES" },
+      { "source": "dec-adr-88", "target": "dec-adr-63", "type": "SUPERSEDES" },
+      { "source": "21090168-9468-582b-b406-85f5902f447a", "target": "msg-0005120", "type": "DERIVED_FROM" },
+      { "source": "b38d2eee-9254-5b23-8c3a-8774ae253322", "target": "tkt-inc-2291", "type": "DERIVED_FROM" }
+    ]
+  }
+}
