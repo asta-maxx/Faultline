@@ -68,17 +68,29 @@ Rules:
   questions and build instructions for developers.
 """
 
-RESOLVE_PROMPT = """You resolve entity aliases for a knowledge graph. Every input subject was extracted
-independently, so the same real-world subject may appear under several slugs or names.
-Merge subjects that denote the SAME real-world system, policy, metric, process or artifact.
-Do NOT merge things that are merely related (a system and a policy about it are different;
-two different limits on the same system are different policies).
+RESOLVE_PROMPT = """You assign every claim to exactly one canonical subject for a contradiction detector.
+Claims were extracted from different documents independently, so the same real subject appears
+under different names and at different granularities: one document says "cycle counts", another
+"A-class SKUs", another "inventory counting", for the same rule. Only claims that share a subject
+are ever compared, so two claims that could contradict each other MUST get the same subject.
 
-Return JSON only, in this compact shape:
-{"entities": {"<canonical kebab-case id>": {"name": "<name>", "type": "<type>"}},
- "map": {"<input subject_ref>": "<canonical id>"}}
-Every input subject_ref must appear as a key of "map". type is one of:
-system, policy, metric, process, artifact."""
+Choose subjects at the level a contradiction would be about:
+- A claim stating a limit, window, threshold, schedule or requirement belongs to that rule
+  (e.g. "Invoice Approval Window"), whichever system, team or document mentions it.
+- A claim about how a system behaves belongs to that system, under one name for all its aliases
+  and abbreviations.
+- Merging two subjects that turn out to be different costs one cheap comparison; keeping apart
+  two that are the same hides a contradiction forever. When in doubt, merge.
+
+Input: the catalogue of entities that already exist, then numbered claims with their extracted
+subject, predicate and object. Reuse a catalogue entity whenever the claim is about it; create a
+new entity only when none fits.
+Return JSON only:
+{"new_entities": {"<kebab-case id>": {"name": "<name>", "type": "<system|policy|metric|process|artifact>"}},
+ "assign": {"<claim number>": "<entity id from the catalogue or new_entities>"}}
+Every claim number must appear in "assign"."""
+
+RESOLVE_BATCH = 30  # Groq free tier caps one request at 8,000 tokens including the completion budget
 
 HARMONISE_PROMPT = """You normalise predicates for claims that are all about one subject.
 Claims that assert the SAME aspect of the subject must share one identical snake_case predicate,
@@ -157,8 +169,16 @@ def validate(raw: dict, src: dict, rep: Report) -> dict | None:
 
 
 def extract_source(src: dict, rep: Report) -> list[dict]:
+    content = f"Document id: {src['id']}\n\n{src['text']}"
     try:
-        out = _ask(EXTRACT_PROMPT, f"Document id: {src['id']}\n\n{src['text']}", rep)
+        try:
+            out = _ask(EXTRACT_PROMPT, content, rep)
+        except llm.ProviderError as e:
+            if "json" not in str(e).lower():
+                raise
+            # Groq rejected the generation as invalid JSON (usually reasoning ate the budget).
+            # One retry with bounded reasoning; it is a different request, so a different cache key.
+            out = _ask(EXTRACT_PROMPT, content, rep, **REASONING_HEAVY)
     except Exception as e:  # one bad source must not sink the run; it is reported
         with rep.lock:
             rep.failed_sources.append((src["id"], f"{type(e).__name__}: {str(e)[:160]}"))
@@ -181,27 +201,39 @@ def extract_source(src: dict, rep: Report) -> list[dict]:
 
 
 # ------------------------------------------------------------------ phase 2
-def resolve_entities(claims: list[dict], rep: Report) -> tuple[dict[str, dict], list[tuple]]:
-    subjects: dict[str, dict] = {}
-    for c in claims:
-        s = subjects.setdefault(c["subject_ref"], {"subject_ref": c["subject_ref"], "name": c["subject_name"],
-                                                   "type": c["subject_type"], "examples": []})
-        if len(s["examples"]) < 2:
-            s["examples"].append(c["text"])
-    listing = json.dumps(sorted(subjects.values(), key=lambda s: s["subject_ref"]), indent=1)
-    out = _ask(RESOLVE_PROMPT, listing, rep, **REASONING_HEAVY)
+def resolve_entities(claims: list[dict], rep: Report) -> tuple[dict[str, dict], list[tuple], int]:
+    """Claim-level resolution: every claim gets one canonical Entity, and its subject_ref becomes
+    that entity's id, so each subject_ref still maps to exactly one Entity (§5).
 
-    canon = {slugify(k): v for k, v in (out.get("entities") or {}).items() if isinstance(v, dict)}
-    mapping: dict[str, dict] = {}
-    for ref, target in (out.get("map") or {}).items():
-        ref, eid = slugify(str(ref)), slugify(str(target))
-        if ref in subjects and eid:
-            ent = canon.get(eid, {})
-            etype = ent.get("type") if ent.get("type") in SUBJECT_TYPES else subjects[ref]["type"]
-            mapping[ref] = {"id": eid, "name": ent.get("name") or subjects[ref]["name"], "type": etype}
-    for ref, s in subjects.items():  # anything the model dropped stays its own entity
-        mapping.setdefault(ref, {"id": ref, "name": s["name"], "type": s["type"]})
-    return mapping, near_duplicates({m["id"]: m["name"] for m in mapping.values()})
+    Sets c["entity_id"] on every claim. Returns (entities, near-duplicate pairs, fallbacks), where
+    fallbacks counts claims the model left unassigned and that kept their extracted subject. A
+    resolver that returns an identity map is a silent no-op, so the caller reports that number."""
+    # Sequential batches against a growing catalogue: one global call cannot hold a real corpus
+    # under Groq's per-request token cap, and independent batches would invent rival names.
+    # Sorting by subject keeps likely aliases in the same batch; the order is stable, so cache keys are too.
+    ordered = sorted(claims, key=lambda c: (c["subject_ref"], c["predicate"], c["id"]))
+    entities: dict[str, dict] = {}
+    fallbacks = 0
+    for start in range(0, len(ordered), RESOLVE_BATCH):
+        batch = ordered[start:start + RESOLVE_BATCH]
+        catalogue = "\n".join(f'{e["id"]}: {e["name"]} ({e["type"]})' for e in entities.values()) or "(empty)"
+        listing = "\n".join(f'{i}. subject={c["subject_ref"]} ({c["subject_type"]}) predicate={c["predicate"]} '
+                            f'object="{c["object"][:60]}" text="{c["text"][:110]}"' for i, c in enumerate(batch))
+        out = _ask(RESOLVE_PROMPT, f"CATALOGUE\n{catalogue}\n\nCLAIMS\n{listing}", rep,
+                   reasoning_effort="medium", max_completion_tokens=3000)
+        new = {slugify(k): v for k, v in (out.get("new_entities") or {}).items() if isinstance(v, dict)}
+        assign = out.get("assign") or {}
+        for i, c in enumerate(batch):
+            eid = slugify(str(assign.get(str(i), "")))
+            if not eid:
+                fallbacks += 1
+                eid = c["subject_ref"]
+            if eid not in entities:
+                ent = new.get(eid, {})
+                etype = ent.get("type") if ent.get("type") in SUBJECT_TYPES else c["subject_type"]
+                entities[eid] = {"id": eid, "name": ent.get("name") or c["subject_name"], "type": etype}
+            c["entity_id"] = eid
+    return entities, near_duplicates({e["id"]: e["name"] for e in entities.values()}), fallbacks
 
 
 def near_duplicates(entities: dict[str, str]) -> list[tuple]:
@@ -283,9 +315,7 @@ def run(corpus_path: Path, tenant: str, workers: int) -> dict:
     for c in claims:  # deterministic ids: same source + span + subject + predicate -> same claim id
         c["id"] = str(uuid.uuid5(uuid.NAMESPACE_URL, "faultline/claim/" + "|".join(
             str(c[k]) for k in ("source_id", "evidence_span", "subject_ref", "predicate", "object", "polarity"))))
-    mapping, near = resolve_entities(claims, rep)
-    for c in claims:
-        c["entity_id"] = mapping[c["subject_ref"]]["id"]
+    entities, near, fallbacks = resolve_entities(claims, rep)
     t2 = time.perf_counter()
 
     by_entity: dict[str, list[dict]] = {}
@@ -296,8 +326,9 @@ def run(corpus_path: Path, tenant: str, workers: int) -> dict:
     t3 = time.perf_counter()
 
     rep.kept = len(claims)
-    load_graph(tenant, sources, claims, mapping)
-    return {"sources": sources, "claims": claims, "mapping": mapping, "near": near, "report": rep,
+    load_graph(tenant, sources, claims, entities)
+    return {"sources": sources, "claims": claims, "entities": entities, "near": near, "fallbacks": fallbacks,
+            "report": rep,
             "timing": {"extract": t1 - t0, "resolve": t2 - t1, "harmonise": t3 - t2}, "corpus": corpus}
 
 

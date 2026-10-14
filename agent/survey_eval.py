@@ -40,8 +40,7 @@ def main() -> int:
     ap.add_argument("--workers", type=int, default=12)
     args = ap.parse_args()
     out = run(Path("fixtures/mini-corpus.json"), args.tenant, args.workers)
-    rep, claims, mapping = out["report"], out["claims"], out["mapping"]
-    by_id = {c["id"]: c for c in claims}
+    rep, claims = out["report"], out["claims"]
 
     dropped = sum(len(v) for v in rep.dropped.values())
     print(f"sources {len(out['sources'])}   LLM calls live {rep.calls['live']} cached {rep.calls['cached']}   "
@@ -58,10 +57,13 @@ def main() -> int:
                   + (f" conf={it.get('confidence')}" if reason == "low_confidence" else ""))
 
     ents = Counter(c["entity_id"] for c in claims)
-    print(f"\nENTITIES  {len(ents)} (from {len(mapping)} raw subject refs)")
+    raw_refs = {c["subject_ref"] for c in claims}
+    moved = sum(c["subject_ref"] != c["entity_id"] for c in claims)
+    print(f"\nENTITIES  {len(ents)} canonical, from {len(raw_refs)} extracted subject refs; "
+          f"{moved} of {len(claims)} claims re-assigned; {out['fallbacks']} left unassigned by the resolver")
     for e, n in ents.most_common():
-        aliases = sorted({r for r, m in mapping.items() if m["id"] == e})
-        print(f"  {n:3}  {e:42} <- {', '.join(a for a in aliases if a != e) or '-'}")
+        aliases = sorted({c["subject_ref"] for c in claims if c["entity_id"] == e} - {e})
+        print(f"  {n:3}  {e:40} <- {', '.join(aliases) or '-'}")
     print(f"near-duplicate entity pairs: {len(out['near'])}")
     for a, b, ratio, jacc in out["near"]:
         print(f"  ?  {a}  ~  {b}   (name ratio {ratio}, token jaccard {jacc})")

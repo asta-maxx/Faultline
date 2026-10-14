@@ -69,7 +69,7 @@ class RateLimited(ProviderError):
 
 
 MAX_ATTEMPTS = 4
-MAX_WAIT_S = 20.0
+MAX_WAIT_S = 65.0  # per-minute windows are waited out; daily quotas (hours) go to overflow
 
 
 class Provider(Protocol):
