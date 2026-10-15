@@ -1,0 +1,131 @@
+.card {
+  background: var(--clr-surface);
+  border: 1px solid var(--clr-border);
+  border-radius: var(--r-lg);
+  padding: var(--sp-5) var(--sp-6);
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-4);
+  animation: fadeIn 300ms var(--ease-out) both;
+}
+
+.topRow {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+  flex-wrap: wrap;
+}
+
+.badges {
+  display: flex;
+  gap: var(--sp-2);
+}
+
+.timestamp {
+  font-size: 12px;
+  color: var(--clr-text-faint);
+  margin-left: auto;
+}
+
+.entityName {
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--clr-text);
+  line-height: 1.2;
+}
+
+.entityMeta {
+  font-size: 12px;
+  color: var(--clr-text-faint);
+  margin-top: -8px;
+}
+
+.entityType {
+  font-family: var(--font-mono);
+  color: var(--clr-text-muted);
+  font-size: 11px;
+}
+
+/* Metrics row */
+.metrics {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--sp-3);
+}
+
+.metric {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: var(--sp-3);
+  background: var(--clr-surface-2);
+  border-radius: var(--r-md);
+  border: 1px solid var(--clr-border);
+}
+
+.metricValue {
+  font-size: 22px;
+  font-weight: 700;
+  font-family: var(--font-mono);
+  color: var(--clr-text);
+  line-height: 1;
+}
+
+.metricLabel {
+  font-size: 11px;
+  color: var(--clr-text-faint);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  font-weight: 500;
+}
+
+/* Systems */
+.systems {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+}
+
+.systemsLabel {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--clr-text-faint);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.systemTags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-1);
+}
+
+.systemTag {
+  padding: 3px var(--sp-2);
+  background: var(--clr-surface-3);
+  border: 1px solid var(--clr-border);
+  border-radius: var(--r-sm);
+  font-size: 12px;
+  color: var(--clr-text-muted);
+}
+
+/* Owner */
+.owner {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  font-size: 13px;
+  color: var(--clr-text-muted);
+  padding-top: var(--sp-2);
+  border-top: 1px solid var(--clr-border);
+}
+
+.ownerName {
+  font-weight: 500;
+  color: var(--clr-text);
+}
+
+.ownerRole {
+  color: var(--clr-text-muted);
+}

@@ -1,0 +1,73 @@
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.icon {
+  font-size: 10px;
+}
+
+/* Kind */
+.kind_direct {
+  background: var(--clr-danger-soft);
+  color: hsl(4, 90%, 68%);
+  border: 1px solid rgba(239, 68, 68, 0.2);
+}
+
+.kind_superseded {
+  background: var(--clr-warning-soft);
+  color: hsl(37, 95%, 65%);
+  border: 1px solid rgba(245, 158, 11, 0.2);
+}
+
+.kind_undocumented {
+  background: hsla(270, 70%, 60%, 0.12);
+  color: hsl(270, 80%, 75%);
+  border: 1px solid rgba(167, 139, 250, 0.2);
+}
+
+/* State */
+.state_live {
+  background: var(--clr-success-soft);
+  color: hsl(142, 75%, 55%);
+  border: 1px solid rgba(34, 197, 94, 0.2);
+}
+
+.state_contradicted {
+  background: var(--clr-danger-soft);
+  color: hsl(4, 90%, 68%);
+  border: 1px solid rgba(239, 68, 68, 0.2);
+}
+
+.state_superseded {
+  background: var(--clr-warning-soft);
+  color: hsl(37, 95%, 65%);
+  border: 1px solid rgba(245, 158, 11, 0.2);
+}
+
+/* Status */
+.status_open {
+  background: var(--clr-primary-soft);
+  color: hsl(235, 90%, 75%);
+  border: 1px solid rgba(99, 102, 241, 0.25);
+}
+
+.status_resolved {
+  background: var(--clr-success-soft);
+  color: hsl(142, 75%, 55%);
+  border: 1px solid rgba(34, 197, 94, 0.2);
+}
+
+.status_dismissed {
+  background: rgba(71, 85, 105, 0.2);
+  color: var(--clr-text-muted);
+  border: 1px solid rgba(71, 85, 105, 0.3);
+}
