@@ -44,11 +44,9 @@ def load_fixture(name: str) -> dict:
     return json.loads(path.read_text(encoding="utf-8"))
 
 
-# ── Health ────────────────────────────────────────────────────────────────────
-
-@app.get("/api/health")
-def health():
-    return {"ok": True, "graph": "faultline:northwind", "nodes": 0, "edges": 0, "falkor": "down"}
+# ── Health (CONTRACT §9) ──────────────────────────────────────────────────────
+from infra.app_patch.health import health_router
+app.include_router(health_router)
 
 
 # ── Stats ─────────────────────────────────────────────────────────────────────
@@ -125,9 +123,8 @@ def resolve_conflict(conflict_id: str, body: dict):
 
 
 # ── Serve built frontend (production) ────────────────────────────────────────
-WEB_DIST = ROOT / "web" / "dist"
-if WEB_DIST.exists():
-    app.mount("/", StaticFiles(directory=str(WEB_DIST), html=True), name="spa")
+from infra.app_patch.static_mount import mount_spa
+mount_spa(app, ROOT / "web" / "dist")
 
 if __name__ == "__main__":
     import uvicorn
