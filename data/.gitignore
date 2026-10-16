@@ -1,0 +1,7 @@
+# Gitignore for data directory
+__pycache__/
+*.pyc
+out/corpus/
+out/corpus.json
+out/graph_seed.cypher
+!out/ground_truth.json

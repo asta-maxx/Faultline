@@ -1,0 +1,276 @@
+{
+  "version": "1.0",
+  "total_planted": 14,
+  "split": {
+    "direct": 5,
+    "superseded": 5,
+    "undocumented": 4
+  },
+  "conflicts": [
+    {
+      "id": "plant-01",
+      "kind": "direct",
+      "entity_slug": "carrier-invoice-dispute-window",
+      "predicate": "dispute_window",
+      "source_a_id": "doc-0001",
+      "source_b_id": "doc-0002",
+      "evidence_span_a": "Carrier invoices can be disputed within 30 days of delivery.",
+      "evidence_span_b": "The dispute window for carrier invoices is 45 days from the invoice date.",
+      "correct_side": "b",
+      "rationale": "Finance Ops Month-End Close policy defines the dispute window for financial settlement.",
+      "expected_blast_radius": 12.5,
+      "side_a_blast_radius": 5.0,
+      "side_b_blast_radius": 12.5,
+      "governed_systems": [
+        "sys-finance-ledger",
+        "sys-carrier-billing"
+      ]
+    },
+    {
+      "id": "plant-02",
+      "kind": "direct",
+      "entity_slug": "a-class-cycle-count",
+      "predicate": "cycle_count_frequency",
+      "source_a_id": "doc-0003",
+      "source_b_id": "doc-0004",
+      "evidence_span_a": "Cycle counts run nightly for A-class SKUs.",
+      "evidence_span_b": "A-class SKUs are cycle counted weekly.",
+      "correct_side": "b",
+      "rationale": "Inventory Accuracy Standard cites accepted ADR-77 for distribution center counting.",
+      "expected_blast_radius": 12.5,
+      "side_a_blast_radius": 7.0,
+      "side_b_blast_radius": 12.5,
+      "governed_systems": [
+        "sys-warehouse-wms",
+        "sys-inventory-service"
+      ]
+    },
+    {
+      "id": "plant-03",
+      "kind": "direct",
+      "entity_slug": "proof-of-delivery",
+      "predicate": "signature_required",
+      "source_a_id": "doc-0005",
+      "source_b_id": "doc-0006",
+      "evidence_span_a": "Proof of delivery customer signature is optional since v4.2.",
+      "evidence_span_b": "Proof of delivery customer signature is strictly mandatory for every drop-off.",
+      "correct_side": "b",
+      "rationale": "Fleet Safety Policy governs legal compliance for cargo delivery.",
+      "expected_blast_radius": 8.5,
+      "side_a_blast_radius": 5.0,
+      "side_b_blast_radius": 8.5,
+      "governed_systems": [
+        "sys-fleet-telematics",
+        "sys-driver-app"
+      ]
+    },
+    {
+      "id": "plant-04",
+      "kind": "direct",
+      "entity_slug": "oncall-tier1-ack",
+      "predicate": "oncall_ack_target",
+      "source_a_id": "doc-0007",
+      "source_b_id": "doc-0008",
+      "evidence_span_a": "Tier 1 systems have a 15 minute acknowledgement target for on-call engineers.",
+      "evidence_span_b": "Tier 1 systems have a 5 minute acknowledgement target for on-call engineers.",
+      "correct_side": "a",
+      "rationale": "Platform On-call Rotation Guide reflects agreed platform incident management policy.",
+      "expected_blast_radius": 32.5,
+      "side_a_blast_radius": 32.5,
+      "side_b_blast_radius": 13.0,
+      "governed_systems": [
+        "sys-dispatch-router",
+        "sys-warehouse-wms",
+        "sys-payments-gateway",
+        "sys-finance-ledger",
+        "sys-cold-chain-monitor"
+      ]
+    },
+    {
+      "id": "plant-05",
+      "kind": "direct",
+      "entity_slug": "damage-claim-auto-approval",
+      "predicate": "refund_auto_approval_limit",
+      "source_a_id": "doc-0009",
+      "source_b_id": "doc-0010",
+      "evidence_span_a": "Customer damage claims under 250 USD are approved automatically without human review.",
+      "evidence_span_b": "Customer damage claims under 400 USD are approved automatically without human review.",
+      "correct_side": "b",
+      "rationale": "Authority Matrix reflects latest financial authorization thresholds under ADR-87.",
+      "expected_blast_radius": 2.5,
+      "side_a_blast_radius": 1.0,
+      "side_b_blast_radius": 2.5,
+      "governed_systems": []
+    },
+    {
+      "id": "plant-06",
+      "kind": "superseded",
+      "entity_slug": "reefer-excursion-limit",
+      "predicate": "excursion_tolerance_duration",
+      "source_a_id": "doc-0011",
+      "source_b_id": "doc-0012",
+      "evidence_span_a": "Reefer loads that stay above 8 degrees C for more than 30 minutes are rejected at the receiving dock.",
+      "evidence_span_b": "A reefer load is rejected once it has spent 15 minutes above 8 degrees C at any point after pickup.",
+      "correct_side": "b",
+      "rationale": "ADR-88 supersedes ADR-41; traversal walks SUPERSEDES backwards to accept the 15-minute standard.",
+      "expected_blast_radius": 16.5,
+      "side_a_blast_radius": 16.5,
+      "side_b_blast_radius": 8.5,
+      "governed_systems": [
+        "sys-warehouse-wms",
+        "sys-fleet-telematics",
+        "sys-cold-chain-monitor"
+      ]
+    },
+    {
+      "id": "plant-07",
+      "kind": "superseded",
+      "entity_slug": "driver-hours-limit",
+      "predicate": "driving_hours_limit",
+      "source_a_id": "doc-0013",
+      "source_b_id": "doc-0014",
+      "evidence_span_a": "Drivers are blocked from accepting new loads after 11 hours of driving in a shift.",
+      "evidence_span_b": "No driver may drive more than 10 hours in a shift across all lanes.",
+      "correct_side": "b",
+      "rationale": "ADR-74 supersedes ADR-30; the 10-hour ceiling is the legally active safety rule.",
+      "expected_blast_radius": 8.5,
+      "side_a_blast_radius": 6.5,
+      "side_b_blast_radius": 8.5,
+      "governed_systems": [
+        "sys-fleet-telematics",
+        "sys-driver-app"
+      ]
+    },
+    {
+      "id": "plant-08",
+      "kind": "superseded",
+      "entity_slug": "dispatch-router-retry-limit",
+      "predicate": "retry_policy",
+      "source_a_id": "doc-0015",
+      "source_b_id": "doc-0016",
+      "evidence_span_a": "External routing solver calls are retried up to 3 times before fallback.",
+      "evidence_span_b": "External routing solver calls are retried exactly 1 time to prevent cascade timeouts.",
+      "correct_side": "b",
+      "rationale": "ADR-52 supersedes ADR-18; single retry prevents downstream cascading queue delays.",
+      "expected_blast_radius": 12.5,
+      "side_a_blast_radius": 8.5,
+      "side_b_blast_radius": 12.5,
+      "governed_systems": [
+        "sys-tracking-api",
+        "sys-dispatch-router"
+      ]
+    },
+    {
+      "id": "plant-09",
+      "kind": "superseded",
+      "entity_slug": "dock-late-cancellation-window",
+      "predicate": "dock_arrival_tolerance",
+      "source_a_id": "doc-0017",
+      "source_b_id": "doc-0018",
+      "evidence_span_a": "Carriers arriving within 60 minutes of scheduled slot retain dock priority.",
+      "evidence_span_b": "Carriers arriving more than 30 minutes late lose dock appointment and are rescheduled.",
+      "correct_side": "b",
+      "rationale": "ADR-68 supersedes ADR-22; tightened grace period reduces yard congestion.",
+      "expected_blast_radius": 10.5,
+      "side_a_blast_radius": 10.5,
+      "side_b_blast_radius": 8.5,
+      "governed_systems": [
+        "sys-warehouse-wms",
+        "sys-depot-kiosk"
+      ]
+    },
+    {
+      "id": "plant-10",
+      "kind": "superseded",
+      "entity_slug": "gps-moving-ping-interval",
+      "predicate": "gps_ping_interval",
+      "source_a_id": "doc-0019",
+      "source_b_id": "doc-0020",
+      "evidence_span_a": "Tractors transmit GPS telematics ping every 15 seconds while moving.",
+      "evidence_span_b": "Tractors transmit GPS telematics ping every 30 seconds while moving to conserve cellular bandwidth.",
+      "correct_side": "b",
+      "rationale": "ADR-49 supersedes ADR-12; 30-second interval balances tracking fidelity and cellular data cost.",
+      "expected_blast_radius": 8.5,
+      "side_a_blast_radius": 4.5,
+      "side_b_blast_radius": 8.5,
+      "governed_systems": [
+        "sys-fleet-telematics",
+        "sys-driver-app"
+      ]
+    },
+    {
+      "id": "plant-11",
+      "kind": "undocumented",
+      "entity_slug": "dispatch-router",
+      "predicate": "timeout_duration",
+      "source_a_id": "doc-0021",
+      "source_b_id": "msg-0000101",
+      "evidence_span_a": "If the routing API does not respond within 10 seconds, Dispatch Router falls back to manual dispatch.",
+      "evidence_span_b": "We cut the router timeout to 4 seconds last sprint and it now retries on the backup solver automatically without manual dispatch fallback.",
+      "correct_side": "b",
+      "rationale": "Operational chat consensus records production change to 4s automated fallback without manual console.",
+      "expected_blast_radius": 8.5,
+      "side_a_blast_radius": 8.5,
+      "side_b_blast_radius": 1.0,
+      "governed_systems": [
+        "sys-dispatch-router"
+      ]
+    },
+    {
+      "id": "plant-12",
+      "kind": "undocumented",
+      "entity_slug": "customs-gateway",
+      "predicate": "declaration_filing_lead_time",
+      "source_a_id": "doc-0022",
+      "source_b_id": "msg-0000102",
+      "evidence_span_a": "Customs Gateway files import declarations automatically 24 hours before scheduled arrival.",
+      "evidence_span_b": "Gateway auto-filing has been switched off since August and brokerage is filing declarations manually.",
+      "correct_side": "b",
+      "rationale": "Brokerage team chat confirms automated filing disabled following certificate expiration.",
+      "expected_blast_radius": 12.5,
+      "side_a_blast_radius": 12.5,
+      "side_b_blast_radius": 1.0,
+      "governed_systems": [
+        "sys-customs-gateway",
+        "sys-dispatch-router"
+      ]
+    },
+    {
+      "id": "plant-13",
+      "kind": "undocumented",
+      "entity_slug": "payments-gateway",
+      "predicate": "idempotency_window",
+      "source_a_id": "doc-0023",
+      "source_b_id": "msg-0000103",
+      "evidence_span_a": "Payments Gateway caches settlement idempotency keys for 24 hours.",
+      "evidence_span_b": "Payment idempotency key retention was increased to 72 hours following the double-charge incident.",
+      "correct_side": "b",
+      "rationale": "Urgent engineering chat hotfix extended payment key retention to 72 hours.",
+      "expected_blast_radius": 14.5,
+      "side_a_blast_radius": 14.5,
+      "side_b_blast_radius": 1.0,
+      "governed_systems": [
+        "sys-payments-gateway",
+        "sys-finance-ledger"
+      ]
+    },
+    {
+      "id": "plant-14",
+      "kind": "undocumented",
+      "entity_slug": "cold-chain-monitor",
+      "predicate": "probe_calibration_tolerance",
+      "source_a_id": "doc-0024",
+      "source_b_id": "msg-0000104",
+      "evidence_span_a": "If the primary reefer probe and secondary logger disagree by more than 1.5 degrees C, open a hardware ticket.",
+      "evidence_span_b": "Reefer probe calibration tolerance was tightened to 0.5 degrees C following the dairy shipment audit.",
+      "correct_side": "b",
+      "rationale": "Quality audit in chat tightened variance threshold to 0.5 degrees C.",
+      "expected_blast_radius": 7.0,
+      "side_a_blast_radius": 7.0,
+      "side_b_blast_radius": 1.0,
+      "governed_systems": [
+        "sys-cold-chain-monitor"
+      ]
+    }
+  ]
+}
