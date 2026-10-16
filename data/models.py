@@ -88,3 +88,11 @@ class PlantedConflictData:
     governed_systems: list[str]
     doc_count: int
     citing_decisions: int
+
+
+@dataclass(frozen=True)
+class SubjectEntity:
+    slug: str
+    name: str
+    type: Literal["system", "policy", "metric", "process", "artifact"]
+    aliases: list[str]

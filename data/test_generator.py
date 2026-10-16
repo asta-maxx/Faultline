@@ -209,3 +209,48 @@ def test_determinism_byte_identical_runs():
         
         assert hashes1 == hashes2
         assert len(hashes1) > 0
+
+
+def test_no_fact_sentence_split_across_lines(generator_run: NorthwindGenerator):
+    """(a) No fact sentence is split across lines in any corpus file."""
+    for doc in generator_run.documents:
+        for fact in doc.factual_sentences:
+            assert "\n" not in fact, f"Fact has internal newline: {fact!r}"
+            assert "\r" not in fact, f"Fact has internal carriage return: {fact!r}"
+            # Ensure fact is an unbroken single line in doc text
+            assert fact in doc.text, f"Fact not found literally in doc.text: {fact!r}"
+
+
+def test_every_subject_has_at_least_two_aliases(generator_run: NorthwindGenerator):
+    """(b) Every subject appears under at least 2 alias spellings."""
+    assert len(generator_run.alias_counts) > 0
+    for slug, aliases in generator_run.alias_counts.items():
+        assert len(aliases) >= 2, f"Subject {slug!r} has fewer than 2 aliases used: {aliases}"
+
+
+def test_entity_types_include_all_five(generator_run: NorthwindGenerator):
+    """(c) Entity types must include all five: system, policy, metric, process, artifact."""
+    types_found = {etype for _, _, etype in generator_run.fact_records}
+    expected_types = {"system", "policy", "metric", "process", "artifact"}
+    assert expected_types.issubset(types_found), f"Missing entity types: {expected_types - types_found}"
+
+
+def test_ground_truth_evidence_sentences_are_literal_substrings(generator_run: NorthwindGenerator):
+    """(d) Ground truth evidence sentences are literal substrings of their source files."""
+    doc_map = {d.id: d.text for d in generator_run.documents}
+    msg_map = {m.id: m.text for m in generator_run.messages}
+
+    for conf in generator_run.planted_conflicts:
+        cid = conf.id
+        # Side A
+        src_a = conf.source_a_id
+        text_a = doc_map.get(src_a) or msg_map.get(src_a)
+        assert text_a is not None, f"Source A {src_a} not found in documents or messages"
+        assert conf.evidence_span_a in text_a, f"{cid} side A {conf.evidence_span_a!r} not in {src_a}"
+
+        # Side B
+        src_b = conf.source_b_id
+        text_b = doc_map.get(src_b) or msg_map.get(src_b)
+        assert text_b is not None, f"Source B {src_b} not found in documents or messages"
+        assert conf.evidence_span_b in text_b, f"{cid} side B {conf.evidence_span_b!r} not in {src_b}"
+

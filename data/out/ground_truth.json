@@ -22,8 +22,8 @@
       "side_a_blast_radius": 5.0,
       "side_b_blast_radius": 12.5,
       "governed_systems": [
-        "sys-finance-ledger",
-        "sys-carrier-billing"
+        "sys-carrier-billing",
+        "sys-finance-ledger"
       ]
     },
     {
@@ -41,8 +41,8 @@
       "side_a_blast_radius": 7.0,
       "side_b_blast_radius": 12.5,
       "governed_systems": [
-        "sys-warehouse-wms",
-        "sys-inventory-service"
+        "sys-inventory-service",
+        "sys-warehouse-wms"
       ]
     },
     {
@@ -80,10 +80,10 @@
       "side_b_blast_radius": 13.0,
       "governed_systems": [
         "sys-dispatch-router",
-        "sys-warehouse-wms",
+        "sys-cold-chain-monitor",
         "sys-payments-gateway",
-        "sys-finance-ledger",
-        "sys-cold-chain-monitor"
+        "sys-warehouse-wms",
+        "sys-finance-ledger"
       ]
     },
     {
@@ -117,9 +117,9 @@
       "side_a_blast_radius": 16.5,
       "side_b_blast_radius": 8.5,
       "governed_systems": [
-        "sys-warehouse-wms",
         "sys-fleet-telematics",
-        "sys-cold-chain-monitor"
+        "sys-cold-chain-monitor",
+        "sys-warehouse-wms"
       ]
     },
     {
@@ -156,8 +156,8 @@
       "side_a_blast_radius": 8.5,
       "side_b_blast_radius": 12.5,
       "governed_systems": [
-        "sys-tracking-api",
-        "sys-dispatch-router"
+        "sys-dispatch-router",
+        "sys-tracking-api"
       ]
     },
     {

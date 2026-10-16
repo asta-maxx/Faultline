@@ -16,6 +16,7 @@ Usage:
 from __future__ import annotations
 
 import argparse
+import collections
 import json
 import math
 import os
@@ -25,13 +26,22 @@ import time
 from pathlib import Path
 
 from data.adr_chains import generate_decisions
-from data.constants import CHANNELS, PEOPLE_RAW, SUBJECT_ALIASES, SYSTEMS_RAW, TEAMS
+from data.constants import (
+    CHANNELS,
+    NORTHWIND_SUBJECTS,
+    PEOPLE_RAW,
+    SUBJECT_ALIASES,
+    SUBJECT_MAP,
+    SYSTEMS_RAW,
+    TEAMS,
+)
 from data.models import (
     DecisionData,
     DocumentData,
     MessageData,
     PersonData,
     PlantedConflictData,
+    SubjectEntity,
     SystemData,
     TicketData,
 )
@@ -64,6 +74,8 @@ class NorthwindGenerator:
         self.tickets: list[TicketData] = []
         self.messages: list[MessageData] = []
         self.planted_conflicts: list[PlantedConflictData] = []
+        self.fact_records: list[tuple[str, str, str]] = []  # (sentence, slug, entity_type)
+        self.alias_counts: dict[str, set[str]] = collections.defaultdict(set)
 
     def build_people(self) -> None:
         """Generates exactly 60 people partitioned across 8 teams."""
@@ -709,74 +721,148 @@ class NorthwindGenerator:
             doc21, doc22, doc23, doc24,
         ]
 
+        # Register seed factual sentences into fact_records and alias counts
+        for p in self.planted_conflicts:
+            subj = SUBJECT_MAP[p.entity_slug]
+            self.fact_records.append((p.evidence_span_a, p.entity_slug, subj.type))
+            self.alias_counts[p.entity_slug].add(p.evidence_span_a)
+            if p.kind != "undocumented":
+                self.fact_records.append((p.evidence_span_b, p.entity_slug, subj.type))
+                self.alias_counts[p.entity_slug].add(p.evidence_span_b)
+
         # Add the 4 special messages (stored for message generation)
         self.special_messages = [msg101, msg102, msg103, msg104]
 
     def build_remaining_documents(self) -> None:
-        """Expands the document set up to exactly 312 documents with extractable facts."""
+        """Expands the document set up to exactly 312 documents with extractable facts
+        covering all five entity types (system, policy, metric, process, artifact)
+        with a realistic skewed distribution."""
         kinds_cycle = ["runbook", "wiki", "spec", "readme"]
         system_ids = [s.id for s in self.systems]
         author_ids = [p.id for p in self.people]
         decision_ids = [d.id for d in self.decisions]
 
-        # Templates for generating extractable factual sentences on single unbroken lines
-        fact_templates = [
-            ("retry_policy", "{subj} retries failed external requests up to {n} times with backoff."),
-            ("timeout_duration", "Requests to {subj} timeout after {n} milliseconds."),
-            ("cycle_count_frequency", "{subj} requires inventory cycle count verification every {n} days."),
-            ("audit_retention_period", "Transaction logs for {subj} are archived for {n} days."),
-            ("oncall_ack_target", "On-call engineers for {subj} must acknowledge critical alerts within {n} minutes."),
-            ("backup_frequency", "Automated snapshots for {subj} are taken every {n} hours."),
-            ("reconciliation_frequency", "Ledger entries in {subj} are reconciled every {n} hours."),
-            ("temperature_threshold", "High priority containers in {subj} must maintain a temperature below {n} degrees C."),
-            ("gps_ping_interval", "Units tracked by {subj} report telemetry every {n} seconds."),
-            ("dispute_window", "Customer dispute notices for {subj} must be filed within {n} days of delivery."),
-        ]
+        templates_by_type = {
+            "system": [
+                "{subj} retries failed external requests up to {n} times with backoff.",
+                "Operational requests to {subj} timeout after {n} milliseconds.",
+                "Automated database snapshots for {subj} execute every {n} hours.",
+                "Health check probe queries to {subj} run every {n} seconds.",
+                "Under peak workload, {subj} maintains a concurrency limit of {n} worker threads.",
+            ],
+            "policy": [
+                "Compliance audits under {subj} occur every {n} business days.",
+                "Exceptions to {subj} require written escalation within {n} hours.",
+                "Review cycles for {subj} are scheduled every {n} months.",
+                "Operational verification for {subj} is audited every {n} weeks.",
+                "Enforcement warnings under {subj} trigger after {n} logged infractions.",
+            ],
+            "metric": [
+                "The baseline calibration for {subj} is refreshed every {n} days.",
+                "Alerts trigger when {subj} deviates by more than {n} percent from nominal baseline.",
+                "Performance reporting for {subj} aggregates metrics every {n} hours.",
+                "The target operational ceiling for {subj} is set to {n} units per shift.",
+                "Telemetry anomaly detection for {subj} evaluates a rolling window of {n} minutes.",
+            ],
+            "process": [
+                "The standard execution window for {subj} must conclude within {n} minutes.",
+                "Operations supervisors must reconcile status logs for {subj} every {n} hours.",
+                "Shift handover protocol for {subj} requires {n} signed checklist verifications.",
+                "Escalation for stalled {subj} initiates after {n} minutes of inactivity.",
+                "Quality assurance checkpoints for {subj} occur every {n} operational cycles.",
+            ],
+            "artifact": [
+                "Archival copies of {subj} must be retained in secure storage for {n} days.",
+                "Digital records of {subj} require cryptographic checksum validation every {n} hours.",
+                "Physical inspection documentation for {subj} is audited every {n} business days.",
+                "Mandatory retention schedules for {subj} require disposal review after {n} months.",
+                "Chain of custody logs for {subj} require {n} supervisor sign-offs.",
+            ],
+        }
+
+        # 14 Planted conflict subjects that MUST have >= 4 supporting documents
+        planted_slugs = [p.entity_slug for p in self.planted_conflicts]
+
+        # Plan the sequence of primary subjects for documents 25 to 312 (288 documents):
+        # Step A: 3 dedicated supporting documents for each of the 14 planted conflict subjects (42 docs)
+        # Step B: 1 dedicated document for each of the 70 subjects in NORTHWIND_SUBJECTS (70 docs)
+        # Step C: The remaining documents sampled via Zipfian skewed distribution (176 docs)
+        planned_subjects: list[SubjectEntity] = []
+
+        # Step A (42 docs)
+        for slug in planted_slugs:
+            subj = SUBJECT_MAP[slug]
+            for _ in range(3):
+                planned_subjects.append(subj)
+
+        # Step B (70 docs)
+        for subj in NORTHWIND_SUBJECTS:
+            planned_subjects.append(subj)
+
+        # Step C (176 docs)
+        remaining_count = 312 - len(self.documents) - len(planned_subjects)
+        zipf_weights = [1.0 / ((i + 1) ** 0.85) for i in range(len(NORTHWIND_SUBJECTS))]
+        for _ in range(remaining_count):
+            chosen = self.rng.choices(NORTHWIND_SUBJECTS, weights=zipf_weights, k=1)[0]
+            planned_subjects.append(chosen)
+
+        # Alias cycling index per subject to guarantee every subject uses >= 2 alias spellings
+        alias_step: dict[str, int] = collections.defaultdict(int)
 
         curr_id = len(self.documents) + 1
-        while len(self.documents) < 312:
+        for primary_subject in planned_subjects:
             doc_id = f"doc-{curr_id:04d}"
             kind = kinds_cycle[(curr_id - 1) % len(kinds_cycle)]
             author_id = self.rng.choice(author_ids)
-            
-            # Select 0 to 2 governed systems deterministically
-            num_gov = self.rng.choice([0, 1, 1, 2])
-            gov_systems = self.rng.sample(system_ids, k=num_gov) if num_gov > 0 else []
-            
-            # Select 0 to 1 cited decisions
+
+            # Governing systems
+            if primary_subject.type == "system" and primary_subject.slug in [s.slug for s in self.systems]:
+                sys_id = next(s.id for s in self.systems if s.slug == primary_subject.slug)
+                gov_systems = [sys_id]
+            else:
+                num_gov = self.rng.choice([0, 1, 1, 2])
+                gov_systems = self.rng.sample(system_ids, k=num_gov) if num_gov > 0 else []
+
+            # Cited decisions
             has_cite = self.rng.random() < 0.35
             cites = [self.rng.choice(decision_ids)] if has_cite else []
-
-            # Determine subject and aliases
-            primary_sys = gov_systems[0] if gov_systems else self.rng.choice(system_ids)
-            sys_obj = next(s for s in self.systems if s.id == primary_sys)
-            aliases = SUBJECT_ALIASES.get(sys_obj.slug, [sys_obj.name])
-            subj_name = self.rng.choice(aliases)
 
             # Generate 4 to 6 atomic factual sentences
             num_facts = self.rng.randint(4, 6)
             facts: list[str] = []
-            selected_templates = self.rng.sample(fact_templates, k=num_facts)
-            for pred, tmpl in selected_templates:
-                val = self.rng.choice([2, 3, 5, 10, 15, 30, 60, 90, 180, 365, 1000, 5000])
-                fact_line = tmpl.format(subj=subj_name, n=val)
+            type_templates = templates_by_type[primary_subject.type]
+
+            for _ in range(num_facts):
+                tmpl = self.rng.choice(type_templates)
+                val = self.rng.choice([2, 3, 5, 10, 15, 30, 45, 60, 90, 120, 180, 250, 365, 500, 1000])
+
+                # Alternate alias spelling for this subject
+                alias_idx = alias_step[primary_subject.slug] % len(primary_subject.aliases)
+                alias_step[primary_subject.slug] += 1
+                alias_used = primary_subject.aliases[alias_idx]
+                self.alias_counts[primary_subject.slug].add(alias_used)
+
+                fact_line = tmpl.format(subj=alias_used, n=val)
+                # Ensure no newlines
+                assert "\n" not in fact_line
                 facts.append(fact_line)
+                self.fact_records.append((fact_line, primary_subject.slug, primary_subject.type))
 
             # Title & Path
             title_prefix = {
-                "runbook": "Operations Runbook",
-                "wiki": "Architecture Overview",
-                "spec": "Technical Specification",
-                "readme": "Component README",
+                "runbook": "Standard Operating Procedure",
+                "wiki": "Knowledge Base Article",
+                "spec": "Operational Standard",
+                "readme": "Component Overview",
             }[kind]
-            title = f"{sys_obj.name} {title_prefix} Part {curr_id}"
+            title = f"{primary_subject.name} {title_prefix} (Part {curr_id})"
             folder = {
                 "runbook": "runbooks",
                 "wiki": "wiki",
                 "spec": "specs",
                 "readme": "repos",
             }[kind]
-            path = f"{folder}/{sys_obj.slug}/{kind}-{curr_id:04d}.md"
+            path = f"{folder}/{primary_subject.slug}/{kind}-{curr_id:04d}.md"
             updated_at = self.base_time + (curr_id * 3600 * 12)
 
             doc = DocumentData(
@@ -1143,10 +1229,18 @@ def main() -> None:
     generator.write_corpus(out_dir)
     elapsed = time.perf_counter() - start_time
 
-    # Output statistics per user requirement:
-    # "Do NOT tune volumes to hit 1,800 claims or 340 pairs. Print what the generator actually produces (documents, fact sentences, distinct subjects) and nothing more."
-    total_facts = sum(len(d.factual_sentences) for d in generator.documents)
-    subjects = set(s.slug for s in generator.systems)
+    # Output statistics per user requirements:
+    total_facts = len(generator.fact_records)
+    subjects_by_type: dict[str, set[str]] = collections.defaultdict(set)
+    facts_per_subject: dict[str, int] = collections.defaultdict(int)
+
+    for _, slug, etype in generator.fact_records:
+        subjects_by_type[etype].add(slug)
+        facts_per_subject[slug] += 1
+
+    all_subjects = set(facts_per_subject.keys())
+    naive_pairs = (total_facts * (total_facts - 1)) // 2
+    predicted_collapsed_pairs = sum((c * (c - 1)) // 2 for c in facts_per_subject.values() if c >= 2)
 
     print(f"Generated Northwind Logistics corpus in {elapsed:.3f} s:")
     print(f"  People:            {len(generator.people)} (across {len(TEAMS)} teams)")
@@ -1154,7 +1248,14 @@ def main() -> None:
     print(f"  Decisions (ADRs):  {len(generator.decisions)} (14 chains, depth 2-4)")
     print(f"  Documents:         {len(generator.documents)} (runbooks, wikis, specs, READMEs)")
     print(f"  Fact sentences:    {total_facts}")
-    print(f"  Distinct subjects: {len(subjects)}")
+    print(f"  Distinct subjects: {len(all_subjects)} across {len(subjects_by_type)} entity types")
+    print(f"    - system:        {len(subjects_by_type.get('system', []))} subjects")
+    print(f"    - policy:        {len(subjects_by_type.get('policy', []))} subjects")
+    print(f"    - metric:        {len(subjects_by_type.get('metric', []))} subjects")
+    print(f"    - process:       {len(subjects_by_type.get('process', []))} subjects")
+    print(f"    - artifact:      {len(subjects_by_type.get('artifact', []))} subjects")
+    print(f"  naive_pairs:       {naive_pairs} (predicted, before extraction)")
+    print(f"  predicted_collapsed_pairs: {predicted_collapsed_pairs} (predicted, before extraction)")
     print(f"  Tickets:           {len(generator.tickets)}")
     print(f"  Messages:          {len(generator.messages)}")
     print(f"  Planted conflicts: {len(generator.planted_conflicts)} (5 direct, 5 superseded, 4 undocumented)")
