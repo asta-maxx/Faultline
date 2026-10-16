@@ -83,7 +83,27 @@ redis://falkordb.railway.internal:6379
 
 To pre-load the structural knowledge graph into Railway without running live ingestion during deploy:
 
-### Option A: Using Railway CLI (Recommended)
+### Option A: Local Docker Compose Restore Rehearsal (Verified)
+1. Export the graph snapshot using `dump_graph.sh`:
+   ```bash
+   bash infra/scripts/dump_graph.sh data
+   ```
+2. Reset stack and volumes:
+   ```bash
+   docker compose -f infra/docker-compose.yml down -v
+   ```
+3. Create fresh volume and copy `dump.rdb` into `/data/dump.rdb`:
+   ```bash
+   docker volume create faultline_falkor_data
+   docker run --rm -v faultline_falkor_data:/data -v ${PWD}/data:/backup alpine cp /backup/dump.rdb /data/dump.rdb
+   ```
+4. Start compose stack:
+   ```bash
+   docker compose -f infra/docker-compose.yml up -d
+   ```
+5. Confirm counts via `GET /health` (`nodes: 2826, edges: 823, falkor: "up"`).
+
+### Option B: Using Railway CLI (Production Deployment)
 1. Export the local graph snapshot using the dump script:
    ```bash
    bash infra/scripts/dump_graph.sh data/
@@ -97,7 +117,7 @@ To pre-load the structural knowledge graph into Railway without running live ing
    railway service restart --service falkordb
    ```
 
-### Option B: Remote One-Time Ingestion
+### Option C: Remote One-Time Ingestion
 If volume upload is not permitted by your permissions tier:
 1. Run `data/seed.py` from a machine connected to the private network via Railway CLI:
    ```bash

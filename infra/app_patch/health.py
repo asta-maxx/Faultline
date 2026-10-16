@@ -19,13 +19,20 @@ DEFAULT_GRAPH = f"faultline:{DEFAULT_TENANT}"
 def check_falkordb() -> dict:
     falkor_url = os.environ.get("FALKOR_URL", "redis://localhost:6379")
     try:
-        from graph.connection import get_graph
+        from graph.connection import client, get_graph
+        c = client()
+        c.connection.ping()
         g = get_graph()
-        # Query node and edge counts
-        res_nodes = g.ro_query("MATCH (n) RETURN count(n)").result_set
-        res_edges = g.ro_query("MATCH ()-[r]->() RETURN count(r)").result_set
-        node_count = int(res_nodes[0][0]) if res_nodes else 0
-        edge_count = int(res_edges[0][0]) if res_edges else 0
+        node_count = 0
+        edge_count = 0
+        try:
+            res_nodes = g.ro_query("MATCH (n) RETURN count(n)").result_set
+            res_edges = g.ro_query("MATCH ()-[r]->() RETURN count(r)").result_set
+            node_count = int(res_nodes[0][0]) if res_nodes else 0
+            edge_count = int(res_edges[0][0]) if res_edges else 0
+        except Exception as q_err:
+            if "empty key" not in str(q_err).lower():
+                raise q_err
         return {
             "ok": True,
             "graph": g.name,
