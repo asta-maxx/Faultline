@@ -21,12 +21,17 @@ from graph.schema import apply_schema
 def seed_structural_graph(
     tenant_id: str = DEFAULT_TENANT,
     reset: bool = False,
+    merge: bool = False,
     generator_seed: int = 42,
     batch_size: int = 500,
 ) -> dict[str, Any]:
     """Applies schema and seeds structural nodes and relationships in batches via UNWIND.
     Verifies that loaded counts match generated counts and that runtime is < 30s.
+    If merge=True, uses MERGE to preserve existing claims/entities and avoid duplicate documents.
     """
+    if reset and merge:
+        raise ValueError("Cannot specify both reset=True and merge=True.")
+
     start_time = time.perf_counter()
     g = get_graph(tenant_id)
 
@@ -51,22 +56,26 @@ def seed_structural_graph(
         {"id": p.id, "name": p.name, "role": p.role, "active": p.active}
         for p in gen.people
     ]
+    person_cypher = (
+        "UNWIND $rows AS row MERGE (p:Person {id: row.id}) SET p.name = row.name, p.role = row.role, p.active = row.active"
+        if merge
+        else "UNWIND $rows AS row CREATE (:Person {id: row.id, name: row.name, role: row.role, active: row.active})"
+    )
     for i in range(0, len(person_rows), batch_size):
-        g.query(
-            "UNWIND $rows AS row CREATE (:Person {id: row.id, name: row.name, role: row.role, active: row.active})",
-            {"rows": person_rows[i : i + batch_size]},
-        )
+        g.query(person_cypher, {"rows": person_rows[i : i + batch_size]})
 
     # 4.2 System
     system_rows = [
         {"id": s.id, "name": s.name, "tier": s.tier}
         for s in gen.systems
     ]
+    system_cypher = (
+        "UNWIND $rows AS row MERGE (s:System {id: row.id}) SET s.name = row.name, s.tier = row.tier"
+        if merge
+        else "UNWIND $rows AS row CREATE (:System {id: row.id, name: row.name, tier: row.tier})"
+    )
     for i in range(0, len(system_rows), batch_size):
-        g.query(
-            "UNWIND $rows AS row CREATE (:System {id: row.id, name: row.name, tier: row.tier})",
-            {"rows": system_rows[i : i + batch_size]},
-        )
+        g.query(system_cypher, {"rows": system_rows[i : i + batch_size]})
 
     # 4.3 Decision
     decision_rows = [
@@ -79,11 +88,13 @@ def seed_structural_graph(
         }
         for d in gen.decisions
     ]
+    decision_cypher = (
+        "UNWIND $rows AS row MERGE (d:Decision {id: row.id}) SET d.ref = row.ref, d.title = row.title, d.status = row.status, d.decided_at = row.decided_at"
+        if merge
+        else "UNWIND $rows AS row CREATE (:Decision {id: row.id, ref: row.ref, title: row.title, status: row.status, decided_at: row.decided_at})"
+    )
     for i in range(0, len(decision_rows), batch_size):
-        g.query(
-            "UNWIND $rows AS row CREATE (:Decision {id: row.id, ref: row.ref, title: row.title, status: row.status, decided_at: row.decided_at})",
-            {"rows": decision_rows[i : i + batch_size]},
-        )
+        g.query(decision_cypher, {"rows": decision_rows[i : i + batch_size]})
 
     # 4.4 Document
     document_rows = [
@@ -96,11 +107,13 @@ def seed_structural_graph(
         }
         for doc in gen.documents
     ]
+    doc_cypher = (
+        "UNWIND $rows AS row MERGE (doc:Document {id: row.id}) SET doc.title = row.title, doc.path = row.path, doc.kind = row.kind, doc.updated_at = row.updated_at"
+        if merge
+        else "UNWIND $rows AS row CREATE (:Document {id: row.id, title: row.title, path: row.path, kind: row.kind, updated_at: row.updated_at})"
+    )
     for i in range(0, len(document_rows), batch_size):
-        g.query(
-            "UNWIND $rows AS row CREATE (:Document {id: row.id, title: row.title, path: row.path, kind: row.kind, updated_at: row.updated_at})",
-            {"rows": document_rows[i : i + batch_size]},
-        )
+        g.query(doc_cypher, {"rows": document_rows[i : i + batch_size]})
 
     # 4.5 Ticket
     ticket_rows = [
@@ -114,11 +127,13 @@ def seed_structural_graph(
         }
         for t in gen.tickets
     ]
+    ticket_cypher = (
+        "UNWIND $rows AS row MERGE (t:Ticket {id: row.id}) SET t.ref = row.ref, t.title = row.title, t.text = row.text, t.state = row.state, t.closed_at = row.closed_at"
+        if merge
+        else "UNWIND $rows AS row CREATE (:Ticket {id: row.id, ref: row.ref, title: row.title, text: row.text, state: row.state, closed_at: row.closed_at})"
+    )
     for i in range(0, len(ticket_rows), batch_size):
-        g.query(
-            "UNWIND $rows AS row CREATE (:Ticket {id: row.id, ref: row.ref, title: row.title, text: row.text, state: row.state, closed_at: row.closed_at})",
-            {"rows": ticket_rows[i : i + batch_size]},
-        )
+        g.query(ticket_cypher, {"rows": ticket_rows[i : i + batch_size]})
 
     # 4.6 Message
     message_rows = [
@@ -130,20 +145,23 @@ def seed_structural_graph(
         }
         for m in gen.messages
     ]
+    msg_cypher = (
+        "UNWIND $rows AS row MERGE (m:Message {id: row.id}) SET m.channel = row.channel, m.text = row.text, m.sent_at = row.sent_at"
+        if merge
+        else "UNWIND $rows AS row CREATE (:Message {id: row.id, channel: row.channel, text: row.text, sent_at: row.sent_at})"
+    )
     for i in range(0, len(message_rows), batch_size):
-        g.query(
-            "UNWIND $rows AS row CREATE (:Message {id: row.id, channel: row.channel, text: row.text, sent_at: row.sent_at})",
-            {"rows": message_rows[i : i + batch_size]},
-        )
+        g.query(msg_cypher, {"rows": message_rows[i : i + batch_size]})
 
     # 5. Ingest Relationships in batches using UNWIND $rows
     # 5.1 OWNS: Person -> System
+    rel_op = "MERGE" if merge else "CREATE"
     owns_rows = [{"from_id": s.owner_id, "to_id": s.id} for s in gen.systems]
     for i in range(0, len(owns_rows), batch_size):
         g.query(
             "UNWIND $rows AS row "
             "MATCH (p:Person {id: row.from_id}), (s:System {id: row.to_id}) "
-            "CREATE (p)-[:OWNS]->(s)",
+            f"{rel_op} (p)-[:OWNS]->(s)",
             {"rows": owns_rows[i : i + batch_size]},
         )
 
@@ -153,7 +171,7 @@ def seed_structural_graph(
         g.query(
             "UNWIND $rows AS row "
             "MATCH (p:Person {id: row.from_id}), (d:Decision {id: row.to_id}) "
-            "CREATE (p)-[:AUTHORED]->(d)",
+            f"{rel_op} (p)-[:AUTHORED]->(d)",
             {"rows": auth_dec_rows[i : i + batch_size]},
         )
 
@@ -167,7 +185,7 @@ def seed_structural_graph(
         g.query(
             "UNWIND $rows AS row "
             "MATCH (newer:Decision {id: row.from_id}), (older:Decision {id: row.to_id}) "
-            "CREATE (newer)-[:SUPERSEDES]->(older)",
+            f"{rel_op} (newer)-[:SUPERSEDES]->(older)",
             {"rows": supersedes_rows[i : i + batch_size]},
         )
 
@@ -177,7 +195,7 @@ def seed_structural_graph(
         g.query(
             "UNWIND $rows AS row "
             "MATCH (p:Person {id: row.from_id}), (d:Document {id: row.to_id}) "
-            "CREATE (p)-[:AUTHORED]->(d)",
+            f"{rel_op} (p)-[:AUTHORED]->(d)",
             {"rows": auth_doc_rows[i : i + batch_size]},
         )
 
@@ -191,7 +209,7 @@ def seed_structural_graph(
         g.query(
             "UNWIND $rows AS row "
             "MATCH (d:Document {id: row.from_id}), (s:System {id: row.to_id}) "
-            "CREATE (d)-[:GOVERNS]->(s)",
+            f"{rel_op} (d)-[:GOVERNS]->(s)",
             {"rows": governs_rows[i : i + batch_size]},
         )
 
@@ -205,7 +223,7 @@ def seed_structural_graph(
         g.query(
             "UNWIND $rows AS row "
             "MATCH (d:Document {id: row.from_id}), (dec:Decision {id: row.to_id}) "
-            "CREATE (d)-[:CITES]->(dec)",
+            f"{rel_op} (d)-[:CITES]->(dec)",
             {"rows": cites_rows[i : i + batch_size]},
         )
 
@@ -229,19 +247,28 @@ def seed_structural_graph(
         "CITES": g.ro_query("MATCH ()-[r:CITES]->() RETURN count(r)").result_set[0][0],
     }
 
-    # Prohibited labels and edge types check
-    prohibited_labels = ("Claim", "Entity", "Conflict")
-    prohibited_edges = ("ASSERTS", "ABOUT", "CONTRADICTS", "INVOLVES", "RESOLVED_AS")
+    if not merge:
+        # Prohibited labels and edge types check
+        prohibited_labels = ("Claim", "Entity", "Conflict")
+        prohibited_edges = ("ASSERTS", "ABOUT", "CONTRADICTS", "INVOLVES", "RESOLVED_AS")
 
-    for lbl in prohibited_labels:
-        cnt = g.ro_query(f"MATCH (n:{lbl}) RETURN count(n)").result_set[0][0]
-        if cnt != 0:
-            raise AssertionError(f"Prohibited label {lbl} found with count {cnt} in structural seed!")
+        for lbl in prohibited_labels:
+            cnt = g.ro_query(f"MATCH (n:{lbl}) RETURN count(n)").result_set[0][0]
+            if cnt != 0:
+                raise AssertionError(f"Prohibited label {lbl} found with count {cnt} in structural seed!")
 
-    for rel in prohibited_edges:
-        cnt = g.ro_query(f"MATCH ()-[r:{rel}]->() RETURN count(r)").result_set[0][0]
-        if cnt != 0:
-            raise AssertionError(f"Prohibited edge {rel} found with count {cnt} in structural seed!")
+        for rel in prohibited_edges:
+            cnt = g.ro_query(f"MATCH ()-[r:{rel}]->() RETURN count(r)").result_set[0][0]
+            if cnt != 0:
+                raise AssertionError(f"Prohibited edge {rel} found with count {cnt} in structural seed!")
+    else:
+        # In merge mode, verify no duplicate documents, tickets, or messages exist
+        for lbl in ("Document", "Ticket", "Message"):
+            dups = g.ro_query(
+                f"MATCH (n:{lbl}) WITH n.id AS nid, count(*) AS c WHERE c > 1 RETURN nid"
+            ).result_set
+            if dups:
+                raise AssertionError(f"Duplicate {lbl} IDs found after merge seed: {dups}")
 
     expected_nodes = {
         "Person": len(gen.people),
@@ -285,11 +312,13 @@ def main() -> None:
     parser = argparse.ArgumentParser(description="Seed Northwind Logistics structural graph into FalkorDB.")
     parser.add_argument("--tenant", type=str, default=DEFAULT_TENANT, help="Tenant ID (default: northwind)")
     parser.add_argument("--reset", action="store_true", help="Delete and recreate graph before seeding")
+    parser.add_argument("--merge", action="store_true", help="Merge structural graph with existing claims/entities")
     parser.add_argument("--seed", type=int, default=42, help="Generator random seed (default: 42)")
     args = parser.parse_args()
 
-    print(f"Seeding structural graph for tenant '{args.tenant}' (reset={args.reset})...")
-    res = seed_structural_graph(tenant_id=args.tenant, reset=args.reset, generator_seed=args.seed)
+    mode_str = "merge" if args.merge else f"reset={args.reset}"
+    print(f"Seeding structural graph for tenant '{args.tenant}' ({mode_str})...")
+    res = seed_structural_graph(tenant_id=args.tenant, reset=args.reset, merge=args.merge, generator_seed=args.seed)
 
     print(f"Structural graph '{res['graph']}' successfully seeded in {res['elapsed_seconds']:.3f} s:")
     print("  Nodes:")
