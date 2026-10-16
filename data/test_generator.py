@@ -230,7 +230,7 @@ def test_every_subject_has_at_least_two_aliases(generator_run: NorthwindGenerato
 
 def test_entity_types_include_all_five(generator_run: NorthwindGenerator):
     """(c) Entity types must include all five: system, policy, metric, process, artifact."""
-    types_found = {etype for _, _, etype in generator_run.fact_records}
+    types_found = {rec.entity_type for rec in generator_run.fact_records}
     expected_types = {"system", "policy", "metric", "process", "artifact"}
     assert expected_types.issubset(types_found), f"Missing entity types: {expected_types - types_found}"
 
@@ -253,4 +253,57 @@ def test_ground_truth_evidence_sentences_are_literal_substrings(generator_run: N
         text_b = doc_map.get(src_b) or msg_map.get(src_b)
         assert text_b is not None, f"Source B {src_b} not found in documents or messages"
         assert conf.evidence_span_b in text_b, f"{cid} side B {conf.evidence_span_b!r} not in {src_b}"
+
+
+def test_canonical_values_consistency(generator_run: NorthwindGenerator):
+    """(Item B) Group all fact records by (subject, predicate); outside planted pairs,
+    assert exactly one canonical value; for each planted pair assert exactly two distinct values.
+    Print how many (subject, predicate) groups exist.
+    """
+    import collections
+    groups: dict[tuple[str, str], set[str]] = collections.defaultdict(set)
+    for rec in generator_run.fact_records:
+        groups[(rec.slug, rec.predicate)].add(rec.canonical_value)
+
+    planted_pairs = {
+        (p.entity_slug, p.predicate) for p in generator_run.planted_conflicts
+    }
+    assert len(planted_pairs) == 14, f"Expected 14 planted conflict pairs, got {len(planted_pairs)}"
+
+    # For each planted pair, assert exactly two distinct values
+    for pair in planted_pairs:
+        assert pair in groups, f"Planted pair {pair} not found in fact records"
+        vals = groups[pair]
+        assert len(vals) == 2, (
+            f"Planted pair {pair} expected exactly 2 distinct values, got {len(vals)}: {vals}"
+        )
+
+    # Outside planted pairs, assert exactly one canonical value
+    for pair, vals in groups.items():
+        if pair not in planted_pairs:
+            assert len(vals) == 1, (
+                f"Non-planted pair {pair} expected exactly 1 canonical value, got {len(vals)}: {vals}"
+            )
+
+    print(f"\nTotal (subject, predicate) groups: {len(groups)}")
+    assert len(groups) >= 70, f"Expected at least 70 distinct groups, got {len(groups)}"
+
+
+def test_kebab_slugs_in_prose_under_ten_percent(generator_run: NorthwindGenerator):
+    """(Item D) Fact sentences must use the human-readable subject name or an alias,
+    never a raw kebab-case slug, unless that slug form is one of the deliberate alias variants
+    (limit to a small share of sentences). Fails if more than 10% of fact sentences contain a kebab-case slug.
+    """
+    import re
+    kebab_pattern = re.compile(r"\b[a-z0-9]+(?:-[a-z0-9]+)+\b")
+    slug_sentences = [
+        rec.sentence for rec in generator_run.fact_records
+        if kebab_pattern.search(rec.sentence)
+    ]
+    total_facts = len(generator_run.fact_records)
+    ratio = len(slug_sentences) / total_facts
+    print(f"\nKebab-case slug fact sentences: {len(slug_sentences)} / {total_facts} ({ratio:.2%})")
+    assert ratio <= 0.10, (
+        f"More than 10% ({ratio:.2%}) of fact sentences contain a kebab-case slug: {len(slug_sentences)} / {total_facts}"
+    )
 

@@ -107,7 +107,7 @@ SYSTEMS_RAW = [
     ("sys-analytics-pipeline", "Analytics Pipeline", "analytics-pipeline", 3, "usr-0014"), # Tariq Mahmoud
 ]
 
-from data.models import SubjectEntity
+from data.models import PredicateSpec, SubjectEntity
 
 # Aliases for entity resolution testing and corpus subject definitions
 NORTHWIND_SUBJECTS: list[SubjectEntity] = [
@@ -128,7 +128,7 @@ NORTHWIND_SUBJECTS: list[SubjectEntity] = [
         slug="proof-of-delivery",
         name="Proof of Delivery",
         type="artifact",
-        aliases=["Proof of Delivery", "electronic proof of delivery", "POD customer signature record", "delivery sign-off receipt"],
+        aliases=["Proof of Delivery", "electronic proof of delivery", "POD customer signature record", "delivery signoff receipt"],
     ),
     SubjectEntity(
         slug="oncall-tier1-ack",
@@ -140,7 +140,7 @@ NORTHWIND_SUBJECTS: list[SubjectEntity] = [
         slug="damage-claim-auto-approval",
         name="Damage Claim Auto-Approval Threshold",
         type="policy",
-        aliases=["Damage Claim Auto-Approval Threshold", "cargo damage self-service limit", "damage claim exception threshold"],
+        aliases=["Damage Claim Auto-Approval Threshold", "cargo damage automated limit", "damage claim exception threshold"],
     ),
     SubjectEntity(
         slug="reefer-excursion-limit",
@@ -164,37 +164,37 @@ NORTHWIND_SUBJECTS: list[SubjectEntity] = [
         slug="dock-late-cancellation-window",
         name="Dock Arrival Grace Period",
         type="process",
-        aliases=["Dock Arrival Grace Period", "dock appointment late arrival window", "cross-dock check-in tolerance"],
+        aliases=["Dock Arrival Grace Period", "dock appointment late arrival window", "cross dock checkin tolerance"],
     ),
     SubjectEntity(
         slug="gps-moving-ping-interval",
         name="GPS Telematics Moving Ping Interval",
         type="metric",
-        aliases=["GPS Telematics Moving Ping Interval", "in-transit GPS reporting cadence", "fleet telemetry ping interval"],
+        aliases=["GPS Telematics Moving Ping Interval", "fleet GPS reporting cadence", "fleet telemetry ping interval"],
     ),
     SubjectEntity(
         slug="dispatch-router",
         name="Dispatch Router",
         type="system",
-        aliases=["Dispatch Router", "the routing engine", "dispatch-router", "the dispatch router service"],
+        aliases=["Dispatch Router", "the routing engine", "the dispatch router service", "dispatch-router"],
     ),
     SubjectEntity(
         slug="customs-gateway",
         name="Customs Gateway",
         type="system",
-        aliases=["Customs Gateway", "the cross-border declaration service", "customs-portal", "customs-gateway"],
+        aliases=["Customs Gateway", "the cross-border declaration service", "the customs compliance portal", "customs-gateway"],
     ),
     SubjectEntity(
         slug="payments-gateway",
         name="Payments Gateway",
         type="system",
-        aliases=["Payments Gateway", "the payment processing service", "payments-gateway", "settlement-engine"],
+        aliases=["Payments Gateway", "the payment processing service", "the settlement engine", "the carrier disbursement platform"],
     ),
     SubjectEntity(
         slug="cold-chain-monitor",
         name="Cold Chain Monitor",
         type="system",
-        aliases=["Cold Chain Monitor", "the cold chain monitoring service", "reefer-monitor", "cold-chain-monitor"],
+        aliases=["Cold Chain Monitor", "the cold chain monitoring service", "the reefer telemetry platform", "the environmental monitor"],
     ),
 
     # ── 2. Remaining Core Systems (system) ──
@@ -202,85 +202,85 @@ NORTHWIND_SUBJECTS: list[SubjectEntity] = [
         slug="warehouse-wms",
         name="Warehouse WMS",
         type="system",
-        aliases=["Warehouse WMS", "the warehouse management system", "WMS Core", "warehouse-wms"],
+        aliases=["Warehouse WMS", "the warehouse management system", "WMS Core", "the distribution center system"],
     ),
     SubjectEntity(
         slug="finance-ledger",
         name="Finance Ledger",
         type="system",
-        aliases=["Finance Ledger", "the ledger service", "general-ledger", "finance-ledger"],
+        aliases=["Finance Ledger", "the financial ledger service", "the general ledger", "the accounting ledger platform"],
     ),
     SubjectEntity(
         slug="driver-app",
         name="Driver App",
         type="system",
-        aliases=["Driver App", "the mobile driver client", "driver-app", "the driver mobile terminal"],
+        aliases=["Driver App", "the mobile driver client", "the driver mobile terminal", "the cab delivery application"],
     ),
     SubjectEntity(
         slug="carrier-billing",
         name="Carrier Billing",
         type="system",
-        aliases=["Carrier Billing", "the billing service", "carrier-billing", "the freight audit system"],
+        aliases=["Carrier Billing", "the freight billing service", "the freight audit system", "the carrier settlement engine"],
     ),
     SubjectEntity(
         slug="inventory-service",
         name="Inventory Service",
         type="system",
-        aliases=["Inventory Service", "the inventory record service", "inventory-service", "stock-service"],
+        aliases=["Inventory Service", "the inventory record service", "the stock management service", "the stock ledger"],
     ),
     SubjectEntity(
         slug="tracking-api",
         name="Tracking API",
         type="system",
-        aliases=["Tracking API", "the shipment tracking service", "tracking-api", "public-tracking-service"],
+        aliases=["Tracking API", "the shipment tracking service", "the public tracking API", "the parcel milestone service"],
     ),
     SubjectEntity(
         slug="fleet-telematics",
         name="Fleet Telematics",
         type="system",
-        aliases=["Fleet Telematics", "the onboard vehicle telematics", "telematics-ingest", "fleet-telematics"],
+        aliases=["Fleet Telematics", "the onboard vehicle telematics", "the telematics ingestion pipeline", "the fleet sensor network"],
     ),
     SubjectEntity(
         slug="notification-engine",
         name="Notification Engine",
         type="system",
-        aliases=["Notification Engine", "the dispatch notifier", "notification-engine", "alert-dispatcher"],
+        aliases=["Notification Engine", "the dispatch notification engine", "the alert dispatcher", "the event messaging service"],
     ),
     SubjectEntity(
         slug="depot-kiosk",
         name="Depot Kiosk",
         type="system",
-        aliases=["Depot Kiosk", "the check-in kiosk terminal", "depot-kiosk", "dock-kiosk"],
+        aliases=["Depot Kiosk", "the check-in kiosk terminal", "the dock check-in kiosk", "the yard terminal"],
     ),
     SubjectEntity(
         slug="analytics-pipeline",
         name="Analytics Pipeline",
         type="system",
-        aliases=["Analytics Pipeline", "the logistics data warehouse", "analytics-pipeline", "reporting-lake"],
+        aliases=["Analytics Pipeline", "the logistics data warehouse", "the analytics reporting lake", "the telemetry pipeline"],
     ),
     SubjectEntity(
         slug="edi-translator",
         name="EDI Translator",
         type="system",
-        aliases=["EDI Translator", "the electronic data interchange translator", "edi-translator", "edi-parser"],
+        aliases=["EDI Translator", "the electronic data interchange translator", "the EDI parser engine", "the trade transaction translator"],
     ),
     SubjectEntity(
         slug="fuel-card-manager",
         name="Fuel Card Manager",
         type="system",
-        aliases=["Fuel Card Manager", "fleet card authorization system", "fuel-card-manager", "fuel-service"],
+        aliases=["Fuel Card Manager", "the fleet fuel card authorization system", "the fuel expense manager", "the fleet card service"],
     ),
     SubjectEntity(
         slug="dock-scheduler",
         name="Dock Scheduler",
         type="system",
-        aliases=["Dock Scheduler", "appointment booking engine", "dock-scheduler", "inbound-scheduling-service"],
+        aliases=["Dock Scheduler", "the appointment booking engine", "the inbound scheduling service", "the dock reservation system"],
     ),
     SubjectEntity(
         slug="trailer-lock-controller",
         name="Trailer Lock Controller",
         type="system",
-        aliases=["Trailer Lock Controller", "electronic cargo seal service", "trailer-lock-controller", "smart-seal-daemon"],
+        aliases=["Trailer Lock Controller", "the electronic cargo seal service", "the trailer lock daemon", "the smart seal controller"],
     ),
 
     # ── 3. Policies (policy) ──
@@ -312,7 +312,7 @@ NORTHWIND_SUBJECTS: list[SubjectEntity] = [
         slug="fuel-reimbursement-guideline",
         name="Fuel Reimbursement Guideline",
         type="policy",
-        aliases=["Fuel Reimbursement Guideline", "driver fuel expense policy", "off-network fuel rule"],
+        aliases=["Fuel Reimbursement Guideline", "driver fuel expense policy", "off network fuel rule"],
     ),
     SubjectEntity(
         slug="cargo-seal-integrity-standard",
@@ -330,7 +330,7 @@ NORTHWIND_SUBJECTS: list[SubjectEntity] = [
         slug="remote-access-security-policy",
         name="Remote Access Security Policy",
         type="policy",
-        aliases=["Remote Access Security Policy", "engineering VPN access policy", "zero-trust infrastructure standard"],
+        aliases=["Remote Access Security Policy", "engineering VPN access policy", "zero trust infrastructure standard"],
     ),
     SubjectEntity(
         slug="driver-rest-break-rule",
@@ -342,7 +342,7 @@ NORTHWIND_SUBJECTS: list[SubjectEntity] = [
         slug="reefer-pre-cooling-standard",
         name="Reefer Pre-Cooling Standard",
         type="policy",
-        aliases=["Reefer Pre-Cooling Standard", "trailer chill-down requirement", "pre-trip refrigeration rule"],
+        aliases=["Reefer Pre-Cooling Standard", "trailer chilldown requirement", "pretrip refrigeration rule"],
     ),
 
     # ── 4. Metrics (metric) ──
@@ -368,7 +368,7 @@ NORTHWIND_SUBJECTS: list[SubjectEntity] = [
         slug="driver-turnaround-minutes",
         name="Driver Turnaround Minutes",
         type="metric",
-        aliases=["Driver Turnaround Minutes", "depot gate-to-gate turnaround duration", "driver facility wait time"],
+        aliases=["Driver Turnaround Minutes", "depot turnaround duration", "driver facility wait time"],
     ),
     SubjectEntity(
         slug="invoice-dispute-resolution-days",
@@ -436,7 +436,7 @@ NORTHWIND_SUBJECTS: list[SubjectEntity] = [
         slug="reefer-breakdown-triage",
         name="Reefer Breakdown Triage",
         type="process",
-        aliases=["Reefer Breakdown Triage", "in-transit refrigeration repair protocol", "reefer unit failure triage"],
+        aliases=["Reefer Breakdown Triage", "in transit refrigeration repair protocol", "reefer unit failure triage"],
     ),
     SubjectEntity(
         slug="carrier-onboarding-workflow",
@@ -448,7 +448,7 @@ NORTHWIND_SUBJECTS: list[SubjectEntity] = [
         slug="driver-shift-handover",
         name="Driver Shift Handover",
         type="process",
-        aliases=["Driver Shift Handover", "slip-seat tractor exchange procedure", "driver cab transfer checklist"],
+        aliases=["Driver Shift Handover", "slip seat tractor exchange procedure", "driver cab transfer checklist"],
     ),
     SubjectEntity(
         slug="returns-pallet-inspection",
@@ -460,7 +460,7 @@ NORTHWIND_SUBJECTS: list[SubjectEntity] = [
         slug="trailer-decontamination-wash",
         name="Trailer Decontamination Wash",
         type="process",
-        aliases=["Trailer Decontamination Wash", "food-grade trailer sanitization", "reefer washout procedure"],
+        aliases=["Trailer Decontamination Wash", "food grade trailer sanitization", "reefer washout procedure"],
     ),
     SubjectEntity(
         slug="customs-brokerage-escalation",
@@ -504,7 +504,7 @@ NORTHWIND_SUBJECTS: list[SubjectEntity] = [
         slug="commercial-customs-invoice",
         name="Commercial Customs Invoice",
         type="artifact",
-        aliases=["Commercial Customs Invoice", "cross-border commercial invoice", "customs valuation document"],
+        aliases=["Commercial Customs Invoice", "international commercial invoice", "customs valuation document"],
     ),
     SubjectEntity(
         slug="cycle-count-variance-report",
@@ -516,7 +516,7 @@ NORTHWIND_SUBJECTS: list[SubjectEntity] = [
         slug="driver-inspection-log",
         name="Driver Inspection Log",
         type="artifact",
-        aliases=["Driver Inspection Log", "daily vehicle pre-trip log", "DVIR safety inspection record"],
+        aliases=["Driver Inspection Log", "daily vehicle pretrip log", "DVIR safety inspection record"],
     ),
     SubjectEntity(
         slug="pallet-manifest-barcode",
@@ -534,7 +534,7 @@ NORTHWIND_SUBJECTS: list[SubjectEntity] = [
         slug="carrier-contract-addendum",
         name="Carrier Contract Addendum",
         type="artifact",
-        aliases=["Carrier Contract Addendum", "fuel surcharge contract schedule", "broker-carrier agreement rider"],
+        aliases=["Carrier Contract Addendum", "fuel surcharge contract schedule", "carrier agreement rider"],
     ),
     SubjectEntity(
         slug="trailer-inspection-certificate",
@@ -559,4 +559,245 @@ CHANNELS = [
     "#customer-escalations",
     "#architecture-decisions",
 ]
+
+# ── Predicates and Canonical Value Sets by Entity Type ──
+# Every predicate has its own unit-appropriate canonical value set.
+# No absurd numbers (e.g. no "500 hours", no "1000 retries", no "2 milliseconds").
+PREDICATES_BY_ENTITY_TYPE: dict[str, list[PredicateSpec]] = {
+    "system": [
+        PredicateSpec(
+            name="retry_limit",
+            templates=[
+                "{subj} retries failed external requests up to {val} times with backoff.",
+                "External integration calls for {subj} retry up to {val} times upon network error.",
+            ],
+            canonical_values=[2, 3, 4, 5],
+            unit="attempts",
+        ),
+        PredicateSpec(
+            name="timeout_duration",
+            templates=[
+                "Operational requests to {subj} timeout after {val} seconds.",
+                "Inbound service requests to {subj} enforce an execution timeout of {val} seconds.",
+            ],
+            canonical_values=[2, 5, 10, 15, 30],
+            unit="seconds",
+        ),
+        PredicateSpec(
+            name="snapshot_frequency",
+            templates=[
+                "Automated database snapshots for {subj} execute every {val} hours.",
+                "Scheduled cluster state snapshots for {subj} run every {val} hours.",
+            ],
+            canonical_values=[1, 4, 6, 12, 24],
+            unit="hours",
+        ),
+        PredicateSpec(
+            name="health_check_interval",
+            templates=[
+                "Health check probe queries to {subj} run every {val} seconds.",
+                "Liveness monitoring probes for {subj} execute every {val} seconds.",
+            ],
+            canonical_values=[5, 10, 15, 30, 60],
+            unit="seconds",
+        ),
+        PredicateSpec(
+            name="concurrency_limit",
+            templates=[
+                "Under peak workload, {subj} maintains a concurrency limit of {val} worker threads.",
+                "Worker execution pools for {subj} are capped at {val} concurrent threads.",
+            ],
+            canonical_values=[16, 32, 64, 128],
+            unit="worker threads",
+        ),
+    ],
+    "policy": [
+        PredicateSpec(
+            name="audit_frequency",
+            templates=[
+                "Compliance audits under {subj} occur every {val} business days.",
+                "Mandatory operational audits for {subj} take place every {val} business days.",
+            ],
+            canonical_values=[30, 60, 90, 180],
+            unit="business days",
+        ),
+        PredicateSpec(
+            name="escalation_window",
+            templates=[
+                "Exceptions to {subj} require formal escalation within {val} minutes.",
+                "Operational exceptions under {subj} must be escalated within {val} minutes.",
+            ],
+            canonical_values=[15, 30, 60, 240],
+            unit="minutes",
+        ),
+        PredicateSpec(
+            name="review_cycle",
+            templates=[
+                "Governance review cycles for {subj} are scheduled every {val} months.",
+                "Formal policy reassessment for {subj} takes place every {val} months.",
+            ],
+            canonical_values=[3, 6, 12],
+            unit="months",
+        ),
+        PredicateSpec(
+            name="sla_target",
+            templates=[
+                "Operational resolution targets under {subj} establish an SLA of {val} hours.",
+                "The formal remediation SLA for {subj} is set to {val} hours.",
+            ],
+            canonical_values=[4, 8, 12, 24, 48],
+            unit="hours",
+        ),
+        PredicateSpec(
+            name="warning_threshold",
+            templates=[
+                "Enforcement warnings under {subj} trigger after {val} logged infractions.",
+                "Supervisory intervention under {subj} initiates after {val} recorded violations.",
+            ],
+            canonical_values=[2, 3, 5],
+            unit="infractions",
+        ),
+    ],
+    "metric": [
+        PredicateSpec(
+            name="calibration_cadence",
+            templates=[
+                "The baseline calibration for {subj} is refreshed every {val} days.",
+                "Telemetry benchmark calibration for {subj} updates every {val} days.",
+            ],
+            canonical_values=[7, 14, 30, 90],
+            unit="days",
+        ),
+        PredicateSpec(
+            name="alert_deviation_threshold",
+            templates=[
+                "Alerts trigger when {subj} deviates by more than {val} percent from nominal baseline.",
+                "Operational alerts dispatch when {subj} variance exceeds {val} percent from baseline.",
+            ],
+            canonical_values=[5, 10, 15, 20],
+            unit="percent",
+        ),
+        PredicateSpec(
+            name="reporting_aggregation_window",
+            templates=[
+                "Performance reporting for {subj} aggregates metrics over a window of {val} hours.",
+                "Executive dashboard metrics for {subj} aggregate across {val} hours.",
+            ],
+            canonical_values=[1, 4, 8, 12, 24],
+            unit="hours",
+        ),
+        PredicateSpec(
+            name="operational_target_ceiling",
+            templates=[
+                "The target operational ceiling for {subj} is set to {val} units per shift.",
+                "Shift throughput targets establish a ceiling for {subj} at {val} units per shift.",
+            ],
+            canonical_values=[50, 100, 250, 500],
+            unit="units per shift",
+        ),
+        PredicateSpec(
+            name="anomaly_detection_window",
+            templates=[
+                "Telemetry anomaly detection for {subj} evaluates a rolling window of {val} minutes.",
+                "Automated anomaly scoring for {subj} inspects data across a {val} minute window.",
+            ],
+            canonical_values=[5, 15, 30, 60],
+            unit="minutes",
+        ),
+    ],
+    "process": [
+        PredicateSpec(
+            name="execution_window",
+            templates=[
+                "The standard execution window for {subj} must conclude within {val} minutes.",
+                "Standard operating procedure requires {subj} to conclude within {val} minutes.",
+            ],
+            canonical_values=[15, 30, 45, 60, 120],
+            unit="minutes",
+        ),
+        PredicateSpec(
+            name="reconciliation_cadence",
+            templates=[
+                "Operations supervisors must reconcile status logs for {subj} every {val} hours.",
+                "Supervisory audit logs for {subj} undergo reconciliation every {val} hours.",
+            ],
+            canonical_values=[2, 4, 8, 12, 24],
+            unit="hours",
+        ),
+        PredicateSpec(
+            name="checklist_verification_count",
+            templates=[
+                "Shift handover protocol for {subj} requires {val} verified checklist signoffs.",
+                "Operational handover verification for {subj} mandates {val} supervisor signoffs.",
+            ],
+            canonical_values=[2, 3, 4],
+            unit="signoffs",
+        ),
+        PredicateSpec(
+            name="stalled_inactivity_timeout",
+            templates=[
+                "Escalation for stalled {subj} initiates after {val} minutes of inactivity.",
+                "Supervisor alerts for stalled {subj} trigger after {val} minutes of queue inactivity.",
+            ],
+            canonical_values=[15, 30, 60, 90],
+            unit="minutes",
+        ),
+        PredicateSpec(
+            name="qa_checkpoint_cadence",
+            templates=[
+                "Quality assurance checkpoints for {subj} occur every {val} operational cycles.",
+                "Operational quality inspection for {subj} runs every {val} batch cycles.",
+            ],
+            canonical_values=[5, 10, 20, 50],
+            unit="cycles",
+        ),
+    ],
+    "artifact": [
+        PredicateSpec(
+            name="retention_period",
+            templates=[
+                "Archival copies of {subj} must be retained in secure storage for {val} days.",
+                "Regulatory retention schedules mandate keeping {subj} for {val} days.",
+            ],
+            canonical_values=[30, 60, 90, 180, 365, 1825],
+            unit="days",
+        ),
+        PredicateSpec(
+            name="checksum_validation_interval",
+            templates=[
+                "Digital records of {subj} require cryptographic checksum validation every {val} hours.",
+                "Integrity verification for {subj} executes checksum validation every {val} hours.",
+            ],
+            canonical_values=[6, 12, 24, 48],
+            unit="hours",
+        ),
+        PredicateSpec(
+            name="audit_cycle",
+            templates=[
+                "Physical inspection documentation for {subj} is audited every {val} business days.",
+                "Compliance verification records for {subj} undergo physical audit every {val} business days.",
+            ],
+            canonical_values=[30, 60, 90],
+            unit="business days",
+        ),
+        PredicateSpec(
+            name="disposal_review_window",
+            templates=[
+                "Mandatory retention schedules for {subj} require disposal review after {val} months.",
+                "Secure disposal assessment for expired {subj} occurs every {val} months.",
+            ],
+            canonical_values=[12, 24, 36, 60],
+            unit="months",
+        ),
+        PredicateSpec(
+            name="custody_signoff_count",
+            templates=[
+                "Chain of custody documentation for {subj} requires {val} verified signoffs.",
+                "Formal custody transfer logs for {subj} require {val} witness signatures.",
+            ],
+            canonical_values=[2, 3],
+            unit="signoffs",
+        ),
+    ],
+}
 

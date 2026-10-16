@@ -24,12 +24,14 @@ import random
 import sys
 import time
 from pathlib import Path
+from typing import Any
 
 from data.adr_chains import generate_decisions
 from data.constants import (
     CHANNELS,
     NORTHWIND_SUBJECTS,
     PEOPLE_RAW,
+    PREDICATES_BY_ENTITY_TYPE,
     SUBJECT_ALIASES,
     SUBJECT_MAP,
     SYSTEMS_RAW,
@@ -38,9 +40,11 @@ from data.constants import (
 from data.models import (
     DecisionData,
     DocumentData,
+    FactRecord,
     MessageData,
     PersonData,
     PlantedConflictData,
+    PredicateSpec,
     SubjectEntity,
     SystemData,
     TicketData,
@@ -74,7 +78,9 @@ class NorthwindGenerator:
         self.tickets: list[TicketData] = []
         self.messages: list[MessageData] = []
         self.planted_conflicts: list[PlantedConflictData] = []
-        self.fact_records: list[tuple[str, str, str]] = []  # (sentence, slug, entity_type)
+        self.fact_records: list[FactRecord] = []
+        self.canonical_values: dict[tuple[str, str], str] = {}
+        self.canonical_raw_values: dict[tuple[str, str], Any] = {}
         self.alias_counts: dict[str, set[str]] = collections.defaultdict(set)
 
     def build_people(self) -> None:
@@ -95,7 +101,8 @@ class NorthwindGenerator:
         self.decisions = generate_decisions()
 
     def build_planted_conflicts_and_seed_docs(self) -> None:
-        """Builds the 14 planted conflicts and their corresponding documents / messages."""
+        """Builds the 14 planted conflicts and their corresponding documents / messages.
+        Planted pairs differ ONLY in their asserted canonical value, sharing identical anchors."""
         self.planted_conflicts.clear()
         sys_map = {s.id: s for s in self.systems}
 
@@ -110,7 +117,7 @@ class NorthwindGenerator:
             author_id="usr-0032",
             governs_system_ids=["sys-carrier-billing"],
             cites_decision_ids=[],
-            factual_sentences=["Carrier invoices can be disputed within 30 days of delivery."],
+            factual_sentences=["Carrier invoices can be disputed within 30 days from the invoice date."],
         )
         doc2 = DocumentData(
             id="doc-0002",
@@ -121,7 +128,7 @@ class NorthwindGenerator:
             author_id="usr-0031",
             governs_system_ids=["sys-finance-ledger", "sys-carrier-billing"],
             cites_decision_ids=["dec-0015"],
-            factual_sentences=["The dispute window for carrier invoices is 45 days from the invoice date."],
+            factual_sentences=["Carrier invoices can be disputed within 45 days from the invoice date."],
         )
         ra_1 = compute_blast_radius([sys_map[sid] for sid in doc1.governs_system_ids], 1, len(doc1.cites_decision_ids))
         rb_1 = compute_blast_radius([sys_map[sid] for sid in doc2.governs_system_ids], 1, len(doc2.cites_decision_ids))
@@ -132,8 +139,8 @@ class NorthwindGenerator:
             predicate="dispute_window",
             source_a_id=doc1.id,
             source_b_id=doc2.id,
-            evidence_span_a="Carrier invoices can be disputed within 30 days of delivery.",
-            evidence_span_b="The dispute window for carrier invoices is 45 days from the invoice date.",
+            evidence_span_a="Carrier invoices can be disputed within 30 days from the invoice date.",
+            evidence_span_b="Carrier invoices can be disputed within 45 days from the invoice date.",
             correct_side="b",
             rationale="Finance Ops Month-End Close policy defines the dispute window for financial settlement.",
             expected_blast_radius=max(ra_1, rb_1),
@@ -154,7 +161,7 @@ class NorthwindGenerator:
             author_id="usr-0017",
             governs_system_ids=["sys-warehouse-wms"],
             cites_decision_ids=[],
-            factual_sentences=["Cycle counts run nightly for A-class SKUs."],
+            factual_sentences=["A-Class SKU Cycle Count runs nightly for distribution center inventory."],
         )
         doc4 = DocumentData(
             id="doc-0004",
@@ -165,7 +172,7 @@ class NorthwindGenerator:
             author_id="usr-0018",
             governs_system_ids=["sys-warehouse-wms", "sys-inventory-service"],
             cites_decision_ids=["dec-0077"],
-            factual_sentences=["A-class SKUs are cycle counted weekly."],
+            factual_sentences=["A-Class SKU Cycle Count runs weekly for distribution center inventory."],
         )
         ra_2 = compute_blast_radius([sys_map[sid] for sid in doc3.governs_system_ids], 1, len(doc3.cites_decision_ids))
         rb_2 = compute_blast_radius([sys_map[sid] for sid in doc4.governs_system_ids], 1, len(doc4.cites_decision_ids))
@@ -176,8 +183,8 @@ class NorthwindGenerator:
             predicate="cycle_count_frequency",
             source_a_id=doc3.id,
             source_b_id=doc4.id,
-            evidence_span_a="Cycle counts run nightly for A-class SKUs.",
-            evidence_span_b="A-class SKUs are cycle counted weekly.",
+            evidence_span_a="A-Class SKU Cycle Count runs nightly for distribution center inventory.",
+            evidence_span_b="A-Class SKU Cycle Count runs weekly for distribution center inventory.",
             correct_side="b",
             rationale="Inventory Accuracy Standard cites accepted ADR-77 for distribution center counting.",
             expected_blast_radius=max(ra_2, rb_2),
@@ -198,7 +205,7 @@ class NorthwindGenerator:
             author_id="usr-0042",
             governs_system_ids=["sys-driver-app"],
             cites_decision_ids=[],
-            factual_sentences=["Proof of delivery customer signature is optional since v4.2."],
+            factual_sentences=["Proof of Delivery customer signature is optional for standard deliveries."],
         )
         doc6 = DocumentData(
             id="doc-0006",
@@ -209,7 +216,7 @@ class NorthwindGenerator:
             author_id="usr-0040",
             governs_system_ids=["sys-driver-app", "sys-fleet-telematics"],
             cites_decision_ids=["dec-0073"],
-            factual_sentences=["Proof of delivery customer signature is strictly mandatory for every drop-off."],
+            factual_sentences=["Proof of Delivery customer signature is mandatory for standard deliveries."],
         )
         ra_3 = compute_blast_radius([sys_map[sid] for sid in doc5.governs_system_ids], 1, len(doc5.cites_decision_ids))
         rb_3 = compute_blast_radius([sys_map[sid] for sid in doc6.governs_system_ids], 1, len(doc6.cites_decision_ids))
@@ -220,8 +227,8 @@ class NorthwindGenerator:
             predicate="signature_required",
             source_a_id=doc5.id,
             source_b_id=doc6.id,
-            evidence_span_a="Proof of delivery customer signature is optional since v4.2.",
-            evidence_span_b="Proof of delivery customer signature is strictly mandatory for every drop-off.",
+            evidence_span_a="Proof of Delivery customer signature is optional for standard deliveries.",
+            evidence_span_b="Proof of Delivery customer signature is mandatory for standard deliveries.",
             correct_side="b",
             rationale="Fleet Safety Policy governs legal compliance for cargo delivery.",
             expected_blast_radius=max(ra_3, rb_3),
@@ -232,7 +239,7 @@ class NorthwindGenerator:
             citing_decisions=1,
         ))
 
-        # Plant 4: On-call tier 1 ack SLA (Touches ALL 5 Tier 1 systems! Highest blast radius!)
+        # Plant 4: On-call tier 1 ack SLA
         doc7 = DocumentData(
             id="doc-0007",
             title="Platform On-call Rotation Guide",
@@ -248,7 +255,7 @@ class NorthwindGenerator:
                 "sys-payments-gateway",
             ],
             cites_decision_ids=["dec-0047"],
-            factual_sentences=["Tier 1 systems have a 15 minute acknowledgement target for on-call engineers."],
+            factual_sentences=["Tier 1 systems have a 15 minute acknowledgement target for oncall engineers."],
         )
         doc8 = DocumentData(
             id="doc-0008",
@@ -259,7 +266,7 @@ class NorthwindGenerator:
             author_id="usr-0001",
             governs_system_ids=["sys-dispatch-router", "sys-payments-gateway"],
             cites_decision_ids=[],
-            factual_sentences=["Tier 1 systems have a 5 minute acknowledgement target for on-call engineers."],
+            factual_sentences=["Tier 1 systems have a 5 minute acknowledgement target for oncall engineers."],
         )
         ra_4 = compute_blast_radius([sys_map[sid] for sid in doc7.governs_system_ids], 1, len(doc7.cites_decision_ids))
         rb_4 = compute_blast_radius([sys_map[sid] for sid in doc8.governs_system_ids], 1, len(doc8.cites_decision_ids))
@@ -270,8 +277,8 @@ class NorthwindGenerator:
             predicate="oncall_ack_target",
             source_a_id=doc7.id,
             source_b_id=doc8.id,
-            evidence_span_a="Tier 1 systems have a 15 minute acknowledgement target for on-call engineers.",
-            evidence_span_b="Tier 1 systems have a 5 minute acknowledgement target for on-call engineers.",
+            evidence_span_a="Tier 1 systems have a 15 minute acknowledgement target for oncall engineers.",
+            evidence_span_b="Tier 1 systems have a 5 minute acknowledgement target for oncall engineers.",
             correct_side="a",
             rationale="Platform On-call Rotation Guide reflects agreed platform incident management policy.",
             expected_blast_radius=max(ra_4, rb_4),
@@ -282,7 +289,7 @@ class NorthwindGenerator:
             citing_decisions=1,
         ))
 
-        # Plant 5: Customer damage claim auto-approval threshold (Governs 0 systems! Low blast radius!)
+        # Plant 5: Customer damage claim auto-approval threshold
         doc9 = DocumentData(
             id="doc-0009",
             title="Returns and Damage Claims Process",
@@ -327,9 +334,7 @@ class NorthwindGenerator:
         ))
 
         # ── 2. SUPERSEDED CONFLICTS (5) ───────────────────────────────────────
-        # Plant 6: Reefer excursion limit (Demo Case 2)
-        # ADR-88 (decided_at ~1742000000) supersedes ADR-63 supersedes ADR-41 (dec-0041).
-        # doc11 asserts ADR-41's 30 mins, but updated_at is 1780000000 (NEWER than ADR-88 decided_at).
+        # Plant 6: Reefer excursion limit
         doc11 = DocumentData(
             id="doc-0011",
             title="Cold Chain Excursion Runbook",
@@ -339,7 +344,7 @@ class NorthwindGenerator:
             author_id="usr-0024",
             governs_system_ids=["sys-cold-chain-monitor", "sys-warehouse-wms", "sys-fleet-telematics"],
             cites_decision_ids=["dec-0041"],
-            factual_sentences=["Reefer loads that stay above 8 degrees C for more than 30 minutes are rejected at the receiving dock."],
+            factual_sentences=["Reefer loads exceeding 8 degrees C for more than 30 minutes are rejected upon receiving."],
         )
         doc12 = DocumentData(
             id="doc-0012",
@@ -350,7 +355,7 @@ class NorthwindGenerator:
             author_id="usr-0024",
             governs_system_ids=["sys-cold-chain-monitor"],
             cites_decision_ids=["dec-0088"],
-            factual_sentences=["A reefer load is rejected once it has spent 15 minutes above 8 degrees C at any point after pickup."],
+            factual_sentences=["Reefer loads exceeding 8 degrees C for more than 15 minutes are rejected upon receiving."],
         )
         ra_6 = compute_blast_radius([sys_map[sid] for sid in doc11.governs_system_ids], 1, len(doc11.cites_decision_ids))
         rb_6 = compute_blast_radius([sys_map[sid] for sid in doc12.governs_system_ids], 1, len(doc12.cites_decision_ids))
@@ -361,8 +366,8 @@ class NorthwindGenerator:
             predicate="excursion_tolerance_duration",
             source_a_id=doc11.id,
             source_b_id=doc12.id,
-            evidence_span_a="Reefer loads that stay above 8 degrees C for more than 30 minutes are rejected at the receiving dock.",
-            evidence_span_b="A reefer load is rejected once it has spent 15 minutes above 8 degrees C at any point after pickup.",
+            evidence_span_a="Reefer loads exceeding 8 degrees C for more than 30 minutes are rejected upon receiving.",
+            evidence_span_b="Reefer loads exceeding 8 degrees C for more than 15 minutes are rejected upon receiving.",
             correct_side="b",
             rationale="ADR-88 supersedes ADR-41; traversal walks SUPERSEDES backwards to accept the 15-minute standard.",
             expected_blast_radius=max(ra_6, rb_6),
@@ -374,7 +379,6 @@ class NorthwindGenerator:
         ))
 
         # Plant 7: Driver shift driving hours
-        # ADR-74 supersedes ADR-30 (dec-0030). doc13 updated_at is newer than ADR-74 decided_at.
         doc13 = DocumentData(
             id="doc-0013",
             title="Driver App Operations README",
@@ -384,7 +388,7 @@ class NorthwindGenerator:
             author_id="usr-0042",
             governs_system_ids=["sys-driver-app"],
             cites_decision_ids=["dec-0030"],
-            factual_sentences=["Drivers are blocked from accepting new loads after 11 hours of driving in a shift."],
+            factual_sentences=["Drivers are restricted to a maximum of 11 hours of driving in a single shift."],
         )
         doc14 = DocumentData(
             id="doc-0014",
@@ -395,7 +399,7 @@ class NorthwindGenerator:
             author_id="usr-0040",
             governs_system_ids=["sys-driver-app", "sys-fleet-telematics"],
             cites_decision_ids=["dec-0074"],
-            factual_sentences=["No driver may drive more than 10 hours in a shift across all lanes."],
+            factual_sentences=["Drivers are restricted to a maximum of 10 hours of driving in a single shift."],
         )
         ra_7 = compute_blast_radius([sys_map[sid] for sid in doc13.governs_system_ids], 1, len(doc13.cites_decision_ids))
         rb_7 = compute_blast_radius([sys_map[sid] for sid in doc14.governs_system_ids], 1, len(doc14.cites_decision_ids))
@@ -406,8 +410,8 @@ class NorthwindGenerator:
             predicate="driving_hours_limit",
             source_a_id=doc13.id,
             source_b_id=doc14.id,
-            evidence_span_a="Drivers are blocked from accepting new loads after 11 hours of driving in a shift.",
-            evidence_span_b="No driver may drive more than 10 hours in a shift across all lanes.",
+            evidence_span_a="Drivers are restricted to a maximum of 11 hours of driving in a single shift.",
+            evidence_span_b="Drivers are restricted to a maximum of 10 hours of driving in a single shift.",
             correct_side="b",
             rationale="ADR-74 supersedes ADR-30; the 10-hour ceiling is the legally active safety rule.",
             expected_blast_radius=max(ra_7, rb_7),
@@ -419,7 +423,6 @@ class NorthwindGenerator:
         ))
 
         # Plant 8: Dispatch router external solver retry attempts
-        # ADR-52 supersedes ADR-35 supersedes ADR-18 (dec-0018).
         doc15 = DocumentData(
             id="doc-0015",
             title="Dispatch Router Solver Runbook",
@@ -440,7 +443,7 @@ class NorthwindGenerator:
             author_id="usr-0009",
             governs_system_ids=["sys-dispatch-router", "sys-tracking-api"],
             cites_decision_ids=["dec-0052"],
-            factual_sentences=["External routing solver calls are retried exactly 1 time to prevent cascade timeouts."],
+            factual_sentences=["External routing solver calls are retried up to 1 time before fallback."],
         )
         ra_8 = compute_blast_radius([sys_map[sid] for sid in doc15.governs_system_ids], 1, len(doc15.cites_decision_ids))
         rb_8 = compute_blast_radius([sys_map[sid] for sid in doc16.governs_system_ids], 1, len(doc16.cites_decision_ids))
@@ -452,7 +455,7 @@ class NorthwindGenerator:
             source_a_id=doc15.id,
             source_b_id=doc16.id,
             evidence_span_a="External routing solver calls are retried up to 3 times before fallback.",
-            evidence_span_b="External routing solver calls are retried exactly 1 time to prevent cascade timeouts.",
+            evidence_span_b="External routing solver calls are retried up to 1 time before fallback.",
             correct_side="b",
             rationale="ADR-52 supersedes ADR-18; single retry prevents downstream cascading queue delays.",
             expected_blast_radius=max(ra_8, rb_8),
@@ -464,7 +467,6 @@ class NorthwindGenerator:
         ))
 
         # Plant 9: Warehouse dock arrival grace period
-        # ADR-68 supersedes ADR-22 (dec-0022).
         doc17 = DocumentData(
             id="doc-0017",
             title="Warehouse Dock Scheduling Runbook",
@@ -474,7 +476,7 @@ class NorthwindGenerator:
             author_id="usr-0017",
             governs_system_ids=["sys-warehouse-wms", "sys-depot-kiosk"],
             cites_decision_ids=["dec-0022"],
-            factual_sentences=["Carriers arriving within 60 minutes of scheduled slot retain dock priority."],
+            factual_sentences=["Carriers arriving within a grace period of 60 minutes retain their scheduled dock appointment."],
         )
         doc18 = DocumentData(
             id="doc-0018",
@@ -485,7 +487,7 @@ class NorthwindGenerator:
             author_id="usr-0017",
             governs_system_ids=["sys-warehouse-wms"],
             cites_decision_ids=["dec-0068"],
-            factual_sentences=["Carriers arriving more than 30 minutes late lose dock appointment and are rescheduled."],
+            factual_sentences=["Carriers arriving within a grace period of 30 minutes retain their scheduled dock appointment."],
         )
         ra_9 = compute_blast_radius([sys_map[sid] for sid in doc17.governs_system_ids], 1, len(doc17.cites_decision_ids))
         rb_9 = compute_blast_radius([sys_map[sid] for sid in doc18.governs_system_ids], 1, len(doc18.cites_decision_ids))
@@ -496,8 +498,8 @@ class NorthwindGenerator:
             predicate="dock_arrival_tolerance",
             source_a_id=doc17.id,
             source_b_id=doc18.id,
-            evidence_span_a="Carriers arriving within 60 minutes of scheduled slot retain dock priority.",
-            evidence_span_b="Carriers arriving more than 30 minutes late lose dock appointment and are rescheduled.",
+            evidence_span_a="Carriers arriving within a grace period of 60 minutes retain their scheduled dock appointment.",
+            evidence_span_b="Carriers arriving within a grace period of 30 minutes retain their scheduled dock appointment.",
             correct_side="b",
             rationale="ADR-68 supersedes ADR-22; tightened grace period reduces yard congestion.",
             expected_blast_radius=max(ra_9, rb_9),
@@ -509,7 +511,6 @@ class NorthwindGenerator:
         ))
 
         # Plant 10: Fleet telematics GPS moving ping interval
-        # ADR-49 supersedes ADR-12 (dec-0012).
         doc19 = DocumentData(
             id="doc-0019",
             title="Fleet Telematics Data Ingest SOP",
@@ -519,7 +520,7 @@ class NorthwindGenerator:
             author_id="usr-0039",
             governs_system_ids=["sys-fleet-telematics"],
             cites_decision_ids=["dec-0012"],
-            factual_sentences=["Tractors transmit GPS telematics ping every 15 seconds while moving."],
+            factual_sentences=["Tractors transmit GPS telematics telemetry every 15 seconds while moving."],
         )
         doc20 = DocumentData(
             id="doc-0020",
@@ -530,7 +531,7 @@ class NorthwindGenerator:
             author_id="usr-0039",
             governs_system_ids=["sys-fleet-telematics", "sys-driver-app"],
             cites_decision_ids=["dec-0049"],
-            factual_sentences=["Tractors transmit GPS telematics ping every 30 seconds while moving to conserve cellular bandwidth."],
+            factual_sentences=["Tractors transmit GPS telematics telemetry every 30 seconds while moving."],
         )
         ra_10 = compute_blast_radius([sys_map[sid] for sid in doc19.governs_system_ids], 1, len(doc19.cites_decision_ids))
         rb_10 = compute_blast_radius([sys_map[sid] for sid in doc20.governs_system_ids], 1, len(doc20.cites_decision_ids))
@@ -541,8 +542,8 @@ class NorthwindGenerator:
             predicate="gps_ping_interval",
             source_a_id=doc19.id,
             source_b_id=doc20.id,
-            evidence_span_a="Tractors transmit GPS telematics ping every 15 seconds while moving.",
-            evidence_span_b="Tractors transmit GPS telematics ping every 30 seconds while moving to conserve cellular bandwidth.",
+            evidence_span_a="Tractors transmit GPS telematics telemetry every 15 seconds while moving.",
+            evidence_span_b="Tractors transmit GPS telematics telemetry every 30 seconds while moving.",
             correct_side="b",
             rationale="ADR-49 supersedes ADR-12; 30-second interval balances tracking fidelity and cellular data cost.",
             expected_blast_radius=max(ra_10, rb_10),
@@ -554,7 +555,7 @@ class NorthwindGenerator:
         ))
 
         # ── 3. UNDOCUMENTED CONFLICTS (4) ─────────────────────────────────────
-        # Plant 11: Dispatch router timeout and manual fallback
+        # Plant 11: Dispatch router timeout
         doc21 = DocumentData(
             id="doc-0021",
             title="Dispatch Router Failover Runbook",
@@ -564,12 +565,12 @@ class NorthwindGenerator:
             author_id="usr-0009",
             governs_system_ids=["sys-dispatch-router"],
             cites_decision_ids=["dec-0084"],
-            factual_sentences=["If the routing API does not respond within 10 seconds, Dispatch Router falls back to manual dispatch."],
+            factual_sentences=["Operational requests to Dispatch Router timeout after 10 seconds."],
         )
         msg101 = MessageData(
             id="msg-0000101",
             channel="#dispatch-oncall",
-            text="We cut the router timeout to 4 seconds last sprint and it now retries on the backup solver automatically without manual dispatch fallback.",
+            text="Operational requests to Dispatch Router timeout after 4 seconds.",
             sent_at=self.base_time + 15_000_000,
             author_id="usr-0009",
         )
@@ -582,8 +583,8 @@ class NorthwindGenerator:
             predicate="timeout_duration",
             source_a_id=doc21.id,
             source_b_id=msg101.id,
-            evidence_span_a="If the routing API does not respond within 10 seconds, Dispatch Router falls back to manual dispatch.",
-            evidence_span_b="We cut the router timeout to 4 seconds last sprint and it now retries on the backup solver automatically without manual dispatch fallback.",
+            evidence_span_a="Operational requests to Dispatch Router timeout after 10 seconds.",
+            evidence_span_b="Operational requests to Dispatch Router timeout after 4 seconds.",
             correct_side="b",
             rationale="Operational chat consensus records production change to 4s automated fallback without manual console.",
             expected_blast_radius=max(ra_11, rb_11),
@@ -604,12 +605,12 @@ class NorthwindGenerator:
             author_id="usr-0047",
             governs_system_ids=["sys-customs-gateway", "sys-dispatch-router"],
             cites_decision_ids=["dec-0038"],
-            factual_sentences=["Customs Gateway files import declarations automatically 24 hours before scheduled arrival."],
+            factual_sentences=["Customs Gateway submits international import declarations 24 hours before port arrival."],
         )
         msg102 = MessageData(
             id="msg-0000102",
             channel="#customs-brokerage",
-            text="Gateway auto-filing has been switched off since August and brokerage is filing declarations manually.",
+            text="Customs Gateway submits international import declarations 48 hours before port arrival.",
             sent_at=self.base_time + 15_500_000,
             author_id="usr-0047",
         )
@@ -622,10 +623,10 @@ class NorthwindGenerator:
             predicate="declaration_filing_lead_time",
             source_a_id=doc22.id,
             source_b_id=msg102.id,
-            evidence_span_a="Customs Gateway files import declarations automatically 24 hours before scheduled arrival.",
-            evidence_span_b="Gateway auto-filing has been switched off since August and brokerage is filing declarations manually.",
+            evidence_span_a="Customs Gateway submits international import declarations 24 hours before port arrival.",
+            evidence_span_b="Customs Gateway submits international import declarations 48 hours before port arrival.",
             correct_side="b",
-            rationale="Brokerage team chat confirms automated filing disabled following certificate expiration.",
+            rationale="Brokerage team chat confirms updated declaration filing lead time to 48 hours.",
             expected_blast_radius=max(ra_12, rb_12),
             side_a_blast_radius=ra_12,
             side_b_blast_radius=rb_12,
@@ -644,12 +645,12 @@ class NorthwindGenerator:
             author_id="usr-0035",
             governs_system_ids=["sys-payments-gateway", "sys-finance-ledger"],
             cites_decision_ids=["dec-0056"],
-            factual_sentences=["Payments Gateway caches settlement idempotency keys for 24 hours."],
+            factual_sentences=["Payments Gateway retains settlement idempotency keys for 24 hours."],
         )
         msg103 = MessageData(
             id="msg-0000103",
             channel="#payments",
-            text="Payment idempotency key retention was increased to 72 hours following the double-charge incident.",
+            text="Payments Gateway retains settlement idempotency keys for 72 hours.",
             sent_at=self.base_time + 16_000_000,
             author_id="usr-0035",
         )
@@ -662,8 +663,8 @@ class NorthwindGenerator:
             predicate="idempotency_window",
             source_a_id=doc23.id,
             source_b_id=msg103.id,
-            evidence_span_a="Payments Gateway caches settlement idempotency keys for 24 hours.",
-            evidence_span_b="Payment idempotency key retention was increased to 72 hours following the double-charge incident.",
+            evidence_span_a="Payments Gateway retains settlement idempotency keys for 24 hours.",
+            evidence_span_b="Payments Gateway retains settlement idempotency keys for 72 hours.",
             correct_side="b",
             rationale="Urgent engineering chat hotfix extended payment key retention to 72 hours.",
             expected_blast_radius=max(ra_13, rb_13),
@@ -684,12 +685,12 @@ class NorthwindGenerator:
             author_id="usr-0027",
             governs_system_ids=["sys-cold-chain-monitor"],
             cites_decision_ids=[],
-            factual_sentences=["If the primary reefer probe and secondary logger disagree by more than 1.5 degrees C, open a hardware ticket."],
+            factual_sentences=["Cold Chain Monitor probe calibration allows a maximum variance of 1.5 degrees C before sensor replacement."],
         )
         msg104 = MessageData(
             id="msg-0000104",
             channel="#cold-chain-ops",
-            text="Reefer probe calibration tolerance was tightened to 0.5 degrees C following the dairy shipment audit.",
+            text="Cold Chain Monitor probe calibration allows a maximum variance of 0.5 degrees C before sensor replacement.",
             sent_at=self.base_time + 16_500_000,
             author_id="usr-0024",
         )
@@ -702,8 +703,8 @@ class NorthwindGenerator:
             predicate="probe_calibration_tolerance",
             source_a_id=doc24.id,
             source_b_id=msg104.id,
-            evidence_span_a="If the primary reefer probe and secondary logger disagree by more than 1.5 degrees C, open a hardware ticket.",
-            evidence_span_b="Reefer probe calibration tolerance was tightened to 0.5 degrees C following the dairy shipment audit.",
+            evidence_span_a="Cold Chain Monitor probe calibration allows a maximum variance of 1.5 degrees C before sensor replacement.",
+            evidence_span_b="Cold Chain Monitor probe calibration allows a maximum variance of 0.5 degrees C before sensor replacement.",
             correct_side="b",
             rationale="Quality audit in chat tightened variance threshold to 0.5 degrees C.",
             expected_blast_radius=max(ra_14, rb_14),
@@ -721,14 +722,47 @@ class NorthwindGenerator:
             doc21, doc22, doc23, doc24,
         ]
 
-        # Register seed factual sentences into fact_records and alias counts
+        # Register seed factual sentences into fact_records, alias counts, and canonical values
+        planted_value_map: dict[str, tuple[str, str, str, Any]] = {
+            "plant-01": ("30 days", "45 days", "45 days", 45),
+            "plant-02": ("nightly", "weekly", "weekly", "weekly"),
+            "plant-03": ("optional", "mandatory", "mandatory", "mandatory"),
+            "plant-04": ("15 minutes", "5 minutes", "15 minutes", 15),
+            "plant-05": ("250 USD", "400 USD", "400 USD", 400),
+            "plant-06": ("30 minutes", "15 minutes", "15 minutes", 15),
+            "plant-07": ("11 hours", "10 hours", "10 hours", 10),
+            "plant-08": ("3 times", "1 time", "1 time", 1),
+            "plant-09": ("60 minutes", "30 minutes", "30 minutes", 30),
+            "plant-10": ("15 seconds", "30 seconds", "30 seconds", 30),
+            "plant-11": ("10 seconds", "4 seconds", "4 seconds", 4),
+            "plant-12": ("24 hours", "48 hours", "48 hours", 48),
+            "plant-13": ("24 hours", "72 hours", "72 hours", 72),
+            "plant-14": ("1.5 degrees C", "0.5 degrees C", "0.5 degrees C", 0.5),
+        }
+
         for p in self.planted_conflicts:
             subj = SUBJECT_MAP[p.entity_slug]
-            self.fact_records.append((p.evidence_span_a, p.entity_slug, subj.type))
+            val_a, val_b, winner_val, raw_winner = planted_value_map[p.id]
+            self.canonical_values[(p.entity_slug, p.predicate)] = winner_val
+            self.canonical_raw_values[(p.entity_slug, p.predicate)] = raw_winner
+
+            self.fact_records.append(FactRecord(
+                sentence=p.evidence_span_a,
+                slug=p.entity_slug,
+                predicate=p.predicate,
+                canonical_value=val_a,
+                entity_type=subj.type,
+            ))
             self.alias_counts[p.entity_slug].add(p.evidence_span_a)
-            if p.kind != "undocumented":
-                self.fact_records.append((p.evidence_span_b, p.entity_slug, subj.type))
-                self.alias_counts[p.entity_slug].add(p.evidence_span_b)
+
+            self.fact_records.append(FactRecord(
+                sentence=p.evidence_span_b,
+                slug=p.entity_slug,
+                predicate=p.predicate,
+                canonical_value=val_b,
+                entity_type=subj.type,
+            ))
+            self.alias_counts[p.entity_slug].add(p.evidence_span_b)
 
         # Add the 4 special messages (stored for message generation)
         self.special_messages = [msg101, msg102, msg103, msg104]
@@ -736,77 +770,117 @@ class NorthwindGenerator:
     def build_remaining_documents(self) -> None:
         """Expands the document set up to exactly 312 documents with extractable facts
         covering all five entity types (system, policy, metric, process, artifact)
-        with a realistic skewed distribution."""
+        with a realistic skewed distribution.
+        Each (subject, predicate) receives exactly ONE canonical value reused across all documents."""
         kinds_cycle = ["runbook", "wiki", "spec", "readme"]
         system_ids = [s.id for s in self.systems]
         author_ids = [p.id for p in self.people]
         decision_ids = [d.id for d in self.decisions]
 
-        templates_by_type = {
-            "system": [
-                "{subj} retries failed external requests up to {n} times with backoff.",
-                "Operational requests to {subj} timeout after {n} milliseconds.",
-                "Automated database snapshots for {subj} execute every {n} hours.",
-                "Health check probe queries to {subj} run every {n} seconds.",
-                "Under peak workload, {subj} maintains a concurrency limit of {n} worker threads.",
-            ],
-            "policy": [
-                "Compliance audits under {subj} occur every {n} business days.",
-                "Exceptions to {subj} require written escalation within {n} hours.",
-                "Review cycles for {subj} are scheduled every {n} months.",
-                "Operational verification for {subj} is audited every {n} weeks.",
-                "Enforcement warnings under {subj} trigger after {n} logged infractions.",
-            ],
-            "metric": [
-                "The baseline calibration for {subj} is refreshed every {n} days.",
-                "Alerts trigger when {subj} deviates by more than {n} percent from nominal baseline.",
-                "Performance reporting for {subj} aggregates metrics every {n} hours.",
-                "The target operational ceiling for {subj} is set to {n} units per shift.",
-                "Telemetry anomaly detection for {subj} evaluates a rolling window of {n} minutes.",
-            ],
-            "process": [
-                "The standard execution window for {subj} must conclude within {n} minutes.",
-                "Operations supervisors must reconcile status logs for {subj} every {n} hours.",
-                "Shift handover protocol for {subj} requires {n} signed checklist verifications.",
-                "Escalation for stalled {subj} initiates after {n} minutes of inactivity.",
-                "Quality assurance checkpoints for {subj} occur every {n} operational cycles.",
-            ],
-            "artifact": [
-                "Archival copies of {subj} must be retained in secure storage for {n} days.",
-                "Digital records of {subj} require cryptographic checksum validation every {n} hours.",
-                "Physical inspection documentation for {subj} is audited every {n} business days.",
-                "Mandatory retention schedules for {subj} require disposal review after {n} months.",
-                "Chain of custody logs for {subj} require {n} supervisor sign-offs.",
-            ],
+        # Dedicated predicate templates for planted subjects so supporting documents assert the winner value
+        planted_pred_specs: dict[str, PredicateSpec] = {
+            "carrier-invoice-dispute-window": PredicateSpec(
+                "dispute_window",
+                ["Carrier invoices can be disputed within {val} days from the invoice date."],
+                [45],
+                "days",
+            ),
+            "a-class-cycle-count": PredicateSpec(
+                "cycle_count_frequency",
+                ["A-Class SKU Cycle Count runs {val} for distribution center inventory."],
+                ["weekly"],
+                "",
+            ),
+            "proof-of-delivery": PredicateSpec(
+                "signature_required",
+                ["Proof of Delivery customer signature is {val} for standard deliveries."],
+                ["mandatory"],
+                "",
+            ),
+            "oncall-tier1-ack": PredicateSpec(
+                "oncall_ack_target",
+                ["Tier 1 systems have a {val} minute acknowledgement target for oncall engineers."],
+                [15],
+                "minutes",
+            ),
+            "damage-claim-auto-approval": PredicateSpec(
+                "refund_auto_approval_limit",
+                ["Customer damage claims under {val} USD are approved automatically without human review."],
+                [400],
+                "USD",
+            ),
+            "reefer-excursion-limit": PredicateSpec(
+                "excursion_tolerance_duration",
+                ["Reefer loads exceeding 8 degrees C for more than {val} minutes are rejected upon receiving."],
+                [15],
+                "minutes",
+            ),
+            "driver-hours-limit": PredicateSpec(
+                "driving_hours_limit",
+                ["Drivers are restricted to a maximum of {val} hours of driving in a single shift."],
+                [10],
+                "hours",
+            ),
+            "dispatch-router-retry-limit": PredicateSpec(
+                "retry_policy",
+                ["External routing solver calls are retried up to {val} time before fallback."],
+                [1],
+                "time",
+            ),
+            "dock-late-cancellation-window": PredicateSpec(
+                "dock_arrival_tolerance",
+                ["Carriers arriving within a grace period of {val} minutes retain their scheduled dock appointment."],
+                [30],
+                "minutes",
+            ),
+            "gps-moving-ping-interval": PredicateSpec(
+                "gps_ping_interval",
+                ["Tractors transmit GPS telematics telemetry every {val} seconds while moving."],
+                [30],
+                "seconds",
+            ),
+            "customs-gateway": PredicateSpec(
+                "declaration_filing_lead_time",
+                ["Customs Gateway submits international import declarations {val} hours before port arrival."],
+                [48],
+                "hours",
+            ),
+            "payments-gateway": PredicateSpec(
+                "idempotency_window",
+                ["Payments Gateway retains settlement idempotency keys for {val} hours."],
+                [72],
+                "hours",
+            ),
+            "cold-chain-monitor": PredicateSpec(
+                "probe_calibration_tolerance",
+                ["Cold Chain Monitor probe calibration allows a maximum variance of {val} degrees C before sensor replacement."],
+                [0.5],
+                "degrees C",
+            ),
         }
 
         # 14 Planted conflict subjects that MUST have >= 4 supporting documents
         planted_slugs = [p.entity_slug for p in self.planted_conflicts]
 
-        # Plan the sequence of primary subjects for documents 25 to 312 (288 documents):
-        # Step A: 3 dedicated supporting documents for each of the 14 planted conflict subjects (42 docs)
-        # Step B: 1 dedicated document for each of the 70 subjects in NORTHWIND_SUBJECTS (70 docs)
-        # Step C: The remaining documents sampled via Zipfian skewed distribution (176 docs)
         planned_subjects: list[SubjectEntity] = []
 
-        # Step A (42 docs)
+        # Step A: 3 dedicated supporting documents for each of the 14 planted conflict subjects (42 docs)
         for slug in planted_slugs:
             subj = SUBJECT_MAP[slug]
             for _ in range(3):
                 planned_subjects.append(subj)
 
-        # Step B (70 docs)
+        # Step B: 1 dedicated document for each of the 70 subjects in NORTHWIND_SUBJECTS (70 docs)
         for subj in NORTHWIND_SUBJECTS:
             planned_subjects.append(subj)
 
-        # Step C (176 docs)
+        # Step C: The remaining documents sampled via Zipfian skewed distribution (176 docs)
         remaining_count = 312 - len(self.documents) - len(planned_subjects)
         zipf_weights = [1.0 / ((i + 1) ** 0.85) for i in range(len(NORTHWIND_SUBJECTS))]
         for _ in range(remaining_count):
             chosen = self.rng.choices(NORTHWIND_SUBJECTS, weights=zipf_weights, k=1)[0]
             planned_subjects.append(chosen)
 
-        # Alias cycling index per subject to guarantee every subject uses >= 2 alias spellings
         alias_step: dict[str, int] = collections.defaultdict(int)
 
         curr_id = len(self.documents) + 1
@@ -827,14 +901,30 @@ class NorthwindGenerator:
             has_cite = self.rng.random() < 0.35
             cites = [self.rng.choice(decision_ids)] if has_cite else []
 
+            # Available predicate specs for this subject
+            available_specs = list(PREDICATES_BY_ENTITY_TYPE[primary_subject.type])
+            if primary_subject.slug in planted_pred_specs:
+                available_specs.append(planted_pred_specs[primary_subject.slug])
+
             # Generate 4 to 6 atomic factual sentences
             num_facts = self.rng.randint(4, 6)
             facts: list[str] = []
-            type_templates = templates_by_type[primary_subject.type]
 
-            for _ in range(num_facts):
-                tmpl = self.rng.choice(type_templates)
-                val = self.rng.choice([2, 3, 5, 10, 15, 30, 45, 60, 90, 120, 180, 250, 365, 500, 1000])
+            # Sample predicates for this document
+            chosen_specs = self.rng.sample(available_specs, k=min(num_facts, len(available_specs)))
+            while len(chosen_specs) < num_facts:
+                chosen_specs.append(self.rng.choice(available_specs))
+
+            for pred_spec in chosen_specs:
+                key = (primary_subject.slug, pred_spec.name)
+                if key not in self.canonical_values:
+                    raw_val = self.rng.choice(pred_spec.canonical_values)
+                    self.canonical_raw_values[key] = raw_val
+                    val_str = f"{raw_val} {pred_spec.unit}".strip()
+                    self.canonical_values[key] = val_str
+                else:
+                    raw_val = self.canonical_raw_values[key]
+                    val_str = self.canonical_values[key]
 
                 # Alternate alias spelling for this subject
                 alias_idx = alias_step[primary_subject.slug] % len(primary_subject.aliases)
@@ -842,11 +932,17 @@ class NorthwindGenerator:
                 alias_used = primary_subject.aliases[alias_idx]
                 self.alias_counts[primary_subject.slug].add(alias_used)
 
-                fact_line = tmpl.format(subj=alias_used, n=val)
-                # Ensure no newlines
+                tmpl = self.rng.choice(pred_spec.templates)
+                fact_line = tmpl.format(subj=alias_used, val=raw_val)
                 assert "\n" not in fact_line
                 facts.append(fact_line)
-                self.fact_records.append((fact_line, primary_subject.slug, primary_subject.type))
+                self.fact_records.append(FactRecord(
+                    sentence=fact_line,
+                    slug=primary_subject.slug,
+                    predicate=pred_spec.name,
+                    canonical_value=val_str,
+                    entity_type=primary_subject.type,
+                ))
 
             # Title & Path
             title_prefix = {
@@ -1233,10 +1329,12 @@ def main() -> None:
     total_facts = len(generator.fact_records)
     subjects_by_type: dict[str, set[str]] = collections.defaultdict(set)
     facts_per_subject: dict[str, int] = collections.defaultdict(int)
+    groups: dict[tuple[str, str], set[str]] = collections.defaultdict(set)
 
-    for _, slug, etype in generator.fact_records:
-        subjects_by_type[etype].add(slug)
-        facts_per_subject[slug] += 1
+    for rec in generator.fact_records:
+        subjects_by_type[rec.entity_type].add(rec.slug)
+        facts_per_subject[rec.slug] += 1
+        groups[(rec.slug, rec.predicate)].add(rec.canonical_value)
 
     all_subjects = set(facts_per_subject.keys())
     naive_pairs = (total_facts * (total_facts - 1)) // 2
@@ -1248,6 +1346,7 @@ def main() -> None:
     print(f"  Decisions (ADRs):  {len(generator.decisions)} (14 chains, depth 2-4)")
     print(f"  Documents:         {len(generator.documents)} (runbooks, wikis, specs, READMEs)")
     print(f"  Fact sentences:    {total_facts}")
+    print(f"  (subject, predicate) groups: {len(groups)}")
     print(f"  Distinct subjects: {len(all_subjects)} across {len(subjects_by_type)} entity types")
     print(f"    - system:        {len(subjects_by_type.get('system', []))} subjects")
     print(f"    - policy:        {len(subjects_by_type.get('policy', []))} subjects")

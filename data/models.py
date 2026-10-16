@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from typing import Literal
+from typing import Any, Literal
 
 
 @dataclass(frozen=True)
@@ -96,3 +96,20 @@ class SubjectEntity:
     name: str
     type: Literal["system", "policy", "metric", "process", "artifact"]
     aliases: list[str]
+
+
+@dataclass(frozen=True)
+class FactRecord:
+    sentence: str
+    slug: str
+    predicate: str
+    canonical_value: str
+    entity_type: Literal["system", "policy", "metric", "process", "artifact"]
+
+
+@dataclass(frozen=True)
+class PredicateSpec:
+    name: str
+    templates: list[str]
+    canonical_values: list[Any]
+    unit: str
