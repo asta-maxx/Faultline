@@ -1,0 +1,247 @@
+{
+  "documents": [
+    {
+      "id": "doc-0001",
+      "title": "Carrier Billing FAQ",
+      "path": "wiki/carrier-billing/faq.md",
+      "kind": "wiki",
+      "updated_at": 1745689600,
+      "text": "# Carrier Billing FAQ\n\nDocument ID: doc-0001. Last updated epoch timestamp: 1745689600.\nGoverns systems: sys-carrier-billing.\nNo external ADR cited.\n\n## Procedures and Policies\nCarrier invoices can be disputed within 30 days from the invoice date.\n"
+    },
+    {
+      "id": "doc-0002",
+      "title": "Finance Ops: Month-End Close",
+      "path": "runbooks/finance/month-end-close.md",
+      "kind": "runbook",
+      "updated_at": 1743689600,
+      "text": "# Finance Ops: Month-End Close\n\nDocument ID: doc-0002. Last updated epoch timestamp: 1743689600.\nGoverns systems: sys-finance-ledger, sys-carrier-billing.\nCites architectural decisions: dec-0015.\n\n## Procedures and Policies\nCarrier invoices can be disputed within 45 days from the invoice date.\n"
+    },
+    {
+      "id": "doc-0003",
+      "title": "WMS Operations Guide",
+      "path": "wiki/warehouse/wms-operations.md",
+      "kind": "wiki",
+      "updated_at": 1740689600,
+      "text": "# WMS Operations Guide\n\nDocument ID: doc-0003. Last updated epoch timestamp: 1740689600.\nGoverns systems: sys-warehouse-wms.\nNo external ADR cited.\n\n## Procedures and Policies\nA-Class SKU Cycle Count runs nightly for distribution center inventory.\n"
+    },
+    {
+      "id": "doc-0004",
+      "title": "Inventory Accuracy Standard",
+      "path": "specs/warehouse/inventory-accuracy.md",
+      "kind": "spec",
+      "updated_at": 1741689600,
+      "text": "# Inventory Accuracy Standard\n\nDocument ID: doc-0004. Last updated epoch timestamp: 1741689600.\nGoverns systems: sys-warehouse-wms, sys-inventory-service, sys-analytics-pipeline.\nCites architectural decisions: dec-0077, dec-0022.\n\n## Procedures and Policies\nA-Class SKU Cycle Count runs weekly for distribution center inventory.\n"
+    },
+    {
+      "id": "doc-0005",
+      "title": "Driver App README",
+      "path": "repos/driver-app/README.md",
+      "kind": "readme",
+      "updated_at": 1747689600,
+      "text": "# Driver App README\n\nDocument ID: doc-0005. Last updated epoch timestamp: 1747689600.\nGoverns systems: sys-driver-app.\nNo external ADR cited.\n\n## Procedures and Policies\nProof of Delivery customer signature is optional for standard deliveries.\n"
+    },
+    {
+      "id": "doc-0006",
+      "title": "Fleet Safety Policy",
+      "path": "specs/fleet/safety-policy.md",
+      "kind": "spec",
+      "updated_at": 1746689600,
+      "text": "# Fleet Safety Policy\n\nDocument ID: doc-0006. Last updated epoch timestamp: 1746689600.\nGoverns systems: sys-driver-app, sys-fleet-telematics.\nCites architectural decisions: dec-0073.\n\n## Procedures and Policies\nProof of Delivery customer signature is mandatory for standard deliveries.\n"
+    },
+    {
+      "id": "doc-0007",
+      "title": "Platform On-call Rotation Guide",
+      "path": "runbooks/oncall/rotation.md",
+      "kind": "runbook",
+      "updated_at": 1739689600,
+      "text": "# Platform On-call Rotation Guide\n\nDocument ID: doc-0007. Last updated epoch timestamp: 1739689600.\nGoverns systems: sys-dispatch-router, sys-warehouse-wms, sys-cold-chain-monitor, sys-finance-ledger, sys-payments-gateway.\nCites architectural decisions: dec-0047.\n\n## Procedures and Policies\nTier 1 systems have a 15 minute acknowledgement target for oncall engineers.\n"
+    },
+    {
+      "id": "doc-0008",
+      "title": "Core Services Escalation SOP",
+      "path": "runbooks/infra/escalation-sop.md",
+      "kind": "runbook",
+      "updated_at": 1740189600,
+      "text": "# Core Services Escalation SOP\n\nDocument ID: doc-0008. Last updated epoch timestamp: 1740189600.\nGoverns systems: sys-dispatch-router, sys-payments-gateway.\nNo external ADR cited.\n\n## Procedures and Policies\nTier 1 systems have a 5 minute acknowledgement target for oncall engineers.\n"
+    },
+    {
+      "id": "doc-0009",
+      "title": "Returns and Damage Claims Process",
+      "path": "wiki/customer-ops/returns-and-claims.md",
+      "kind": "wiki",
+      "updated_at": 1738689600,
+      "text": "# Returns and Damage Claims Process\n\nDocument ID: doc-0009. Last updated epoch timestamp: 1738689600.\nGoverns: general organization procedures.\nNo external ADR cited.\n\n## Procedures and Policies\nCustomer damage claims under 250 USD are approved automatically without human review.\n"
+    },
+    {
+      "id": "doc-0010",
+      "title": "Customer Ops Authority Matrix",
+      "path": "specs/customer-ops/authority-matrix.md",
+      "kind": "spec",
+      "updated_at": 1739189600,
+      "text": "# Customer Ops Authority Matrix\n\nDocument ID: doc-0010. Last updated epoch timestamp: 1739189600.\nGoverns: general organization procedures.\nCites architectural decisions: dec-0087.\n\n## Procedures and Policies\nCustomer damage claims under 400 USD are approved automatically without human review.\n"
+    },
+    {
+      "id": "doc-0011",
+      "title": "Cold Chain Excursion Runbook",
+      "path": "runbooks/cold-chain/excursion-response.md",
+      "kind": "runbook",
+      "updated_at": 1780000000,
+      "text": "# Cold Chain Excursion Runbook\n\nDocument ID: doc-0011. Last updated epoch timestamp: 1780000000.\nGoverns systems: sys-cold-chain-monitor, sys-warehouse-wms, sys-fleet-telematics.\nCites architectural decisions: dec-0041.\n\n## Procedures and Policies\nReefer loads exceeding 8 degrees C for more than 30 minutes are rejected upon receiving.\n"
+    },
+    {
+      "id": "doc-0012",
+      "title": "Cold Chain Policy v3",
+      "path": "specs/cold-chain/policy-v3.md",
+      "kind": "spec",
+      "updated_at": 1743000000,
+      "text": "# Cold Chain Policy v3\n\nDocument ID: doc-0012. Last updated epoch timestamp: 1743000000.\nGoverns systems: sys-cold-chain-monitor.\nCites architectural decisions: dec-0088.\n\n## Procedures and Policies\nReefer loads exceeding 8 degrees C for more than 15 minutes are rejected upon receiving.\n"
+    },
+    {
+      "id": "doc-0013",
+      "title": "Driver App Operations README",
+      "path": "repos/driver-app/operations.md",
+      "kind": "readme",
+      "updated_at": 1775000000,
+      "text": "# Driver App Operations README\n\nDocument ID: doc-0013. Last updated epoch timestamp: 1775000000.\nGoverns systems: sys-driver-app.\nCites architectural decisions: dec-0030.\n\n## Procedures and Policies\nDrivers are restricted to a maximum of 11 hours of driving in a single shift.\n"
+    },
+    {
+      "id": "doc-0014",
+      "title": "Fleet Safety Standard",
+      "path": "specs/fleet/driver-safety.md",
+      "kind": "spec",
+      "updated_at": 1738000000,
+      "text": "# Fleet Safety Standard\n\nDocument ID: doc-0014. Last updated epoch timestamp: 1738000000.\nGoverns systems: sys-driver-app, sys-fleet-telematics.\nCites architectural decisions: dec-0074, dec-0049.\n\n## Procedures and Policies\nDrivers are restricted to a maximum of 10 hours of driving in a single shift.\n"
+    },
+    {
+      "id": "doc-0015",
+      "title": "Dispatch Router Solver Runbook",
+      "path": "runbooks/dispatch/solver-troubleshooting.md",
+      "kind": "runbook",
+      "updated_at": 1782000000,
+      "text": "# Dispatch Router Solver Runbook\n\nDocument ID: doc-0015. Last updated epoch timestamp: 1782000000.\nGoverns systems: sys-dispatch-router.\nCites architectural decisions: dec-0018.\n\n## Procedures and Policies\nExternal routing solver calls are retried up to 3 times before fallback.\n"
+    }
+  ],
+  "tickets": [
+    {
+      "id": "tkt-0001",
+      "ref": "INC-2291",
+      "title": "Reefer load rejected at 18 minutes, carrier disputes chargeback",
+      "text": "Load NW-55812 was rejected at dock 3 after 18 minutes above 8 degrees C. The carrier disputes the chargeback and cites the 30 minute limit in the excursion runbook. Policy v3 says 15 minutes; chargeback upheld.",
+      "state": "closed",
+      "closed_at": 1749689600
+    },
+    {
+      "id": "tkt-0002",
+      "ref": "INC-3410",
+      "title": "Cold chain probe temperature variance alert during dairy transit",
+      "text": "Reefer probe calibration tolerance was tightened to 0.5 degrees C following the dairy shipment audit. The probe drift exceeded 0.8 degrees C and triggered trailer sensor replacement.",
+      "state": "closed",
+      "closed_at": 1752289600
+    },
+    {
+      "id": "tkt-0003",
+      "ref": "INC-1003",
+      "title": "Cross-border declaration pre-arrival filing validation error (Unit 3)",
+      "text": "Incident report for Payments Gateway. Automated monitoring alerted on anomaly. Assigned on-call engineer responded. Status is in-progress.",
+      "state": "in-progress",
+      "closed_at": null
+    },
+    {
+      "id": "tkt-0004",
+      "ref": "INC-1004",
+      "title": "Carrier billing invoice dispute window expired without review (Unit 4)",
+      "text": "Incident report for Dispatch Router. Automated monitoring alerted on anomaly. Assigned on-call engineer responded. Status is open.",
+      "state": "open",
+      "closed_at": null
+    },
+    {
+      "id": "tkt-0005",
+      "ref": "INC-1005",
+      "title": "Solver timeout during bulk route recalculation (Unit 5)",
+      "text": "Incident report for Notification Engine. Automated monitoring alerted on anomaly. Assigned on-call engineer responded. Status is closed.",
+      "state": "closed",
+      "closed_at": 1735789600
+    },
+    {
+      "id": "tkt-0006",
+      "ref": "INC-1006",
+      "title": "Replication lag exceeded threshold during morning peak (Unit 6)",
+      "text": "Incident report for Finance Ledger. Automated monitoring alerted on anomaly. Assigned on-call engineer responded. Status is closed.",
+      "state": "closed",
+      "closed_at": 1735809600
+    },
+    {
+      "id": "tkt-0007",
+      "ref": "INC-1007",
+      "title": "Dock gate appointment rescheduled after 45 minute arrival delay (Unit 7)",
+      "text": "Incident report for Analytics Pipeline. Automated monitoring alerted on anomaly. Assigned on-call engineer responded. Status is closed.",
+      "state": "closed",
+      "closed_at": 1735829600
+    },
+    {
+      "id": "tkt-0008",
+      "ref": "INC-1008",
+      "title": "Dock gate appointment rescheduled after 45 minute arrival delay (Unit 8)",
+      "text": "Incident report for Notification Engine. Automated monitoring alerted on anomaly. Assigned on-call engineer responded. Status is closed.",
+      "state": "closed",
+      "closed_at": 1735849600
+    },
+    {
+      "id": "tkt-0009",
+      "ref": "INC-1009",
+      "title": "Cross-border declaration pre-arrival filing validation error (Unit 9)",
+      "text": "Incident report for Driver App. Automated monitoring alerted on anomaly. Assigned on-call engineer responded. Status is closed.",
+      "state": "closed",
+      "closed_at": 1735869600
+    },
+    {
+      "id": "tkt-0010",
+      "ref": "INC-1010",
+      "title": "Cold chain secondary probe failed automated CRC checksum (Unit 10)",
+      "text": "Incident report for Inventory Service. Automated monitoring alerted on anomaly. Assigned on-call engineer responded. Status is closed.",
+      "state": "closed",
+      "closed_at": 1735889600
+    },
+    {
+      "id": "tkt-0011",
+      "ref": "INC-1011",
+      "title": "Idempotency cache eviction causing duplicate charge warning (Unit 11)",
+      "text": "Incident report for Dispatch Router. Automated monitoring alerted on anomaly. Assigned on-call engineer responded. Status is open.",
+      "state": "open",
+      "closed_at": null
+    },
+    {
+      "id": "tkt-0012",
+      "ref": "INC-1012",
+      "title": "Solver timeout during bulk route recalculation (Unit 12)",
+      "text": "Incident report for Driver App. Automated monitoring alerted on anomaly. Assigned on-call engineer responded. Status is in-progress.",
+      "state": "in-progress",
+      "closed_at": null
+    },
+    {
+      "id": "tkt-0013",
+      "ref": "INC-1013",
+      "title": "Handheld scanner barcode reconciliation failure in aisle 4 (Unit 13)",
+      "text": "Incident report for Tracking API. Automated monitoring alerted on anomaly. Assigned on-call engineer responded. Status is in-progress.",
+      "state": "in-progress",
+      "closed_at": null
+    },
+    {
+      "id": "tkt-0014",
+      "ref": "INC-1014",
+      "title": "Cold chain secondary probe failed automated CRC checksum (Unit 14)",
+      "text": "Incident report for Cold Chain Monitor. Automated monitoring alerted on anomaly. Assigned on-call engineer responded. Status is closed.",
+      "state": "closed",
+      "closed_at": 1735969600
+    },
+    {
+      "id": "tkt-0015",
+      "ref": "INC-1015",
+      "title": "Idempotency cache eviction causing duplicate charge warning (Unit 15)",
+      "text": "Incident report for Driver App. Automated monitoring alerted on anomaly. Assigned on-call engineer responded. Status is in-progress.",
+      "state": "in-progress",
+      "closed_at": null
+    }
+  ],
+  "messages": []
+}
