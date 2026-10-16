@@ -1,0 +1,31 @@
+# Faultline task runner justfile
+
+set dotenv-load := true
+
+# Start FalkorDB and application services
+up:
+    docker compose -f infra/docker-compose.yml up -d
+
+# Stop all services
+down:
+    docker compose -f infra/docker-compose.yml down
+
+# Build docker containers
+build:
+    docker compose -f infra/docker-compose.yml build
+
+# Seed structural graph for default northwind tenant
+seed:
+    python -m data.seed --tenant northwind
+
+# Reset and seed structural graph
+reset:
+    python -m data.seed --reset --tenant northwind
+
+# Run test suite
+test:
+    pytest -v
+
+# Export FalkorDB graph state to dump.rdb
+dump:
+    bash infra/scripts/dump_graph.sh

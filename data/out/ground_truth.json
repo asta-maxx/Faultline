@@ -22,8 +22,8 @@
       "side_a_blast_radius": 5.0,
       "side_b_blast_radius": 12.5,
       "governed_systems": [
-        "sys-carrier-billing",
-        "sys-finance-ledger"
+        "sys-finance-ledger",
+        "sys-carrier-billing"
       ]
     },
     {
@@ -37,10 +37,11 @@
       "evidence_span_b": "A-Class SKU Cycle Count runs weekly for distribution center inventory.",
       "correct_side": "b",
       "rationale": "Inventory Accuracy Standard cites accepted ADR-77 for distribution center counting.",
-      "expected_blast_radius": 12.5,
+      "expected_blast_radius": 16.0,
       "side_a_blast_radius": 7.0,
-      "side_b_blast_radius": 12.5,
+      "side_b_blast_radius": 16.0,
       "governed_systems": [
+        "sys-analytics-pipeline",
         "sys-warehouse-wms",
         "sys-inventory-service"
       ]
@@ -79,11 +80,11 @@
       "side_a_blast_radius": 32.5,
       "side_b_blast_radius": 13.0,
       "governed_systems": [
+        "sys-warehouse-wms",
         "sys-cold-chain-monitor",
         "sys-dispatch-router",
-        "sys-payments-gateway",
-        "sys-warehouse-wms",
-        "sys-finance-ledger"
+        "sys-finance-ledger",
+        "sys-payments-gateway"
       ]
     },
     {
@@ -117,9 +118,9 @@
       "side_a_blast_radius": 16.5,
       "side_b_blast_radius": 8.5,
       "governed_systems": [
-        "sys-fleet-telematics",
+        "sys-cold-chain-monitor",
         "sys-warehouse-wms",
-        "sys-cold-chain-monitor"
+        "sys-fleet-telematics"
       ]
     },
     {
@@ -133,9 +134,9 @@
       "evidence_span_b": "Drivers are restricted to a maximum of 10 hours of driving in a single shift.",
       "correct_side": "b",
       "rationale": "ADR-74 supersedes ADR-30; the 10-hour ceiling is the legally active safety rule.",
-      "expected_blast_radius": 8.5,
+      "expected_blast_radius": 10.0,
       "side_a_blast_radius": 6.5,
-      "side_b_blast_radius": 8.5,
+      "side_b_blast_radius": 10.0,
       "governed_systems": [
         "sys-fleet-telematics",
         "sys-driver-app"
@@ -156,8 +157,8 @@
       "side_a_blast_radius": 8.5,
       "side_b_blast_radius": 12.5,
       "governed_systems": [
-        "sys-tracking-api",
-        "sys-dispatch-router"
+        "sys-dispatch-router",
+        "sys-tracking-api"
       ]
     },
     {
@@ -175,8 +176,8 @@
       "side_a_blast_radius": 10.5,
       "side_b_blast_radius": 8.5,
       "governed_systems": [
-        "sys-warehouse-wms",
-        "sys-depot-kiosk"
+        "sys-depot-kiosk",
+        "sys-warehouse-wms"
       ]
     },
     {
@@ -209,11 +210,12 @@
       "evidence_span_b": "Operational requests to Dispatch Router timeout after 4 seconds.",
       "correct_side": "b",
       "rationale": "Operational chat consensus records production change to 4s automated fallback without manual console.",
-      "expected_blast_radius": 8.5,
-      "side_a_blast_radius": 8.5,
+      "expected_blast_radius": 12.0,
+      "side_a_blast_radius": 12.0,
       "side_b_blast_radius": 1.0,
       "governed_systems": [
-        "sys-dispatch-router"
+        "sys-dispatch-router",
+        "sys-notification-engine"
       ]
     },
     {
@@ -227,8 +229,8 @@
       "evidence_span_b": "Customs Gateway submits international import declarations 48 hours before port arrival.",
       "correct_side": "b",
       "rationale": "Brokerage team chat confirms updated declaration filing lead time to 48 hours.",
-      "expected_blast_radius": 12.5,
-      "side_a_blast_radius": 12.5,
+      "expected_blast_radius": 14.0,
+      "side_a_blast_radius": 14.0,
       "side_b_blast_radius": 1.0,
       "governed_systems": [
         "sys-customs-gateway",

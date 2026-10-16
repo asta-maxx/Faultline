@@ -17,7 +17,20 @@ Per team contract and ownership boundaries, Dev C touches **only** `/data` and `
 ### 2. Live `/health` and `/api/health` Route Wiring
 - **Current state**: `api/main.py` has a stubbed `@app.get("/api/health")` returning hardcoded zeros and `"falkor": "down"`. CONTRACT.md §9 specifies `GET /health` returning `{"ok": bool, "graph": str, "nodes": int, "edges": int, "falkor": "up"|"down"}` with HTTP 503 if FalkorDB is down.
 - **Delivery**: We have prepared a drop-in health router in `/infra/app_patch/health.py` that handles both `/health` (CONTRACT §9 root route) and `/api/health` (frontend proxy route).
-- **Request**: Please include `app.include_router(health_router)` in `api/main.py`.
+- **Exact Paste Location**:
+  In `api/main.py` lines 47–52, replace:
+  ```python
+  # ── Health ────────────────────────────────────────────────────────────────────
+  @app.get("/api/health")
+  def health():
+      return {"ok": True, "graph": "faultline:northwind", "nodes": 0, "edges": 0, "falkor": "down"}
+  ```
+  with:
+  ```python
+  # ── Health (Live FalkorDB check per CONTRACT §9) ──────────────────────────────
+  from infra.app_patch.health import health_router
+  app.include_router(health_router)
+  ```
 
 ---
 
@@ -47,6 +60,20 @@ Per team contract and ownership boundaries, Dev C touches **only** `/data` and `
          raise HTTPException(status_code=404, detail="Frontend index.html not found")
      ```
   3. We deliver ready-to-paste helpers in `/infra/app_patch/static_mount.py`.
+- **Exact Paste Location**:
+  In `api/main.py` lines 128–131, replace:
+  ```python
+  # ── Serve built frontend (production) ────────────────────────────────────────
+  WEB_DIST = ROOT / "web" / "dist"
+  if WEB_DIST.exists():
+      app.mount("/", StaticFiles(directory=str(WEB_DIST), html=True), name="spa")
+  ```
+  with:
+  ```python
+  # ── Serve built frontend with SPA fallback (production) ──────────────────────
+  from infra.app_patch.static_mount import mount_spa
+  mount_spa(app, ROOT / "web" / "dist")
+  ```
 
 ---
 

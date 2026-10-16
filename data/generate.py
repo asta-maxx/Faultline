@@ -170,8 +170,8 @@ class NorthwindGenerator:
             kind="spec",
             updated_at=self.base_time + 6_000_000,
             author_id="usr-0018",
-            governs_system_ids=["sys-warehouse-wms", "sys-inventory-service"],
-            cites_decision_ids=["dec-0077"],
+            governs_system_ids=["sys-warehouse-wms", "sys-inventory-service", "sys-analytics-pipeline"],
+            cites_decision_ids=["dec-0077", "dec-0022"],
             factual_sentences=["A-Class SKU Cycle Count runs weekly for distribution center inventory."],
         )
         ra_2 = compute_blast_radius([sys_map[sid] for sid in doc3.governs_system_ids], 1, len(doc3.cites_decision_ids))
@@ -192,7 +192,7 @@ class NorthwindGenerator:
             side_b_blast_radius=rb_2,
             governed_systems=list(set(doc3.governs_system_ids + doc4.governs_system_ids)),
             doc_count=2,
-            citing_decisions=1,
+            citing_decisions=2,
         ))
 
         # Plant 3: Proof of delivery customer signature
@@ -398,7 +398,7 @@ class NorthwindGenerator:
             updated_at=1738000000,
             author_id="usr-0040",
             governs_system_ids=["sys-driver-app", "sys-fleet-telematics"],
-            cites_decision_ids=["dec-0074"],
+            cites_decision_ids=["dec-0074", "dec-0049"],
             factual_sentences=["Drivers are restricted to a maximum of 10 hours of driving in a single shift."],
         )
         ra_7 = compute_blast_radius([sys_map[sid] for sid in doc13.governs_system_ids], 1, len(doc13.cites_decision_ids))
@@ -419,7 +419,7 @@ class NorthwindGenerator:
             side_b_blast_radius=rb_7,
             governed_systems=list(set(doc13.governs_system_ids + doc14.governs_system_ids)),
             doc_count=2,
-            citing_decisions=2,
+            citing_decisions=3,
         ))
 
         # Plant 8: Dispatch router external solver retry attempts
@@ -563,8 +563,8 @@ class NorthwindGenerator:
             kind="runbook",
             updated_at=self.base_time + 7_000_000,
             author_id="usr-0009",
-            governs_system_ids=["sys-dispatch-router"],
-            cites_decision_ids=["dec-0084"],
+            governs_system_ids=["sys-dispatch-router", "sys-notification-engine"],
+            cites_decision_ids=["dec-0084", "dec-0018"],
             factual_sentences=["Operational requests to Dispatch Router timeout after 10 seconds."],
         )
         msg101 = MessageData(
@@ -592,7 +592,7 @@ class NorthwindGenerator:
             side_b_blast_radius=rb_11,
             governed_systems=doc21.governs_system_ids,
             doc_count=2,
-            citing_decisions=1,
+            citing_decisions=2,
         ))
 
         # Plant 12: Customs Gateway automatic import filing
@@ -604,7 +604,7 @@ class NorthwindGenerator:
             updated_at=self.base_time + 6_000_000,
             author_id="usr-0047",
             governs_system_ids=["sys-customs-gateway", "sys-dispatch-router"],
-            cites_decision_ids=["dec-0038"],
+            cites_decision_ids=["dec-0038", "dec-0084"],
             factual_sentences=["Customs Gateway submits international import declarations 24 hours before port arrival."],
         )
         msg102 = MessageData(
@@ -632,7 +632,7 @@ class NorthwindGenerator:
             side_b_blast_radius=rb_12,
             governed_systems=doc22.governs_system_ids,
             doc_count=2,
-            citing_decisions=1,
+            citing_decisions=2,
         ))
 
         # Plant 13: Payments settlement idempotency retention
@@ -1340,7 +1340,17 @@ def main() -> None:
     naive_pairs = (total_facts * (total_facts - 1)) // 2
     predicted_collapsed_pairs = sum((c * (c - 1)) // 2 for c in facts_per_subject.values() if c >= 2)
 
+    # Deterministic SHA256 of the whole corpus
+    import hashlib
+    hasher = hashlib.sha256()
+    for p in sorted(out_dir.rglob("*")):
+        if p.is_file():
+            hasher.update(p.relative_to(out_dir).as_posix().encode("utf-8"))
+            hasher.update(p.read_bytes())
+    corpus_sha = hasher.hexdigest()
+
     print(f"Generated Northwind Logistics corpus in {elapsed:.3f} s:")
+    print(f"  Corpus SHA256:     {corpus_sha}")
     print(f"  People:            {len(generator.people)} (across {len(TEAMS)} teams)")
     print(f"  Systems:           {len(generator.systems)} (tiers 1-3)")
     print(f"  Decisions (ADRs):  {len(generator.decisions)} (14 chains, depth 2-4)")
