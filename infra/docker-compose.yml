@@ -1,0 +1,55 @@
+# Docker Compose for Faultline (FalkorDB + FastAPI App with Frontend SPA)
+
+services:
+  falkordb:
+    image: falkordb/falkordb:latest
+    container_name: faultline-falkordb
+    ports:
+      - "${FALKOR_PORT:-6379}:6379"
+    volumes:
+      - falkor_data:/var/lib/falkordb/data
+    environment:
+      - FALKOR_PASSWORD=${FALKOR_PASSWORD:-${FALKORDB_PASSWORD:-}}
+    entrypoint:
+      - sh
+      - -c
+      - >
+        if [ -n "$$FALKOR_PASSWORD" ]; then
+          exec /var/lib/falkordb/bin/run.sh --requirepass "$$FALKOR_PASSWORD"
+        else
+          exec /var/lib/falkordb/bin/run.sh
+        fi
+    healthcheck:
+      test: ["CMD-SHELL", "redis-cli -p 6379 $${FALKOR_PASSWORD:+-a \"$$FALKOR_PASSWORD\"} ping | grep -q PONG"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 3s
+    restart: unless-stopped
+
+  app:
+    build:
+      context: ..
+      dockerfile: infra/Dockerfile
+    container_name: faultline-app
+    ports:
+      - "${PORT:-8000}:8000"
+    environment:
+      - FALKOR_URL=${FALKOR_URL:-redis://falkordb:6379}
+      - FALKOR_PASSWORD=${FALKOR_PASSWORD:-${FALKORDB_PASSWORD:-}}
+      - REINGEST_TOKEN=${REINGEST_TOKEN:-}
+      - PORT=8000
+      - GEMINI_API_KEY=${GEMINI_API_KEY:-}
+      - GROQ_API_KEY=${GROQ_API_KEY:-}
+    volumes:
+      - agent_cache:/cache
+    depends_on:
+      falkordb:
+        condition: service_healthy
+    restart: unless-stopped
+
+volumes:
+  falkor_data:
+    name: faultline_falkor_data
+  agent_cache:
+    name: faultline_agent_cache

@@ -1,16 +1,13 @@
 /**
- * Faultline frontend types — derived from CONTRACT.md §9 (frozen).
- * Field names must match the backend response exactly.
+ * Faultline frontend types — CONTRACT.md §5 and §9 (frozen).
+ * Field names match the API response exactly. Nothing here is optional
+ * unless the contract makes it optional.
  */
 
-// ── Claim state ───────────────────────────────────────────────────────────────
 export type ClaimState = 'live' | 'contradicted' | 'superseded'
-
-// ── Conflict kinds and statuses ───────────────────────────────────────────────
 export type ConflictKind = 'direct' | 'superseded' | 'undocumented'
 export type ConflictStatus = 'open' | 'resolved' | 'dismissed'
 
-// ── Source document reference ─────────────────────────────────────────────────
 export interface ClaimSource {
   doc_id: string
   title: string
@@ -18,7 +15,6 @@ export interface ClaimSource {
   updated_at: number // epoch seconds
 }
 
-// ── A claim as it appears on a Conflict ───────────────────────────────────────
 export interface ConflictClaim {
   side: 'a' | 'b'
   id: string
@@ -29,62 +25,54 @@ export interface ConflictClaim {
   source: ClaimSource
 }
 
-// ── Impact / blast radius summary ─────────────────────────────────────────────
-export interface ConflictImpact {
-  doc_count: number
-  system_count: number
-  systems: string[]
-}
-
-// ── Person / owner ────────────────────────────────────────────────────────────
 export interface Person {
   id: string
   name: string
   role: string
 }
 
-// ── Entity ────────────────────────────────────────────────────────────────────
-export type EntityType = 'system' | 'policy' | 'metric' | 'process' | 'artifact'
-
-export interface Entity {
-  id: string
-  name: string
-  type: EntityType
-}
-
-// ── Full Conflict (CONTRACT §9) ───────────────────────────────────────────────
 export interface Conflict {
   id: string
   kind: ConflictKind
   status: ConflictStatus
   blast_radius: number
   found_at: number // epoch seconds
-  entity: Entity
+  entity: { id: string; name: string; type: string }
   claims: ConflictClaim[]
-  impact: ConflictImpact
+  impact: { doc_count: number; system_count: number; systems: string[] }
   owner: Person | null
+  /** v5, optional: the CONTRADICTS edge between the two claims. */
+  judgement?: Judgement | null
+  /** v5, optional: the RESOLVED_AS edge; null unless status is "resolved". */
+  resolution?: Resolution | null
 }
 
-// ── Graph path node (CONTRACT §9) ─────────────────────────────────────────────
+export interface Judgement {
+  method: string
+  confidence: number
+  evidence_span: string
+}
+
+export interface Resolution {
+  winner_claim_id: string
+  rationale: string
+  resolved_at: number
+  resolved_by: string
+}
+
+/** `type` is the §5 node label lowercased. */
 export type NodeType =
   | 'claim'
+  | 'entity'
   | 'document'
   | 'decision'
-  | 'system'
   | 'person'
-  | 'message'
+  | 'system'
   | 'ticket'
-  | 'entity'
+  | 'message'
   | 'conflict'
 
-export interface GraphNode {
-  id: string
-  label: string
-  type: NodeType
-  state?: ClaimState
-}
-
-// ── Graph path edge (CONTRACT §9) ─────────────────────────────────────────────
+/** §5 edge types. No other edge names exist. */
 export type EdgeType =
   | 'ASSERTS'
   | 'ABOUT'
@@ -98,19 +86,26 @@ export type EdgeType =
   | 'INVOLVES'
   | 'RESOLVED_AS'
 
+export interface GraphNode {
+  id: string
+  label: string
+  type: NodeType
+  state?: ClaimState
+  /** v5, optional: the node's own §5 date, epoch seconds; a claim takes its source's. */
+  at?: number
+}
+
 export interface GraphEdge {
   source: string
   target: string
   type: EdgeType
 }
 
-// ── GraphPath (CONTRACT §9) ───────────────────────────────────────────────────
 export interface GraphPath {
   nodes: GraphNode[]
   edges: GraphEdge[]
 }
 
-// ── Stats (CONTRACT §9) ───────────────────────────────────────────────────────
 export interface Stats {
   claims: number
   documents: number
@@ -123,20 +118,6 @@ export interface Stats {
   conflicts_resolved: number
 }
 
-// ── API list response ─────────────────────────────────────────────────────────
-export interface ConflictsResponse {
-  conflicts: Conflict[]
-  total: number
-  stats: Stats
-}
-
-// ── API single conflict response ──────────────────────────────────────────────
-export interface ConflictDetailResponse {
-  conflict: Conflict
-  path: GraphPath
-}
-
-// ── Health response ───────────────────────────────────────────────────────────
 export interface HealthResponse {
   ok: boolean
   graph: string
@@ -145,36 +126,128 @@ export interface HealthResponse {
   falkor: 'up' | 'down'
 }
 
-// ── Resolve conflict request ──────────────────────────────────────────────────
-export interface ResolveConflictRequest {
+export interface ConflictsResponse {
+  conflicts: Conflict[]
+  total: number
+  stats: Stats
+}
+
+export interface ConflictDetailResponse {
+  conflict: Conflict
+  path: GraphPath
+}
+
+export interface ResolveRequest {
   winner_claim_id: string
   rationale: string
   resolved_by: string
 }
 
-// ── API error ─────────────────────────────────────────────────────────────────
-export interface ApiError {
-  error: string
+export interface ResolveResponse {
+  ok: true
+  conflict: Conflict
 }
 
-// ── Filter / sort options ─────────────────────────────────────────────────────
-export type ConflictStatusFilter = 'all' | ConflictStatus
-export type ConflictSortField = 'blast_radius' | 'found_at'
-export type SortDirection = 'asc' | 'desc'
-
-export interface ConflictFilters {
-  status: ConflictStatusFilter
-  kind?: ConflictKind
-  sortBy: ConflictSortField
-  sortDir: SortDirection
-  limit: number
+export interface DraftResponse {
+  correction: string
+  owner: Person
+  ticket: { title: string; body: string }
 }
 
-// ── UI State ──────────────────────────────────────────────────────────────────
-export type LoadingState = 'idle' | 'loading' | 'success' | 'error'
+export interface ReingestResponse {
+  job_id: string
+}
 
-export interface AsyncState<T> {
-  state: LoadingState
-  data: T | null
+// ── CONTRACT §9b: workspaces, sources and audits (v6) ─────────────────────────
+
+export interface Workspace {
+  id: string
+  name: string
+  /** "faultline:{id}" */
+  graph: string
+  sources: number
+  documents: number
+  claims: number
+  /** open conflicts */
+  conflicts: number
+  /** epoch seconds, end of the latest finished audit */
+  last_audit: number | null
+  /** the most recent audit of any status; open /audit/{run_id} for it */
+  latest_run: LatestRun | null
+}
+
+export interface LatestRun {
+  run_id: string
+  status: 'running' | 'done' | 'failed'
+  started_at: number
+}
+
+export type SourceKind = 'folder' | 'git'
+export type SourceStatus = 'ready' | 'unsupported' | 'missing'
+
+export interface Source {
+  id: string
+  kind: SourceKind
+  location: string
+  /** readable files found when scanned; null if never scanned */
+  docs: number | null
+  /** claims extracted from it by the latest audit */
+  claims: number | null
+  status: SourceStatus
+  /** plain-language reason for any status other than "ready" */
+  message: string | null
+  /** a token was supplied; the token itself is never stored */
+  has_token: boolean
+  added_at: number
+  last_read_at: number | null
+}
+
+export interface AddSourceRequest {
+  kind: SourceKind
+  location: string
+  token?: string
+}
+
+export type AuditStageName =
+  | 'READING SOURCES'
+  | 'EXTRACTING CLAIMS'
+  | 'BUILDING GRAPH'
+  | 'COLLAPSING CANDIDATES'
+  | 'JUDGING PAIRS'
+
+export type AuditStageState = 'pending' | 'active' | 'done' | 'failed'
+
+export interface AuditStage {
+  name: AuditStageName
+  state: AuditStageState
+  count: number | null
+  unit: string
+  detail: string | null
+  started_at: number | null
+  ended_at: number | null
+}
+
+export interface AuditSummary {
+  documents: number
+  claims: number
+  pairs_compared: number
+  judged: number
+  contradictions: number
+}
+
+export interface AuditRun {
+  run_id: string
+  workspace_id: string
+  status: 'running' | 'done' | 'failed'
+  stage: string | null
+  stages: AuditStage[]
+  current: string | null
+  summary: AuditSummary | null
   error: string | null
+  started_at: number
+  ended_at: number | null
+}
+
+export interface StartAuditResponse {
+  run_id: string
 }

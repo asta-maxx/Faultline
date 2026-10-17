@@ -7,9 +7,9 @@ export default defineConfig({
   server: {
     port: 5173,
     proxy: {
-      // Proxy /api/* to the FastAPI backend (dev: port 8000)
+      // Proxy /api/* to the FastAPI backend (dev: port 8000; FAULTLINE_API overrides)
       '/api': {
-        target: 'http://localhost:8000',
+        target: process.env.FAULTLINE_API ?? 'http://localhost:8000',
         changeOrigin: true,
         // No rewrite — FastAPI routes are at /api/*
       },

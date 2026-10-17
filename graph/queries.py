@@ -29,6 +29,20 @@ ORDER BY e.id
 
 CLAIM_COUNT = "MATCH (c:Claim) RETURN count(c) AS n"
 
+# §7.1 without the "not yet judged" exclusions. /stats reports the funnel the corpus
+# produces, which must not shrink as the Adjudicator works through it.
+SHARED_ENTITY_PAIRS = """
+MATCH (a:Claim)-[:ABOUT]->(e:Entity)<-[:ABOUT]-(b:Claim)
+WHERE a.id < b.id
+  AND a.confidence >= $floor
+  AND b.confidence >= $floor
+RETURN a.id AS a_id, a.text AS a_text, a.predicate AS a_pred,
+       a.object AS a_obj, a.polarity AS a_pol,
+       b.id AS b_id, b.text AS b_text, b.predicate AS b_pred,
+       b.object AS b_obj, b.polarity AS b_pol,
+       e.id AS entity_id, e.name AS entity
+"""
+
 # §7.2 verbatim.
 CURRENT_CLAIM = """
 MATCH (start:Decision {id: $decision_id})
@@ -102,6 +116,16 @@ def _rows(g: Graph, cypher: str, params: dict[str, Any] | None = None) -> list[d
 def candidate_collapse(g: Graph, floor: float = 0.65) -> list[dict[str, Any]]:
     """§7.1 — claim pairs sharing an Entity, not yet judged. Funnel stage 2."""
     return _rows(g, CANDIDATE_COLLAPSE, {"floor": floor})
+
+
+def shared_entity_pairs(g: Graph, floor: float = 0.65) -> list[dict[str, Any]]:
+    """Every pair sharing an Entity, judged or not. Funnel stage 2 as reported by /stats."""
+    return _rows(g, SHARED_ENTITY_PAIRS, {"floor": floor})
+
+
+def rows(g: Graph, cypher: str, params: dict[str, Any] | None = None) -> list[dict[str, Any]]:
+    """Public form of the row helper, for read queries outside this module."""
+    return _rows(g, cypher, params)
 
 
 def naive_pair_count(g: Graph) -> int:

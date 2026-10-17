@@ -1,34 +1,36 @@
-"""
-Faultline API server — dev/demo entry point.
+"""Faultline HTTP API (CONTRACT §9) under /api, and the MCP tools (§8) at /mcp.
 
-For the hackathon demo, this serves the fixture JSON files when FalkorDB is
-not yet fully wired. When the real graph data is live, the responses here
-will come from graph.queries rather than fixtures/.
+    uv run --env-file .env uvicorn api.main:app --reload --port 8000
 
-Run with:
-    uv run python -m api.main
-    # or:
-    uv run uvicorn api.main:app --reload --port 8000
-
-The frontend Vite dev server proxies /api/* → http://localhost:8000.
+Live by default: every response is read from faultline:northwind (api/service.py).
+FAULTLINE_FIXTURES=1 serves /fixtures/*.json instead, for frontend work without a graph.
+The frontend Vite dev server proxies /api/* to this process.
 """
 
 from __future__ import annotations
 
 import json
+import os
 from pathlib import Path
 
-from fastapi import FastAPI, HTTPException, Query
+from fastapi import APIRouter, FastAPI, Header, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.staticfiles import StaticFiles
+from pydantic import BaseModel
+
+from agent.mcp_tools import mcp
+from api import service, workspaces
+from infra.app_patch.health import health_router
+from infra.app_patch.static_mount import mount_spa
 
 ROOT = Path(__file__).parent.parent
 FIXTURES = ROOT / "fixtures"
+FIXTURE_MODE = os.environ.get("FAULTLINE_FIXTURES") == "1"
 
-app = FastAPI(title="Faultline API", version="0.1.0")
+# MCP tools (CONTRACT §8) share this process, mounted at /mcp (streamable HTTP).
+mcp_app = mcp.http_app(path="/")
+app = FastAPI(title="Faultline API", version="0.2.0", lifespan=mcp_app.lifespan)
 
-# Allow the Vite dev server origin during development.
-# In production, FastAPI serves the built frontend directly.
+# The Vite dev server's origin. In production FastAPI serves the built frontend itself.
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["http://localhost:5173", "http://127.0.0.1:5173"],
@@ -36,99 +38,140 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Health (CONTRACT §9), Dev C's router: /health and /api/health, 503 when FalkorDB is down.
+app.include_router(health_router)
 
-def load_fixture(name: str) -> dict:
-    path = FIXTURES / name
-    if not path.exists():
-        raise HTTPException(status_code=503, detail=f"Fixture {name} not found")
-    return json.loads(path.read_text(encoding="utf-8"))
+api = APIRouter(prefix="/api")
 
 
-# ── Health ────────────────────────────────────────────────────────────────────
-
-@app.get("/api/health")
-def health():
-    return {"ok": True, "graph": "faultline:northwind", "nodes": 0, "edges": 0, "falkor": "down"}
-
-
-# ── Stats ─────────────────────────────────────────────────────────────────────
-
-@app.get("/api/stats")
-def get_stats():
-    return load_fixture("stats.json")
+class ResolveBody(BaseModel):
+    winner_claim_id: str
+    rationale: str
+    resolved_by: str
 
 
-# ── Conflicts ─────────────────────────────────────────────────────────────────
-
-@app.get("/api/conflicts")
-def list_conflicts(
-    status: str | None = Query(default=None),
-    limit: int = Query(default=50, le=200),
-):
-    data = load_fixture("conflicts.json")
-    conflicts = data["conflicts"]
-
-    if status and status != "all":
-        conflicts = [c for c in conflicts if c.get("status") == status]
-
-    # Sort by blast_radius descending (default)
-    conflicts = sorted(conflicts, key=lambda c: c["blast_radius"], reverse=True)
-    conflicts = conflicts[:limit]
-
-    return {
-        "conflicts": conflicts,
-        "total": len(data["conflicts"]),
-        "stats": data.get("stats", {}),
-    }
+class WorkspaceBody(BaseModel):
+    name: str
 
 
-@app.get("/api/conflicts/{conflict_id}")
-def get_conflict(conflict_id: str):
-    # The fixture only covers conflict-01; for others, serve the summary from
-    # the list fixture without a path (frontend handles missing path gracefully).
-    detail_fixture = FIXTURES / f"{conflict_id}.json"
-    if detail_fixture.exists():
-        return json.loads(detail_fixture.read_text(encoding="utf-8"))
-
-    # Fall back: find in conflicts.json and synthesise a minimal response.
-    data = load_fixture("conflicts.json")
-    match = next((c for c in data["conflicts"] if c["id"] == conflict_id), None)
-    if not match:
-        raise HTTPException(status_code=404, detail=f"Conflict {conflict_id!r} not found")
-
-    # Minimal graph path from claims
-    nodes = []
-    edges = []
-    for claim in match.get("claims", []):
-        nodes.append({"id": claim["id"], "label": claim["text"][:60], "type": "claim", "state": claim.get("state")})
-        src = claim.get("source", {})
-        if src.get("doc_id"):
-            if not any(n["id"] == src["doc_id"] for n in nodes):
-                nodes.append({"id": src["doc_id"], "label": src.get("title", src["doc_id"]), "type": "document"})
-            edges.append({"source": src["doc_id"], "target": claim["id"], "type": "ASSERTS"})
-
-    # Add CONTRADICTS edge if both claims present
-    claim_ids = [c["id"] for c in match.get("claims", [])]
-    if len(claim_ids) >= 2:
-        edges.append({"source": claim_ids[0], "target": claim_ids[1], "type": "CONTRADICTS"})
-
-    return {
-        "conflict": match,
-        "path": {"nodes": nodes, "edges": edges},
-    }
+class SourceBody(BaseModel):
+    kind: str
+    location: str
+    token: str | None = None
 
 
-@app.post("/api/conflicts/{conflict_id}/resolve")
-def resolve_conflict(conflict_id: str, body: dict):
-    # In fixture mode, just acknowledge.
-    return {"ok": True, "conflict": {"id": conflict_id, "status": "resolved"}}
+def _errors(fn, *args, **kwargs):
+    try:
+        return fn(*args, **kwargs)
+    except service.NotFound as e:
+        raise HTTPException(status_code=404, detail=str(e)) from e
+    except service.Invalid as e:
+        raise HTTPException(status_code=422, detail=str(e)) from e
+    except workspaces.Conflict as e:
+        raise HTTPException(status_code=409, detail=str(e)) from e
 
 
-# ── Serve built frontend (production) ────────────────────────────────────────
-WEB_DIST = ROOT / "web" / "dist"
-if WEB_DIST.exists():
-    app.mount("/", StaticFiles(directory=str(WEB_DIST), html=True), name="spa")
+def _tenant(workspace: str | None) -> str:
+    """?workspace=<id> on the §9 endpoints (CONTRACT §9b); the default tenant when absent."""
+    if workspace in (None, ""):
+        return "northwind"
+    return _errors(workspaces.require, workspace)["id"]
+
+
+if FIXTURE_MODE:
+
+    def _fixture(name: str) -> dict:
+        path = FIXTURES / name
+        if not path.exists():
+            raise HTTPException(status_code=404, detail=f"fixture {name} not found")
+        return json.loads(path.read_text(encoding="utf-8"))
+
+    @api.get("/stats")
+    def fixture_stats():
+        return _fixture("stats.json")
+
+    @api.get("/conflicts")
+    def fixture_conflicts(status: str | None = None, limit: int = Query(default=50, le=200)):
+        data = _fixture("conflicts.json")
+        rows = [c for c in data["conflicts"] if status in (None, "", "all") or c["status"] == status]
+        rows = sorted(rows, key=lambda c: c["blast_radius"], reverse=True)[:limit]
+        return {"conflicts": rows, "total": len(rows), "stats": data["stats"]}
+
+    @api.get("/conflicts/{conflict_id}")
+    def fixture_conflict(conflict_id: str):
+        # Only conflict-01 has a full fixture; anything else is a 404, never a synthesised path.
+        return _fixture(f"{conflict_id}.json")
+
+else:
+
+    @api.get("/stats")
+    def get_stats(workspace: str | None = None):
+        return service.stats(_tenant(workspace))
+
+    @api.get("/conflicts")
+    def list_conflicts(status: str | None = None, limit: int = Query(default=50, ge=1, le=200),
+                       workspace: str | None = None):
+        return service.list_conflicts(status, limit, tenant=_tenant(workspace))
+
+    @api.get("/conflicts/{conflict_id}")
+    def get_conflict(conflict_id: str, workspace: str | None = None):
+        return _errors(service.get_conflict, conflict_id, tenant=_tenant(workspace))
+
+    @api.post("/conflicts/{conflict_id}/resolve")
+    def resolve_conflict(conflict_id: str, body: ResolveBody, workspace: str | None = None):
+        return _errors(service.resolve, conflict_id, body.winner_claim_id, body.rationale, body.resolved_by,
+                       tenant=_tenant(workspace))
+
+    @api.post("/conflicts/{conflict_id}/draft")
+    def draft_correction(conflict_id: str, workspace: str | None = None):
+        return _errors(service.draft, conflict_id, tenant=_tenant(workspace))
+
+    # Workspaces, sources and audits (CONTRACT §9b)
+    @api.get("/workspaces")
+    def list_workspaces():
+        return workspaces.list_workspaces()
+
+    @api.post("/workspaces")
+    def create_workspace(body: WorkspaceBody):
+        return _errors(workspaces.create_workspace, body.name)
+
+    @api.get("/workspaces/{workspace_id}/sources")
+    def list_sources(workspace_id: str):
+        return _errors(workspaces.list_sources, workspace_id)
+
+    @api.post("/workspaces/{workspace_id}/sources")
+    def add_source(workspace_id: str, body: SourceBody):
+        return _errors(workspaces.add_source, workspace_id, body.kind, body.location, body.token)
+
+    @api.delete("/workspaces/{workspace_id}/sources/{source_id}")
+    def delete_source(workspace_id: str, source_id: str):
+        return _errors(workspaces.delete_source, workspace_id, source_id)
+
+    @api.post("/workspaces/{workspace_id}/audit")
+    def start_audit(workspace_id: str):
+        return _errors(workspaces.start_audit, workspace_id)
+
+    @api.get("/audits/{run_id}")
+    def get_audit(run_id: str):
+        return _errors(workspaces.get_audit, run_id)
+
+    @api.post("/reingest")
+    def reingest(x_reingest_token: str | None = Header(default=None)):
+        expected = os.environ.get("REINGEST_TOKEN")
+        if not expected:
+            raise HTTPException(status_code=503, detail="reingest is disabled: REINGEST_TOKEN is not set")
+        if x_reingest_token != expected:
+            raise HTTPException(status_code=403, detail="X-Reingest-Token is missing or wrong")
+        return {"job_id": service.start_reingest()}
+
+
+app.include_router(api)
+app.mount("/mcp", mcp_app)
+
+# Built frontend with SPA fallback. Registered last so it never shadows an API route.
+mount_spa(app, ROOT / "web" / "dist")
 
 if __name__ == "__main__":
     import uvicorn
+
     uvicorn.run("api.main:app", host="0.0.0.0", port=8000, reload=True)

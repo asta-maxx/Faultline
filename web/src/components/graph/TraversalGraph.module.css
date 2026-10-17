@@ -1,0 +1,51 @@
+.frame {
+  position: relative;
+  display: grid;
+  grid-template-columns: 88px minmax(0, 1fr);
+  min-height: 0;
+  height: 100%;
+  overflow: hidden;
+  background: var(--surface-base);
+}
+
+.gutter {
+  position: relative;
+  border-right: 1px dashed var(--rule);
+}
+
+.bandLabel {
+  position: absolute;
+  top: 0;
+  left: var(--space-6);
+  transform: translateY(-100px); /* placed by the render event */
+  font: 400 12px/16px var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  color: var(--ink-muted);
+  white-space: nowrap;
+}
+
+.canvasWrap {
+  position: relative;
+  min-width: 0;
+  min-height: 0;
+}
+
+.canvas {
+  position: absolute;
+  inset: 0;
+}
+
+/* Band separators: dashed hairlines across gutter and canvas. */
+.separators {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+.separators span {
+  position: absolute;
+  top: 0;
+  transform: translateY(-100px); /* placed by the render event */
+  left: 0;
+  right: 0;
+  border-top: 1px dashed var(--rule);
+}

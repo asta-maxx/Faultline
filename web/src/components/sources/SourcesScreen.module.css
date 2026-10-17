@@ -1,0 +1,135 @@
+.screen {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+}
+
+.head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-6);
+  height: 64px;
+  padding: 0 var(--space-6);
+  border-bottom: 1px solid var(--rule);
+  flex: none;
+}
+
+.actions {
+  display: flex;
+  gap: var(--space-3);
+}
+
+.auditError {
+  padding: var(--space-3) var(--space-6);
+  border-bottom: 1px solid var(--rule);
+  font: 400 13px/20px var(--font-mono);
+  color: var(--state-contradicted);
+}
+
+.running {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-6);
+  border-bottom: 1px solid var(--rule);
+  background: var(--surface-raised);
+  color: var(--state-live);
+}
+.runningWord {
+  font: 400 11px/16px var(--font-mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.meta {
+  font: 400 12px/16px var(--font-mono);
+  color: var(--ink-muted);
+}
+
+.body :global(.notice) {
+  padding: 0;
+}
+
+.body {
+  overflow-y: auto;
+  min-height: 0;
+  padding: var(--space-6);
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+.table th {
+  padding: 0 var(--space-4) var(--space-2) 0;
+  border-bottom: 1px solid var(--rule);
+  text-align: left;
+  font-weight: 400;
+}
+.table th:nth-child(1) {
+  width: 96px;
+}
+.table th:nth-child(3),
+.table th:nth-child(4) {
+  width: 160px;
+}
+.table th:nth-child(5) {
+  width: 140px;
+}
+.table th:nth-child(6) {
+  width: 140px;
+}
+.table td {
+  padding: var(--space-4) var(--space-4) var(--space-4) 0;
+  border-bottom: 1px solid var(--rule);
+  vertical-align: top;
+}
+
+.numCol {
+  text-align: right;
+}
+.table th.numCol {
+  text-align: right;
+  padding-right: var(--space-8);
+}
+.table td.numCol {
+  padding-right: var(--space-8);
+}
+
+.num {
+  font: 400 13px/22px var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  color: var(--ink);
+}
+
+.none {
+  color: var(--ink-muted);
+}
+
+.locationCell {
+  min-width: 0;
+}
+.location {
+  font: 400 13px/22px var(--font-mono);
+  color: var(--ink);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.message {
+  font: 400 13px/20px var(--font-ui);
+  color: var(--ink-muted);
+}
+
+.footLine {
+  margin-top: var(--space-4);
+  font: 400 12px/16px var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  color: var(--ink-muted);
+}
+
+.runLink {
+  margin-left: var(--space-4);
+}

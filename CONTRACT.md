@@ -23,7 +23,7 @@ Built for Graph Hacks 2026 (FalkorDB × WeMakeDevs). Entering Track 03 (Company 
 | Layer | Choice |
 | --- | --- |
 | Agent + API | Python 3.12, FastAPI |
-| Extraction | Graphiti onto FalkorDB |
+| Extraction | Surveyor (`agent/surveyor.py`): constrained JSON extraction written directly onto FalkorDB, no Graphiti, no embeddings |
 | Graph client | `falkordb-py`, raw Cypher, **no ORM** |
 | MCP | FastMCP (same process as API) |
 | Frontend | Vite + React + TypeScript (**not** Next.js) |
@@ -330,6 +330,8 @@ route_owner(conflict_id: str)
 
 ## 9. HTTP API
 
+Every endpoint except `/health` is served under the `/api` prefix (`GET /api/conflicts`, and so on), so the SPA can own the `/conflicts` and `/resolved` routes in the browser. `/health` is served at both `/health` and `/api/health`.
+
 ```
 GET  /health
   -> {"ok": bool, "graph": str, "nodes": int, "edges": int, "falkor": "up"|"down"}
@@ -376,10 +378,14 @@ type Conflict = {
   }[]
   impact: { doc_count: number; system_count: number; systems: string[] }
   owner: { id: string; name: string; role: string } | null
+  // v5, optional: the CONTRADICTS edge between the two claims, null if none
+  judgement?: { method: string; confidence: number; evidence_span: string } | null
+  // v5, optional: the RESOLVED_AS edge, null unless status is "resolved"
+  resolution?: { winner_claim_id: string; rationale: string; resolved_at: number; resolved_by: string } | null
 }
 
 type GraphPath = {
-  nodes: { id: string; label: string; type: string; state?: "live"|"contradicted"|"superseded" }[]
+  nodes: { id: string; label: string; type: string; state?: "live"|"contradicted"|"superseded"; at?: number }[]
   edges: { source: string; target: string; type: string }[]
 }
 
@@ -396,9 +402,69 @@ type Stats = {
 }
 ```
 
-`node.type` in `GraphPath` is the node label lowercased (`claim`, `document`, `decision`, `system`, `person`, `message`, `ticket`). B maps those to icons.
+`node.type` in `GraphPath` is the node label lowercased (`claim`, `entity`, `document`, `decision`, `system`, `person`, `message`, `ticket`). B maps those to icons.
+
+**v5 addition, optional:** a `GraphPath` node may carry `at` (int, epoch seconds): its own §5 date (`Document.updated_at`, `Decision.decided_at`, `Message.sent_at`, `Ticket.closed_at`), and for a `Claim` the date of the source that asserts it. `System`, `Entity` and `Person` have no date in §5 and never carry `at`. The path also includes the claims' `Entity` (with `ABOUT` edges) and the conflict's routed owner (with `OWNS` edges to systems in the path); still capped at 40 nodes.
 
 ---
+
+### 9b. Workspaces, sources and audits (v6)
+
+A workspace is one FalkorDB graph, `faultline:{workspace_id}`: the multigraph is the isolation, there is no tenant property anywhere. `workspace_id` is a slug of the name (`[a-z0-9-]`). No auth, no accounts: a workspace is created and used at once.
+
+Workspace, source and audit records live in one more graph in the same instance, **`faultline:_registry`**. Its labels (`Workspace`, `Source`, `AuditRun`) and edges (`HAS_SOURCE`, `RAN`) exist only there and never appear in a workspace graph; §5 still governs every workspace graph. The registry is not a second database: same FalkorDB, one more graph.
+
+The §9 conflict and stats endpoints take an optional `?workspace=<id>` (default `northwind`).
+
+```
+GET    /api/workspaces                      -> [Workspace]
+POST   /api/workspaces          {name}       -> Workspace            409 if the id exists
+GET    /api/workspaces/{id}/sources         -> [Source]
+POST   /api/workspaces/{id}/sources  {kind, location, token?} -> Source   422 if a folder is missing or outside FAULTLINE_SOURCE_ROOT
+DELETE /api/workspaces/{id}/sources/{source_id} -> {ok: true}
+POST   /api/workspaces/{id}/audit           -> {run_id}             409 if an audit is running, 422 if no readable source
+GET    /api/audits/{run_id}                 -> AuditRun
+```
+
+```ts
+type Workspace = {
+  id: string; name: string; graph: string      // graph = "faultline:{id}"
+  sources: number; documents: number; claims: number
+  conflicts: number                            // open conflicts
+  last_audit: number | null                    // epoch s, end of the latest finished audit
+  latest_run: { run_id: string; status: "running" | "done" | "failed"; started_at: number } | null
+                                               // the most recent audit of any status; open /audit/{run_id} for it
+}
+
+type Source = {
+  id: string; kind: "folder" | "git"; location: string
+  docs: number | null                          // readable files found when scanned; null if never scanned
+  claims: number | null                        // claims extracted from it by the latest audit
+  status: "ready" | "unsupported" | "missing"  // "unsupported": git cloning is not implemented
+  message: string | null                       // plain-language reason for any status other than "ready"
+  has_token: boolean                           // a token was supplied; the token itself is never stored
+  added_at: number; last_read_at: number | null
+}
+
+type AuditRun = {
+  run_id: string; workspace_id: string
+  status: "running" | "done" | "failed"
+  stage: string | null                         // name of the active stage
+  stages: {
+    name: "READING SOURCES" | "EXTRACTING CLAIMS" | "BUILDING GRAPH" | "COLLAPSING CANDIDATES" | "JUDGING PAIRS"
+    state: "pending" | "active" | "done" | "failed"
+    count: number | null; unit: string          // documents, claims, possible pairs, candidate pairs, pairs judged
+    detail: string | null                       // e.g. "202 after prefilter", "20 contradictions"
+    started_at: number | null; ended_at: number | null
+  }[]
+  current: string | null                       // file or pair being processed right now
+  summary: { documents: number; claims: number; pairs_compared: number; judged: number; contradictions: number } | null
+  error: string | null
+  started_at: number; ended_at: number | null
+}
+```
+
+Stage counts: documents read; claims kept; `n·(n−1)/2` possible pairs once the claims are in the graph; pairs sharing an Entity (§7.1); pairs judged. Folder sources read `.md`, `.markdown` and `.txt` files under the folder. A file's document id is its file name without extension when that is unique, its title is the first `#` heading or the file name, `updated_at` is the file's modification time.
 
 ## 10. Fixtures — Dev B starts against these, today
 
