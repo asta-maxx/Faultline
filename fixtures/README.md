@@ -1,6 +1,8 @@
 # Fixtures
 
-Mock API responses in the exact shapes of CONTRACT §9. The frontend builds against these until the live API lands. If the live API disagrees with a fixture, the API is wrong.
+Mock API responses in the exact shapes of CONTRACT §9. The live API is the default; start it with `FAULTLINE_FIXTURES=1` to serve these files instead, for frontend work without a graph. Only three endpoints are served in that mode: `GET /api/stats`, `GET /api/conflicts` and `GET /api/conflicts/{id}` (only `conflict-01` has a detail file; any other id is a 404). If the live API disagrees with a fixture, the API is wrong.
+
+The fixtures carry none of the optional v5 and v7 fields (`judgement`, `resolution`, `precedent`).
 
 | File | Endpoint | Notes |
 | --- | --- | --- |
@@ -11,7 +13,7 @@ Mock API responses in the exact shapes of CONTRACT §9. The frontend builds agai
 
 ## `stats.json` values are placeholders
 
-The numbers in `stats.json`, and the copy embedded in `conflicts.json`, are **not measured**. They sit inside the orders of magnitude in CONTRACT §6 so the UI has realistic widths to lay out: about 10⁶ naive pairs, 10³ collapsed, 10² prefiltered and 10² judged. They replace nothing and prove nothing. They are swapped for measured values once a real corpus has been ingested.
+The numbers in `stats.json`, and the copy embedded in `conflicts.json`, are **not measured**. They sit inside the orders of magnitude in CONTRACT §6 so the UI has realistic widths to lay out: about 10⁶ naive pairs, 10³ collapsed, 10² prefiltered and 10² judged. They replace nothing and prove nothing. They remain placeholders: the measured Northwind numbers (57,291 → 1,666 → 202 → 159 judged → 20 conflicts) come from the live `GET /api/stats`, not from this file.
 
 JSON has no comments, and a `_comment` key would break the exact `Stats` shape, so this note lives here instead.
 

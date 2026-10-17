@@ -1,6 +1,6 @@
 # Railway Deployment Runbook — Faultline
 
-This document specifies the production deployment architecture for the **Faultline** service on [Railway](https://railway.app).
+This document specifies the production deployment architecture for the **Faultline** service on [Railway](https://railway.app). It has not been deployed yet: there is no public URL. The restore steps in section 4 were rehearsed locally (`infra/RUN_LOG.md`).
 
 ---
 
@@ -11,10 +11,12 @@ This document specifies the production deployment architecture for the **Faultli
      │
      ▼ (Public HTTPS)
 ┌────────────────────────────────────────────────────────┐
-│ App Service (Public)                                  │
+│ App Service (Public)                                   │
 │ - Dockerfile: infra/Dockerfile                         │
-│ - FastAPI (api.main:app) + React Vite SPA (/web/dist)   │
-│ - Port: 8000 (mapped to $PORT)                         │
+│ - FastAPI (api.main:app) + React Vite SPA (/web/dist)  │
+│ - MCP tools at /mcp/                                   │
+│ - Listens on $PORT (Railway sets it; default 8000)     │
+│ - Volume: /cache (LLM response cache)                  │
 └────────────────────────────────────────────────────────┘
      │
      ▼ (Railway Private Network: *.railway.internal)
@@ -44,64 +46,60 @@ This document specifies the production deployment architecture for the **Faultli
 3. **Volume Mount**:
    - Mount a Railway Volume at Mount Path: `/var/lib/falkordb/data`.
    - Recommended volume size: 5 GB+.
-4. **Environment Variable Names**:
-   - `FALKOR_PASSWORD` (Optional authentication password).
+4. **Password (optional)**:
+   - Setting a `FALKOR_PASSWORD` variable on this service does nothing by itself: the image does not read it. To require a password, also set a custom start command that passes it, as `infra/docker-compose.yml` does:
+     ```text
+     sh -c 'exec /var/lib/falkordb/bin/run.sh --requirepass "$FALKOR_PASSWORD"'
+     ```
+   - Set the same `FALKOR_PASSWORD` on the app service.
 
 ---
 
 ## 3. App Service Configuration (Public)
 
 ### Service Settings
-1. **Service Type**: Deploy from GitHub Repo (`devc/deploy-all` or `main`).
+1. **Service Type**: Deploy from GitHub Repo, branch `main`.
 2. **Build Settings**:
    - **RAILWAY_DOCKERFILE_PATH**: `infra/Dockerfile`
    - **Build Context**: `/` (repository root)
 3. **Networking**:
    - Generate a Public Domain (e.g. `faultline-production.up.railway.app`).
-   - Target Port: `8000` (mapped to Railway dynamic `$PORT`).
+   - The container listens on `$PORT`, which Railway injects (the image defaults it to `8000`). No port mapping is needed.
    - Healthcheck Path: `/health`
 4. **Volume Mount**:
-   - Mount a volume at Mount Path: `/cache` (for LLM disk cache).
+   - Mount a volume at Mount Path: `/cache`. The image sets `FAULTLINE_CACHE_DIR=/cache`, so the LLM cache lands on the volume and survives redeploys.
 5. **Environment Variable Names (Names Only — No Plaintext Secrets)**:
-   - `FALKOR_URL`
-   - `FALKOR_PASSWORD`
-   - `REINGEST_TOKEN`
+   - `FALKOR_URL` — see below.
+   - `FALKOR_PASSWORD` — only if the FalkorDB service requires one (section 2).
+   - `REINGEST_TOKEN` — enables `POST /api/reingest`; leave unset to keep it disabled (it then returns 503).
    - `GROQ_API_KEY`
    - `GEMINI_API_KEY`
-   - `PORT`
    - `RAILWAY_DOCKERFILE_PATH`
-   - `FAULTLINE_SOURCE_ROOT` — set to `/app/data/out/corpus` on Railway.
-     This is the directory that `api/workspaces.py` (on the `allen/live-pipeline`
-     branch) uses to sandbox folder-based source locations. The Dockerfile
-     generates the corpus at build time into `/app/data/out/`.
+   - `FAULTLINE_SOURCE_ROOT` — set it, for example to `/app/data/out/corpus`. Folder sources added through the UI must sit under this path. **If it is unset, any folder on the server is accepted**, which a public deploy should not allow. The Dockerfile generates the corpus at build time into `/app/data/out/`.
+   - `PORT` is set by Railway; do not override it.
+   - `FAULTLINE_CACHE_DIR` is already `/cache` in the image; set it only to move the cache.
 
 ### Build Notes
-- **Corpus generation**: The Dockerfile runs `python -m data.generate --seed 42 --out data/out`
-  at build time (~0.4 s, stdlib only) because `data/out/` is gitignored. The corpus
-  SHA256 is `0d44f7dbaa0441e4318ceed79c9e6e899ae36f2e6809b2af546fda2f7dedce9c`.
-  No `.dockerignore` is needed since none exists and `data/out/` is created inside
-  the image during build (not copied from host).
-- **Static file serving**: `infra/app_patch/static_mount.py` serves root-level
-  dist files (e.g. `/faultline.svg`) directly and falls back to `index.html` for
-  SPA routes. Path traversal is blocked via `Path.resolve()` + `is_relative_to()`.
+- **Corpus generation**: The Dockerfile runs `python -m data.generate --seed 42 --out data/out` at build time (~0.4 s, stdlib only) because `data/out/` is gitignored. The resulting `corpus.json` has SHA-256 `0d44f7dbaa0441e4318ceed79c9e6e899ae36f2e6809b2af546fda2f7dedce9c`.
+- **Build context**: the root `.dockerignore` keeps `.env*` (except `.env.example`), `cache/`, `data/out/`, `*.rdb`, `web/node_modules`, `web/dist` and other local state out of the build context. The image regenerates `data/out/` itself.
+- **Static file serving**: `infra/app_patch/static_mount.py` serves root-level dist files (e.g. `/faultline.svg`) directly and falls back to `index.html` for SPA routes. Path traversal is blocked via `Path.resolve()` + `is_relative_to()`.
 
 ### Private-Network `FALKOR_URL` Format
-In the App service settings, set `FALKOR_URL` to reference the private FalkorDB service over Railway private network:
-```text
-redis://${FALKOR_PASSWORD:+:$FALKOR_PASSWORD@}falkordb.railway.internal:6379
-```
-Or without password:
+In the App service settings, set `FALKOR_URL` to the plain private address of the FalkorDB service:
 ```text
 redis://falkordb.railway.internal:6379
 ```
+Do not put the password in the URL. When `FALKOR_PASSWORD` is set and the URL carries no credentials, the app adds it itself (`graph/connection.py`).
 
 ---
 
 ## 4. How to Load `dump.rdb` into the Persistent Volume
 
-To pre-load the structural knowledge graph into Railway without running live ingestion during deploy:
+Rule 4: extraction never runs on the demo path. The demo graph ships as an RDB dump of `faultline:northwind` with its claims and conflicts. Restoring it is all the deploy needs: **do not run `data.seed` afterwards**, which would only add the structure again (`--merge`) or wipe the claims (`--reset`).
 
-### Option A: Local Docker Compose Restore Rehearsal (Verified)
+`infra/scripts/dump_graph.sh` calls `redis-cli` without `-a`, so it only works against a FalkorDB without a password. Export the dump before setting one, or add `-a "$FALKOR_PASSWORD"` to its `redis-cli` calls.
+
+### Option A: Local Docker Compose Restore Rehearsal
 1. Export the graph snapshot using `dump_graph.sh`:
    ```bash
    bash infra/scripts/dump_graph.sh data
@@ -119,7 +117,7 @@ To pre-load the structural knowledge graph into Railway without running live ing
    ```bash
    docker compose -f infra/docker-compose.yml up -d
    ```
-5. Confirm counts via `GET /health` (`nodes: 2826, edges: 823, falkor: "up"`).
+5. Confirm counts via `GET /health` (section 5).
 
 ### Option B: Using Railway CLI (Production Deployment)
 1. Export the local graph snapshot using the dump script:
@@ -135,12 +133,10 @@ To pre-load the structural knowledge graph into Railway without running live ing
    railway service restart --service falkordb
    ```
 
-### Option C: Remote One-Time Ingestion
-If volume upload is not permitted by your permissions tier:
-1. Run `data/seed.py` from a machine connected to the private network via Railway CLI:
-   ```bash
-   railway run -s app python -m data.seed --reset --tenant northwind
-   ```
+### Option C: Structure-Only Seed (Fallback)
+`railway run` runs the command **on your machine** with the service's variables injected. Your machine cannot resolve `*.railway.internal`, so `railway run -s app python -m data.seed ...` cannot reach the private FalkorDB service. To seed from outside, you would need a temporary public TCP proxy on the FalkorDB service and a `FALKOR_URL` pointing at it.
+
+Even then, `data.seed` loads only the structural graph (2,826 nodes, 823 edges): no claims, no conflicts, and an empty queue. Prefer Option B.
 
 ---
 
@@ -152,20 +148,21 @@ After both services are up, verify graph health using `curl`:
 curl -f https://<your-app-domain>.up.railway.app/health
 ```
 
-### Expected Response
+### Expected Response (demo RDB restored)
 ```json
 {
   "ok": true,
   "graph": "faultline:northwind",
-  "nodes": 2826,
-  "edges": 823,
+  "nodes": 3264,
+  "edges": 1567,
   "falkor": "up"
 }
 ```
 
-- **HTTP Status Code**: `200 OK` (if FalkorDB is down or unseeded, it returns `503 Service Unavailable`).
-- **Nodes Expected**: `2826` (60 Person + 14 System + 40 Decision + 312 Document + 400 Ticket + 2000 Message).
-- **Edges Expected**: `823` (14 OWNS + 352 AUTHORED + 26 SUPERSEDES + 323 GOVERNS + 108 CITES).
+- **Nodes**: `3264` = 2,826 structural (60 Person + 14 System + 40 Decision + 312 Document + 400 Ticket + 2000 Message) + 339 Claim + 79 Entity + 20 Conflict.
+- **Edges**: `1567` = 823 structural (14 OWNS + 352 AUTHORED + 26 SUPERSEDES + 323 GOVERNS + 108 CITES) + 339 ASSERTS + 339 ABOUT + 26 CONTRADICTS + 40 INVOLVES.
+- **Structure-only seed** (Option C): `nodes: 2826`, `edges: 823`, and the conflict queue is empty.
+- **HTTP status**: `200 OK` whenever FalkorDB answers, including an empty or unseeded graph (`nodes: 0`, `edges: 0`). Only an unreachable FalkorDB returns `503 Service Unavailable` with `"falkor": "down"`.
 
 ---
 
@@ -183,4 +180,4 @@ If a bad deployment or database corruption occurs:
      railway volume upload --service falkordb backup/dump.rdb /var/lib/falkordb/data/dump.rdb
      ```
    - Restart the FalkorDB service.
-   - Verify `/health` returns `nodes: 2826` and `falkor: "up"`.
+   - Verify `/health` returns `nodes: 3264`, `edges: 1567` and `falkor: "up"`.

@@ -203,8 +203,8 @@ def hero(t):
 
 # ---------------------------------------------------------------- stack strip
 def stack(t):
-    items = ["Python 3.12", "FastAPI", "FalkorDB · raw Cypher", "Gemini free tier", "Groq overflow",
-             "Vite + React + TS", "Cytoscape.js", "$0 budget"]
+    items = ["Python 3.12", "FastAPI", "FalkorDB · raw Cypher", "Groq · extraction", "Gemini · judging",
+             "Groq · judge overflow", "Vite + React + TS", "Cytoscape.js", "$0 budget"]
     widths = [tw(s.upper(), 11, mono=True) + 20 for s in items]
     gap = 8
     total = sum(widths) + gap * (len(items) - 1)
@@ -214,8 +214,8 @@ def stack(t):
         c, cw = chip(x, 19, s, t, "ink")
         b.append(c)
         x += cw + gap
-    return frame(w, h, t, "\n".join(b), "Stack", "Python 3.12, FastAPI, FalkorDB with raw Cypher, Gemini free tier, "
-                 "Groq overflow, Vite React TypeScript, Cytoscape.js, zero budget.")
+    return frame(w, h, t, "\n".join(b), "Stack", "Python 3.12, FastAPI, FalkorDB with raw Cypher, Groq free tier for extraction, "
+                 "Gemini free tier for judging with Groq overflow, Vite React TypeScript, Cytoscape.js, zero budget.")
 
 
 # ---------------------------------------------------------------- funnel

@@ -2,7 +2,7 @@
 
 **Your company disagrees with itself. Faultline finds where.**
 
-Faultline is an agent that audits an organisation's documented knowledge for self-contradiction, ranks each conflict by what is downstream of it, and repairs it. Built for Graph Hacks 2026 (FalkorDB × WeMakeDevs), Track 03 Company Brain and Track 02 Agent Memory and Coordination.
+Faultline is an agent that audits an organisation's documented knowledge for self-contradiction, ranks each conflict by what is downstream of it, drafts the correction for the owner, and records the resolution. Built for Graph Hacks 2026 (FalkorDB × WeMakeDevs), Track 03 Company Brain and Track 02 Agent Memory and Coordination.
 
 This page is the visual identity. Build the UI from these tokens, not from screenshots.
 
@@ -40,7 +40,7 @@ The palette is four neutrals and four states. **The four states are the whole se
 
 | Token | Means | In the graph |
 | --- | --- | --- |
-| `state-live` | This is current | the claim the `SUPERSEDES` chain lands on |
+| `state-live` | This is current | the side known to be current: the claim whose cited decision supersedes the other side's, the message or ticket side of an undocumented conflict, the winner of a resolved conflict, or an accepted `Decision` |
 | `state-contradicted` | This is in conflict | an endpoint of a `CONTRADICTS` edge |
 | `state-superseded` | This was retired | a `Decision` with a successor |
 | `state-resolved` | This was settled before | a `Conflict` with a `RESOLVED_AS` edge |

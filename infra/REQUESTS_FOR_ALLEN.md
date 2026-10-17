@@ -5,16 +5,20 @@ Branch: `devc/data-infra`
 
 Per team contract and ownership boundaries, Dev C touches **only** `/data` and `/infra`. Any adjustments or synchronizations needed outside those directories are tracked here.
 
+**Status (2026-10-17): every request below is done.** Each section notes where it landed.
+
 ---
 
-### 1. Python Test Dependency (`pytest`) in `pyproject.toml`
+### 1. Python Test Dependency (`pytest`) in `pyproject.toml` — DONE
+- **Resolution**: `pyproject.toml` has `[dependency-groups] dev = ["pytest>=9.1.1"]`, which `uv sync` installs. `uv run --env-file .env pytest -q` runs all 48 tests; the `--with pytest` workaround is no longer needed.
 - **Current state**: `pyproject.toml` contains runtime dependencies (`fastapi`, `uvicorn`, `falkordb`, `httpx`), but not `pytest`.
 - **Request**: Please add `pytest` to `pyproject.toml` under a dev dependency group (e.g., `[dependency-groups] dev = ["pytest>=8.0"]`).
 - **Dev C non-blocking workaround**: In our test scripts and local environments, we use `uv pip install pytest` into `.venv` or run with `uv run --with pytest pytest ...` so we don't modify your `pyproject.toml` or `uv.lock`.
 
 ---
 
-### 2. Live `/health` and `/api/health` Route Wiring
+### 2. Live `/health` and `/api/health` Route Wiring — DONE
+- **Resolution**: `api/main.py` imports `health_router` from `infra/app_patch/health.py` and includes it. The stub is gone.
 - **Current state**: `api/main.py` has a stubbed `@app.get("/api/health")` returning hardcoded zeros and `"falkor": "down"`. CONTRACT.md §9 specifies `GET /health` returning `{"ok": bool, "graph": str, "nodes": int, "edges": int, "falkor": "up"|"down"}` with HTTP 503 if FalkorDB is down.
 - **Delivery**: We have prepared a drop-in health router in `/infra/app_patch/health.py` that handles both `/health` (CONTRACT §9 root route) and `/api/health` (frontend proxy route).
 - **Exact Paste Location**:
@@ -34,7 +38,8 @@ Per team contract and ownership boundaries, Dev C touches **only** `/data` and `
 
 ---
 
-### 3. SPA Catch-All vs `GET /conflicts/{id}` Routing Analysis & Recommended Fix
+### 3. SPA Catch-All vs `GET /conflicts/{id}` Routing Analysis & Recommended Fix — DONE
+- **Resolution**: every endpoint except `/health` is under `/api` (CONTRACT §9), and `api/main.py` calls `mount_spa(app, ROOT / "web" / "dist")` last, after the API routers and the `/mcp` mount. `infra/app_patch/test_static_mount.py` (12 tests) covers it.
 - **Investigation of `/web` API calls**:
   - `web/src/lib/api.ts` makes all HTTP requests with a `/api/` prefix (e.g., `/api/health`, `/api/conflicts`, `/api/conflicts/${id}`, `/api/stats`, `/api/conflicts/${id}/resolve`).
   - `web/vite.config.ts` proxies `/api` requests to `http://localhost:8000` during development without URL rewrites.
@@ -77,12 +82,14 @@ Per team contract and ownership boundaries, Dev C touches **only** `/data` and `
 
 ---
 
-### 4. Question: CONTRACT.md §2 Stack Table (Graphiti vs Surveyor)
+### 4. Question: CONTRACT.md §2 Stack Table (Graphiti vs Surveyor) — DONE
+- **Resolution**: CONTRACT §2 now reads "Surveyor (`agent/surveyor.py`): constrained JSON extraction written directly onto FalkorDB, no Graphiti, no embeddings".
 - **Question for Allen**: CONTRACT.md §2 currently lists `Extraction | Graphiti onto FalkorDB`. However, `SESSION-NOTES.md` notes that extraction is now implemented directly in `agent/surveyor.py` without Graphiti or vector embeddings. Should CONTRACT.md §2 be updated in the next version to reflect this architectural decision for judges?
 
 ---
 
-### 5. Corpus & Ground Truth Ingest Interface
+### 5. Corpus & Ground Truth Ingest Interface — DONE
+- **Resolution**: `agent/ingest.py` reads `data/out/corpus.json` and the planted message ids from `data/out/ground_truth.json`, runs the Surveyor, then `data.seed --merge`.
 - **Current state**: The Northwind generator (`data.generate`) outputs:
   - Markdown documents under `data/out/corpus/docs/`
   - Markdown ADRs under `data/out/corpus/adr/`
@@ -95,7 +102,8 @@ Per team contract and ownership boundaries, Dev C touches **only** `/data` and `
 
 ---
 
-### 6. Environment Variables (`FALKOR_PASSWORD` and `REINGEST_TOKEN`) in root `.env.example`
+### 6. Environment Variables (`FALKOR_PASSWORD` and `REINGEST_TOKEN`) in root `.env.example` — DONE
+- **Resolution**: both are in the root `.env.example`, and both are now read: `graph/connection.py` adds `FALKOR_PASSWORD` to `FALKOR_URL` when the URL has no credentials, and `POST /api/reingest` checks `REINGEST_TOKEN` (503 when it is unset).
 - **Current state**: The root `.env.example` contains `FALKOR_URL`, `GEMINI_API_KEY`, `GROQ_API_KEY`, and model overrides.
 - **Infra additions**: In `infra/.env.example`, we added:
   - `FALKOR_PASSWORD=`: required for secured FalkorDB instances (used in local compose and private Railway deployments).

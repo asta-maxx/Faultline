@@ -1,58 +1,44 @@
-# Session notes: checkpoint 2026-10-15
+# Session notes: checkpoint 2026-10-17
 
-Where Allen's track stands, what's verified, and how to pick up. Written against CONTRACT.md v4.
+Where the project stands and how to pick up. Written against CONTRACT.md v7. The README's [Status](README.md#status) table carries the detail; this page is the short version.
 
 ## Done and verified
 
 | Area | Evidence |
 | --- | --- |
-| Repo skeleton, uv, Python 3.12 | `uv sync` |
-| Schema (§5.3) | idempotent; all 7 unique constraints OPERATIONAL; duplicate `Claim.id` rejected |
-| Queries §7.1–§7.5 (v4) | `python -m graph.collapse_demo` prints ALL CHECKS PASSED |
-| Stage 3 prefilter | matches a brute-force oracle at floors 0.65 and 0.80 |
-| LLM providers + disk cache | live Groq and Gemini calls; repeats served from `/cache` |
-| Retry/backoff | a 429 waits for the provider's retry delay up to 65 s, otherwise switches to the overflow model; 5xx and timeouts back off |
-| Fixtures (v4 shapes) | strict shape check passes; `stats.json` values are placeholders (see `fixtures/README.md`) |
-| README + themed SVGs | `python .github/readme/build.py` |
+| Schema, queries §7.1–§7.5, prefilter | `uv run --env-file .env python -m graph.collapse_demo` prints ALL CHECKS PASSED |
+| LLM providers + disk cache | Groq extracts, Gemini judges with Groq overflow; every call cached under `cache/` |
+| Surveyor on the Northwind demo slice | 100 sources, 339 claims, 79 entities |
+| Adjudicator + blast radius | 20 open conflicts in `faultline:northwind` |
+| Demo graph | `faultline:northwind`: 3,264 nodes, 1,567 edges (2,826 / 823 structural, plus claims, entities and conflicts) |
+| HTTP API, CONTRACT §9 and §9b | live by default; `?workspace=<id>`; resolve and dismiss return 409 unless the conflict is open; `GET /api/conflicts/{id}` returns `precedent` |
+| Workspaces and folder audits | `faultline:_registry`; an audit cut off by a restart is saved as failed |
+| MCP tools | six §8 tools at `/mcp/`, each with an optional `workspace` argument |
+| Docker image | builds the UI, generates the corpus (`corpus.json` SHA-256 `0d44f7db…`), cache at `/cache`, listens on `$PORT` |
+| Tests | `uv run --env-file .env pytest -q`: 48 passed |
 
-## Surveyor: in progress, not yet passing
+## Measured results
 
-`agent/surveyor.py`, evaluated by `agent/survey_eval.py`. It is written directly, **not via Graphiti**, so no embeddings are needed. Output goes to graph `faultline:minicorpus`, deliberately not `faultline:northwind`, which Dev C's ingest owns.
+- Funnel: 57,291 → 1,666 → 202 → 159 judged → 20 conflicts.
+- 16 of the 20 conflicts correspond to 13 of the 14 planted contradictions, 11 with the correct kind.
+- 4 false positives: 3 from over-merged ticket "Incident" entities, 1 judge error.
+- 12 planted contradictions reach stage 3 as the planted pair itself (claims from both planted source documents). 13 surface, because a conflict can pair one planted-source claim with a distractor document restating the other value. Both numbers are true.
+- The planted set was also the development set, so these numbers are optimistic.
 
-### Run 1: measured, and failed
+## In progress
 
-| | |
-| --- | --- |
-| Sources | 24 (20 docs, 3 messages, 1 ticket); 3 failed with Groq JSON errors (doc-0127, doc-0162, doc-0193) |
-| Claims | 127 raw, 123 kept, 4 dropped (3%), all `span_not_literal` |
-| Entities | 83 from 83 subject refs: **resolution merged nothing** (the model returned an identity map) |
-| Funnel | 7,503 → 84 → 4 → ≤ 4 |
-| Planted contradictions | **0 of 7** reach stage 3: six split across different entities, one side of plant-7 not extracted |
+- Web UI: DRAFT CORRECTION, ASSIGN (opens the drafted ticket for the owner; there is no assignment endpoint), RESOLVE, DISMISS and a precedent line are being wired in this branch.
 
-### Fixes written since: not yet run
+## Open items
 
-1. **Claim-level entity resolution.** Each claim, not each subject name, is assigned to a canonical entity, at the granularity a contradiction would be about. Its `subject_ref` becomes that entity's id, so §5's one-Entity-per-subject still holds. The prompt leans towards merging: over-merging costs stage-2 pairs, under-merging hides contradictions.
-2. **Batched against a running catalogue.** 30 claims per call, each call shown the entities created so far. A single global call can't fit: **Groq's free tier caps `gpt-oss-120b` at 8,000 tokens per minute, and one request counts its completion budget too** (the global call asked for 8,105).
-3. **JSON-failure retry.** A source whose JSON fails validation is retried once with `reasoning_effort: low` and a bounded completion budget.
-4. **Waits up to 65 s.** Per-minute rate limits are waited out rather than switching to the overflow model, which would mix two models' outputs in one run.
-5. **Resolver report.** The evaluator prints how many claims were re-assigned and how many the resolver left unassigned, so another silent no-op would show.
-
-### Resume
-
-```bash
-uv run python -m agent.survey_eval     # .env supplies keys and FALKOR_URL; extraction calls are cached
-```
-
-Still to report: claim drop rate with reasons, entity count, near-duplicate entities, the measured funnel on the corpus, and how many of the 7 planted contradictions survive to stage 3. Each iteration tunes prompts against the same 20 documents, so treat the survival count as optimistic until a held-out corpus exists.
-
-## Findings to act on
-
-1. **The binding constraint is free-tier quota, not latency.**
-   - Gemini `gemini-3.5-flash`: min 1.76 s, median 2.96 s, max 6.38 s over 8 clean calls. Within about 30 requests it also returned a 503 (high demand), a 60 s+ timeout, a per-minute 429, then the daily-quota 429 (~3 h 16 min until reset).
-   - Groq `gpt-oss-120b`: 8,000 tokens per minute, so extracting an 1,800-claim corpus is minutes-to-hours of wall time, not seconds.
-2. **CONTRACT §2 still lists "Extraction | Graphiti onto FalkorDB".** Extraction is written directly; that row needs updating.
+1. Demo video.
+2. Deploy: no public URL yet. `infra/RAILWAY.md` is the runbook; restore the demo RDB, do not seed.
+3. LICENSE: not chosen yet.
+4. Plant 10: the one planted contradiction not surfaced.
+5. The 4 false positives above.
+6. Folder-audit limits: no `Person`, `System` or `Decision` nodes, so blast radius is the document count, conflicts have no owner, `/draft` returns 422, and the `superseded` kind cannot occur. Git sources are saved, not cloned.
 
 ## Local environment
 
-- FalkorDB runs in the `faultline-falkordb` container on **port 6380**, because 6379 belongs to another project's `fusecode-redis`, which we don't touch. `.env` sets `FALKOR_URL=redis://localhost:6380`.
-- Test graphs: `faultline:synthetic` (collapse demo) and `faultline:minicorpus` (Surveyor).
+- FalkorDB runs in the `faultline-falkordb` container on **port 6380**, because 6379 belongs to another project's Redis, which we don't touch. `.env` sets `FALKOR_URL=redis://localhost:6380`.
+- Test graphs: `faultline:synthetic` (collapse demo), plus throwaway graphs created and deleted by the tests.
