@@ -79,8 +79,12 @@ def list_sources(workspace_id: str) -> list[dict]:
                       f"ORDER BY s.added_at, s.id", {"ws": workspace_id})
 
 
-def add_source(workspace_id: str, source: dict) -> dict:
-    sid = "src-" + uuid.uuid4().hex[:10]
+def new_source_id() -> str:
+    return "src-" + uuid.uuid4().hex[:10]
+
+
+def add_source(workspace_id: str, source: dict, sid: str | None = None) -> dict:
+    sid = sid or new_source_id()
     record = {"id": sid, "added_at": int(time.time()), "last_read_at": None, "claims": None, **source}
     _g().query("MATCH (w:Workspace {id: $ws}) CREATE (w)-[:HAS_SOURCE]->(s:Source) SET s = $props",
                {"ws": workspace_id, "props": {k: v for k, v in record.items() if v is not None}})

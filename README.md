@@ -72,7 +72,7 @@ Two of the four stages cost nothing. Only stage 4 calls a model, and every call 
 
 The Northwind demo is one workspace. Others can be created from the UI (`/setup`) or the API ([CONTRACT §9b](CONTRACT.md)). Each workspace is its own graph, `faultline:{workspace_id}`; the list of workspaces, their sources and their audit runs live in one more graph in the same FalkorDB, `faultline:_registry` ([graph/registry.py](graph/registry.py)). `northwind` is registered automatically when its graph exists.
 
-A source is a folder on the machine running the API. Git URLs are saved but not cloned. An audit ([agent/audit.py](agent/audit.py)) reads every `.md`, `.markdown` and `.txt` file under the folders, runs the Surveyor, rebuilds the workspace graph from scratch, then runs the same funnel and Adjudicator. `GET /api/audits/{run_id}` reports each stage as it runs. An audit left running by a server restart is reported, and saved, as failed.
+A source is a **Git repository** or a **folder**. A Git source (https on GitHub, GitLab or Bitbucket) is cloned when it is added: the latest commit only, symlinks as plain files, no LFS, within a time and size limit; a token for a private repository is used for that one clone and never stored ([agent/gitsource.py](agent/gitsource.py)). A folder is read from the disk of the machine running the API, so it only works when you run Faultline yourself: **the hosted demo cannot see your computer and refuses folder sources** (`FAULTLINE_ALLOW_FOLDERS=0`). An audit ([agent/audit.py](agent/audit.py)) fetches each public repository again, then reads every `.md`, `.markdown` and `.txt` file under each source (never following a symlink), runs the Surveyor, rebuilds the workspace graph from scratch, then runs the same funnel and Adjudicator. `GET /api/audits/{run_id}` reports each stage as it runs. An audit left running by a server restart is reported, and saved, as failed.
 
 A folder audit only knows documents and their claims. There are no `Person`, `System` or `Decision` nodes, so:
 
@@ -504,6 +504,10 @@ uv run --env-file .env python -m agent.cache_proof groq:openai/gpt-oss-120b
 | `FAULTLINE_CACHE_DIR` | `<repo>/cache` | LLM response cache; the Docker image sets `/cache` |
 | `FAULTLINE_FIXTURES` | unset | `1` serves `fixtures/` for `/api/stats`, `/api/conflicts` and `/api/conflicts/{id}` |
 | `FAULTLINE_SOURCE_ROOT` | unset | folder sources must sit under this path; unset, any folder on the server is accepted |
+| `FAULTLINE_ALLOW_FOLDERS` | `1` | `0` refuses folder sources: a hosted server cannot see a visitor's computer (the demo sets it) |
+| `FAULTLINE_GIT_HOSTS` | `github.com,gitlab.com,bitbucket.org` | hosts a Git source may be cloned from (https only) |
+| `FAULTLINE_GIT_TIMEOUT_S` / `FAULTLINE_GIT_MAX_MB` | `120` / `200` | limits on one clone: time, and size on disk |
+| `FAULTLINE_CLONE_DIR` | `<repo root>/data/clones` | where Git sources are cloned; gitignored |
 | `REINGEST_TOKEN` | unset | enables `POST /api/reingest` (checked against the `X-Reingest-Token` header); unset, it returns 503 |
 | `FAULTLINE_API` | `http://localhost:8000` | where the Vite dev server proxies `/api/*` (read by `web/vite.config.ts`) |
 
@@ -596,7 +600,7 @@ README visuals are generated, not hand-drawn, from the design system in [`faultl
 | 12 at stage 3, 13 surfaced | Both true | a conflict can surface a planted disagreement through a pair of one planted-source claim and a distractor document that restates the other value; the stage-3 count only counts the planted pair itself |
 | Reconciler (`/resolve`, `/dismiss`, `/draft`, in `api/service.py`) | Built | `/resolve`, `/dismiss`, their 409 when a conflict is not open, and precedent are covered by tests on a throwaway graph; `/draft` not yet called against the live graph |
 | HTTP API | Live | every §9 endpoint reads the graph, `faultline:northwind` unless `?workspace=<id>` names another; the §9b workspace, source and audit endpoints; `FAULTLINE_FIXTURES=1` serves `fixtures/` for three endpoints |
-| Workspaces and folder audits | Built | folder sources only (git URLs saved, not cloned); audit progress kept in `faultline:_registry`; an audit cut off by a restart reads as failed; 4 tests in `api/`. Folder workspaces have no owners, systems or decisions (see [Workspaces and folder audits](#workspaces-and-folder-audits)) |
+| Workspaces and audits | Built | Git sources cloned (https, shallow, limited; tokens never stored) and folder sources (local runs only; off on the hosted demo); audited end to end from a GitHub repository; audit progress kept in `faultline:_registry`; an audit cut off by a restart reads as failed; 4 tests in `api/`. Folder workspaces have no owners, systems or decisions (see [Workspaces and folder audits](#workspaces-and-folder-audits)) |
 | Web UI | Built | Vite + React + Cytoscape app in `web/`, reading the API: conflict queue with evidence and the traversal graph, `/resolved`, `/sources`, `/audit/{run_id}` live progress, and a workspace switcher. DRAFT CORRECTION, ASSIGN (opens the drafted ticket for the owner; there is no assignment endpoint), RESOLVE, DISMISS and a precedent line are being wired in this branch |
 | Onboarding UI | Built | `/setup`: create a workspace, add folder sources, start an audit |
 | Design system | Written | `faultline-design-system/`: tokens (CSS and JSON), mark, type and brand rules, used by `web/` and the README visuals |

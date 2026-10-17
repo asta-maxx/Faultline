@@ -484,7 +484,7 @@ type Source = {
   id: string; kind: "folder" | "git"; location: string
   docs: number | null                          // readable files found when scanned; null if never scanned
   claims: number | null                        // claims extracted from it by the latest audit
-  status: "ready" | "unsupported" | "missing"  // "unsupported": git cloning is not implemented
+  status: "ready" | "unsupported" | "missing"  // "unsupported": only git sources added before v8
   message: string | null                       // plain-language reason for any status other than "ready"
   has_token: boolean                           // a token was supplied; the token itself is never stored
   added_at: number; last_read_at: number | null
@@ -507,6 +507,10 @@ type AuditRun = {
   started_at: number; ended_at: number | null
 }
 ```
+
+**Git sources (v8).** `POST …/sources {kind: "git", location, token?}` clones the repository when it is added: shallow (latest commit), symlinks checked out as plain files, LFS objects not fetched, at most `FAULTLINE_GIT_TIMEOUT_S` seconds (default 120) and `FAULTLINE_GIT_MAX_MB` (default 200) on disk. The URL must be `https://` on a host in `FAULTLINE_GIT_HOSTS` (default `github.com,gitlab.com,bitbucket.org`) and carry no credentials. A failed clone is a 422 with git's own message and no source is created. The token, when given, is passed to that one clone through the environment and never stored or logged; `has_token` records only that one was given. An audit fetches the latest commit again for public repositories; when that fails (a private repository, whose token is gone) it reads the copy cloned when the source was added and says so in the READING SOURCES detail. Nothing in a repository is executed: only `.md`, `.markdown` and `.txt` files are read, and symlinks are never followed.
+
+**Folder sources** read a folder on the machine running the API, so they work only when you run Faultline yourself; a hosted deployment cannot see a visitor's computer. `FAULTLINE_ALLOW_FOLDERS=0` refuses them with a 422 that says so (the hosted demo sets it); `FAULTLINE_SOURCE_ROOT` confines them when allowed.
 
 Stage counts: documents read; claims kept; `n·(n−1)/2` possible pairs once the claims are in the graph; pairs sharing an Entity (§7.1); pairs judged. Folder sources read `.md`, `.markdown` and `.txt` files under the folder. A file's document id is its file name without extension when that is unique, its title is the first `#` heading or the file name, `updated_at` is the file's modification time.
 

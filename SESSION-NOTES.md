@@ -36,7 +36,7 @@ Where the project stands and how to pick up. Written against CONTRACT.md v7. The
 3. LICENSE: not chosen yet.
 4. Plant 10: the one planted contradiction not surfaced.
 5. The 4 false positives above.
-6. Folder-audit limits: no `Person`, `System` or `Decision` nodes, so blast radius is the document count, conflicts have no owner, `/draft` returns 422, and the `superseded` kind cannot occur. Git sources are saved, not cloned.
+6. Folder-audit limits: no `Person`, `System` or `Decision` nodes, so blast radius is the document count, conflicts have no owner, `/draft` returns 422, and the `superseded` kind cannot occur. Git sources are cloned (https, shallow, limited); folder sources only work when you run Faultline yourself and are off on the hosted demo.
 
 ## Local environment
 

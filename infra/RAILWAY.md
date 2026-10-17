@@ -75,7 +75,8 @@ This document specifies the production deployment architecture for the **Faultli
    - `GROQ_API_KEY`
    - `GEMINI_API_KEY`
    - `RAILWAY_DOCKERFILE_PATH`
-   - `FAULTLINE_SOURCE_ROOT` — set it, for example to `/app/data/out/corpus`. Folder sources added through the UI must sit under this path. **If it is unset, any folder on the server is accepted**, which a public deploy should not allow. The Dockerfile generates the corpus at build time into `/app/data/out/`.
+   - `FAULTLINE_ALLOW_FOLDERS=0` — set it. The server cannot see a visitor's computer, so folder sources are refused with a message that says so; visitors add a Git repository instead (https on GitHub, GitLab or Bitbucket, cloned shallow; the image includes `git`). Clones live in `/app/data/clones` and are not kept across redeploys: an audit re-fetches public repositories, and a private one must be added again with its token.
+   - `FAULTLINE_SOURCE_ROOT` — set it as well, for example to `/app/data/out/corpus`. Folder sources added through the UI must sit under this path. **If it is unset, any folder on the server is accepted**, which a public deploy should not allow. The Dockerfile generates the corpus at build time into `/app/data/out/`.
    - `PORT` is set by Railway; do not override it.
    - `FAULTLINE_CACHE_DIR` is already `/cache` in the image; set it only to move the cache.
 

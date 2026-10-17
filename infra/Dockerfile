@@ -25,7 +25,7 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
 
 # Install runtime utilities
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    curl \
+    curl git \
     && rm -rf /var/lib/apt/lists/*
 
 # Install python dependencies
