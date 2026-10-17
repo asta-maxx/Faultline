@@ -1,0 +1,2165 @@
+{
+  "documents": [],
+  "tickets": [
+    {
+      "id": "tkt-0016",
+      "ref": "INC-1016",
+      "title": "Dock gate appointment rescheduled after 45 minute arrival delay (Unit 16)",
+      "text": "Incident report for Depot Kiosk. Automated monitoring alerted on anomaly. Assigned on-call engineer responded. Status is open.",
+      "state": "open",
+      "closed_at": null
+    },
+    {
+      "id": "tkt-0017",
+      "ref": "INC-1017",
+      "title": "Solver timeout during bulk route recalculation (Unit 17)",
+      "text": "Incident report for Carrier Billing. Automated monitoring alerted on anomaly. Assigned on-call engineer responded. Status is in-progress.",
+      "state": "in-progress",
+      "closed_at": null
+    },
+    {
+      "id": "tkt-0018",
+      "ref": "INC-1018",
+      "title": "Cross-border declaration pre-arrival filing validation error (Unit 18)",
+      "text": "Incident report for Customs Gateway. Automated monitoring alerted on anomaly. Assigned on-call engineer responded. Status is closed.",
+      "state": "closed",
+      "closed_at": 1736049600
+    },
+    {
+      "id": "tkt-0019",
+      "ref": "INC-1019",
+      "title": "Missing accessorial fee in carrier EDI transmission (Unit 19)",
+      "text": "Incident report for Fleet Telematics. Automated monitoring alerted on anomaly. Assigned on-call engineer responded. Status is closed.",
+      "state": "closed",
+      "closed_at": 1736069600
+    },
+    {
+      "id": "tkt-0020",
+      "ref": "INC-1020",
+      "title": "Driver app GPS telemetry stream disconnected on interstate 80 (Unit 20)",
+      "text": "Incident report for Fleet Telematics. Automated monitoring alerted on anomaly. Assigned on-call engineer responded. Status is in-progress.",
+      "state": "in-progress",
+      "closed_at": null
+    },
+    {
+      "id": "tkt-0021",
+      "ref": "INC-1021",
+      "title": "Carrier billing invoice dispute window expired without review (Unit 21)",
+      "text": "Incident report for Carrier Billing. Automated monitoring alerted on anomaly. Assigned on-call engineer responded. Status is closed.",
+      "state": "closed",
+      "closed_at": 1736109600
+    },
+    {
+      "id": "tkt-0022",
+      "ref": "INC-1022",
+      "title": "Solver timeout during bulk route recalculation (Unit 22)",
+      "text": "Incident report for Cold Chain Monitor. Automated monitoring alerted on anomaly. Assigned on-call engineer responded. Status is closed.",
+      "state": "closed",
+      "closed_at": 1736129600
+    },
+    {
+      "id": "tkt-0023",
+      "ref": "INC-1023",
+      "title": "Handheld scanner barcode reconciliation failure in aisle 4 (Unit 23)",
+      "text": "Incident report for Driver App. Automated monitoring alerted on anomaly. Assigned on-call engineer responded. Status is closed.",
+      "state": "closed",
+      "closed_at": 1736149600
+    },
+    {
+      "id": "tkt-0024",
+      "ref": "INC-1024",
+      "title": "Cross-border declaration pre-arrival filing validation error (Unit 24)",
+      "text": "Incident report for Notification Engine. Automated monitoring alerted on anomaly. Assigned on-call engineer responded. Status is closed.",
+      "state": "closed",
+      "closed_at": 1736169600
+    },
+    {
+      "id": "tkt-0025",
+      "ref": "INC-1025",
+      "title": "Carrier billing invoice dispute window expired without review (Unit 25)",
+      "text": "Incident report for Fleet Telematics. Automated monitoring alerted on anomaly. Assigned on-call engineer responded. Status is open.",
+      "state": "open",
+      "closed_at": null
+    },
+    {
+      "id": "tkt-0026",
+      "ref": "INC-1026",
+      "title": "Cross-border declaration pre-arrival filing validation error (Unit 26)",
+      "text": "Incident report for Customs Gateway. Automated monitoring alerted on anomaly. Assigned on-call engineer responded. Status is closed.",
+      "state": "closed",
+      "closed_at": 1736209600
+    },
+    {
+      "id": "tkt-0027",
+      "ref": "INC-1027",
+      "title": "Carrier billing invoice dispute window expired without review (Unit 27)",
+      "text": "Incident report for Inventory Service. Automated monitoring alerted on anomaly. Assigned on-call engineer responded. Status is open.",
+      "state": "open",
+      "closed_at": null
+    },
+    {
+      "id": "tkt-0028",
+      "ref": "INC-1028",
+      "title": "Driver app GPS telemetry stream disconnected on interstate 80 (Unit 28)",
+      "text": "Incident report for Cold Chain Monitor. Automated monitoring alerted on anomaly. Assigned on-call engineer responded. Status is closed.",
+      "state": "closed",
+      "closed_at": 1736249600
+    },
+    {
+      "id": "tkt-0029",
+      "ref": "INC-1029",
+      "title": "Replication lag exceeded threshold during morning peak (Unit 29)",
+      "text": "Incident report for Cold Chain Monitor. Automated monitoring alerted on anomaly. Assigned on-call engineer responded. Status is closed.",
+      "state": "closed",
+      "closed_at": 1736269600
+    },
+    {
+      "id": "tkt-0030",
+      "ref": "INC-1030",
+      "title": "Cross-border declaration pre-arrival filing validation error (Unit 30)",
+      "text": "Incident report for Notification Engine. Automated monitoring alerted on anomaly. Assigned on-call engineer responded. Status is closed.",
+      "state": "closed",
+      "closed_at": 1736289600
+    },
+    {
+      "id": "tkt-0031",
+      "ref": "INC-1031",
+      "title": "Handheld scanner barcode reconciliation failure in aisle 4 (Unit 31)",
+      "text": "Incident report for Cold Chain Monitor. Automated monitoring alerted on anomaly. Assigned on-call engineer responded. Status is open.",
+      "state": "open",
+      "closed_at": null
+    },
+    {
+      "id": "tkt-0032",
+      "ref": "INC-1032",
+      "title": "Solver timeout during bulk route recalculation (Unit 32)",
+      "text": "Incident report for Warehouse WMS. Automated monitoring alerted on anomaly. Assigned on-call engineer responded. Status is closed.",
+      "state": "closed",
+      "closed_at": 1736329600
+    },
+    {
+      "id": "tkt-0033",
+      "ref": "INC-1033",
+      "title": "Dock gate appointment rescheduled after 45 minute arrival delay (Unit 33)",
+      "text": "Incident report for Inventory Service. Automated monitoring alerted on anomaly. Assigned on-call engineer responded. Status is closed.",
+      "state": "closed",
+      "closed_at": 1736349600
+    },
+    {
+      "id": "tkt-0034",
+      "ref": "INC-1034",
+      "title": "Replication lag exceeded threshold during morning peak (Unit 34)",
+      "text": "Incident report for Depot Kiosk. Automated monitoring alerted on anomaly. Assigned on-call engineer responded. Status is open.",
+      "state": "open",
+      "closed_at": null
+    },
+    {
+      "id": "tkt-0035",
+      "ref": "INC-1035",
+      "title": "Cold chain secondary probe failed automated CRC checksum (Unit 35)",
+      "text": "Incident report for Depot Kiosk. Automated monitoring alerted on anomaly. Assigned on-call engineer responded. Status is closed.",
+      "state": "closed",
+      "closed_at": 1736389600
+    },
+    {
+      "id": "tkt-0036",
+      "ref": "INC-1036",
+      "title": "Solver timeout during bulk route recalculation (Unit 36)",
+      "text": "Incident report for Payments Gateway. Automated monitoring alerted on anomaly. Assigned on-call engineer responded. Status is in-progress.",
+      "state": "in-progress",
+      "closed_at": null
+    },
+    {
+      "id": "tkt-0037",
+      "ref": "INC-1037",
+      "title": "Missing accessorial fee in carrier EDI transmission (Unit 37)",
+      "text": "Incident report for Warehouse WMS. Automated monitoring alerted on anomaly. Assigned on-call engineer responded. Status is open.",
+      "state": "open",
+      "closed_at": null
+    },
+    {
+      "id": "tkt-0038",
+      "ref": "INC-1038",
+      "title": "Cross-border declaration pre-arrival filing validation error (Unit 38)",
+      "text": "Incident report for Finance Ledger. Automated monitoring alerted on anomaly. Assigned on-call engineer responded. Status is closed.",
+      "state": "closed",
+      "closed_at": 1736449600
+    },
+    {
+      "id": "tkt-0039",
+      "ref": "INC-1039",
+      "title": "Cross-border declaration pre-arrival filing validation error (Unit 39)",
+      "text": "Incident report for Customs Gateway. Automated monitoring alerted on anomaly. Assigned on-call engineer responded. Status is closed.",
+      "state": "closed",
+      "closed_at": 1736469600
+    },
+    {
+      "id": "tkt-0040",
+      "ref": "INC-1040",
+      "title": "Missing accessorial fee in carrier EDI transmission (Unit 40)",
+      "text": "Incident report for Inventory Service. Automated monitoring alerted on anomaly. Assigned on-call engineer responded. Status is closed.",
+      "state": "closed",
+      "closed_at": 1736489600
+    },
+    {
+      "id": "tkt-0041",
+      "ref": "INC-1041",
+      "title": "Replication lag exceeded threshold during morning peak (Unit 41)",
+      "text": "Incident report for Dispatch Router. Automated monitoring alerted on anomaly. Assigned on-call engineer responded. Status is closed.",
+      "state": "closed",
+      "closed_at": 1736509600
+    },
+    {
+      "id": "tkt-0042",
+      "ref": "INC-1042",
+      "title": "Idempotency cache eviction causing duplicate charge warning (Unit 42)",
+      "text": "Incident report for Analytics Pipeline. Automated monitoring alerted on anomaly. Assigned on-call engineer responded. Status is open.",
+      "state": "open",
+      "closed_at": null
+    },
+    {
+      "id": "tkt-0043",
+      "ref": "INC-1043",
+      "title": "Dock gate appointment rescheduled after 45 minute arrival delay (Unit 43)",
+      "text": "Incident report for Analytics Pipeline. Automated monitoring alerted on anomaly. Assigned on-call engineer responded. Status is in-progress.",
+      "state": "in-progress",
+      "closed_at": null
+    },
+    {
+      "id": "tkt-0044",
+      "ref": "INC-1044",
+      "title": "Cross-border declaration pre-arrival filing validation error (Unit 44)",
+      "text": "Incident report for Inventory Service. Automated monitoring alerted on anomaly. Assigned on-call engineer responded. Status is open.",
+      "state": "open",
+      "closed_at": null
+    },
+    {
+      "id": "tkt-0045",
+      "ref": "INC-1045",
+      "title": "Missing accessorial fee in carrier EDI transmission (Unit 45)",
+      "text": "Incident report for Notification Engine. Automated monitoring alerted on anomaly. Assigned on-call engineer responded. Status is in-progress.",
+      "state": "in-progress",
+      "closed_at": null
+    },
+    {
+      "id": "tkt-0046",
+      "ref": "INC-1046",
+      "title": "Missing accessorial fee in carrier EDI transmission (Unit 46)",
+      "text": "Incident report for Tracking API. Automated monitoring alerted on anomaly. Assigned on-call engineer responded. Status is in-progress.",
+      "state": "in-progress",
+      "closed_at": null
+    },
+    {
+      "id": "tkt-0047",
+      "ref": "INC-1047",
+      "title": "Dock gate appointment rescheduled after 45 minute arrival delay (Unit 47)",
+      "text": "Incident report for Fleet Telematics. Automated monitoring alerted on anomaly. Assigned on-call engineer responded. Status is in-progress.",
+      "state": "in-progress",
+      "closed_at": null
+    },
+    {
+      "id": "tkt-0048",
+      "ref": "INC-1048",
+      "title": "Driver app GPS telemetry stream disconnected on interstate 80 (Unit 48)",
+      "text": "Incident report for Inventory Service. Automated monitoring alerted on anomaly. Assigned on-call engineer responded. Status is in-progress.",
+      "state": "in-progress",
+      "closed_at": null
+    },
+    {
+      "id": "tkt-0049",
+      "ref": "INC-1049",
+      "title": "Cross-border declaration pre-arrival filing validation error (Unit 49)",
+      "text": "Incident report for Driver App. Automated monitoring alerted on anomaly. Assigned on-call engineer responded. Status is open.",
+      "state": "open",
+      "closed_at": null
+    },
+    {
+      "id": "tkt-0050",
+      "ref": "INC-1050",
+      "title": "Cold chain secondary probe failed automated CRC checksum (Unit 50)",
+      "text": "Incident report for Finance Ledger. Automated monitoring alerted on anomaly. Assigned on-call engineer responded. Status is closed.",
+      "state": "closed",
+      "closed_at": 1736689600
+    },
+    {
+      "id": "tkt-0051",
+      "ref": "INC-1051",
+      "title": "Dock gate appointment rescheduled after 45 minute arrival delay (Unit 51)",
+      "text": "Incident report for Payments Gateway. Automated monitoring alerted on anomaly. Assigned on-call engineer responded. Status is closed.",
+      "state": "closed",
+      "closed_at": 1736709600
+    },
+    {
+      "id": "tkt-0052",
+      "ref": "INC-1052",
+      "title": "Driver app GPS telemetry stream disconnected on interstate 80 (Unit 52)",
+      "text": "Incident report for Payments Gateway. Automated monitoring alerted on anomaly. Assigned on-call engineer responded. Status is closed.",
+      "state": "closed",
+      "closed_at": 1736729600
+    },
+    {
+      "id": "tkt-0053",
+      "ref": "INC-1053",
+      "title": "Cross-border declaration pre-arrival filing validation error (Unit 53)",
+      "text": "Incident report for Dispatch Router. Automated monitoring alerted on anomaly. Assigned on-call engineer responded. Status is closed.",
+      "state": "closed",
+      "closed_at": 1736749600
+    },
+    {
+      "id": "tkt-0054",
+      "ref": "INC-1054",
+      "title": "Cold chain secondary probe failed automated CRC checksum (Unit 54)",
+      "text": "Incident report for Analytics Pipeline. Automated monitoring alerted on anomaly. Assigned on-call engineer responded. Status is closed.",
+      "state": "closed",
+      "closed_at": 1736769600
+    },
+    {
+      "id": "tkt-0055",
+      "ref": "INC-1055",
+      "title": "Idempotency cache eviction causing duplicate charge warning (Unit 55)",
+      "text": "Incident report for Payments Gateway. Automated monitoring alerted on anomaly. Assigned on-call engineer responded. Status is open.",
+      "state": "open",
+      "closed_at": null
+    },
+    {
+      "id": "tkt-0056",
+      "ref": "INC-1056",
+      "title": "Cold chain secondary probe failed automated CRC checksum (Unit 56)",
+      "text": "Incident report for Dispatch Router. Automated monitoring alerted on anomaly. Assigned on-call engineer responded. Status is open.",
+      "state": "open",
+      "closed_at": null
+    },
+    {
+      "id": "tkt-0057",
+      "ref": "INC-1057",
+      "title": "Dock gate appointment rescheduled after 45 minute arrival delay (Unit 57)",
+      "text": "Incident report for Payments Gateway. Automated monitoring alerted on anomaly. Assigned on-call engineer responded. Status is closed.",
+      "state": "closed",
+      "closed_at": 1736829600
+    },
+    {
+      "id": "tkt-0058",
+      "ref": "INC-1058",
+      "title": "Driver app GPS telemetry stream disconnected on interstate 80 (Unit 58)",
+      "text": "Incident report for Depot Kiosk. Automated monitoring alerted on anomaly. Assigned on-call engineer responded. Status is closed.",
+      "state": "closed",
+      "closed_at": 1736849600
+    },
+    {
+      "id": "tkt-0059",
+      "ref": "INC-1059",
+      "title": "Carrier billing invoice dispute window expired without review (Unit 59)",
+      "text": "Incident report for Finance Ledger. Automated monitoring alerted on anomaly. Assigned on-call engineer responded. Status is closed.",
+      "state": "closed",
+      "closed_at": 1736869600
+    },
+    {
+      "id": "tkt-0060",
+      "ref": "INC-1060",
+      "title": "Cold chain secondary probe failed automated CRC checksum (Unit 60)",
+      "text": "Incident report for Driver App. Automated monitoring alerted on anomaly. Assigned on-call engineer responded. Status is closed.",
+      "state": "closed",
+      "closed_at": 1736889600
+    },
+    {
+      "id": "tkt-0061",
+      "ref": "INC-1061",
+      "title": "Driver app GPS telemetry stream disconnected on interstate 80 (Unit 61)",
+      "text": "Incident report for Inventory Service. Automated monitoring alerted on anomaly. Assigned on-call engineer responded. Status is open.",
+      "state": "open",
+      "closed_at": null
+    },
+    {
+      "id": "tkt-0062",
+      "ref": "INC-1062",
+      "title": "Driver app GPS telemetry stream disconnected on interstate 80 (Unit 62)",
+      "text": "Incident report for Finance Ledger. Automated monitoring alerted on anomaly. Assigned on-call engineer responded. Status is closed.",
+      "state": "closed",
+      "closed_at": 1736929600
+    },
+    {
+      "id": "tkt-0063",
+      "ref": "INC-1063",
+      "title": "Driver app GPS telemetry stream disconnected on interstate 80 (Unit 63)",
+      "text": "Incident report for Analytics Pipeline. Automated monitoring alerted on anomaly. Assigned on-call engineer responded. Status is open.",
+      "state": "open",
+      "closed_at": null
+    },
+    {
+      "id": "tkt-0064",
+      "ref": "INC-1064",
+      "title": "Handheld scanner barcode reconciliation failure in aisle 4 (Unit 64)",
+      "text": "Incident report for Payments Gateway. Automated monitoring alerted on anomaly. Assigned on-call engineer responded. Status is closed.",
+      "state": "closed",
+      "closed_at": 1736969600
+    },
+    {
+      "id": "tkt-0065",
+      "ref": "INC-1065",
+      "title": "Driver app GPS telemetry stream disconnected on interstate 80 (Unit 65)",
+      "text": "Incident report for Fleet Telematics. Automated monitoring alerted on anomaly. Assigned on-call engineer responded. Status is closed.",
+      "state": "closed",
+      "closed_at": 1736989600
+    },
+    {
+      "id": "tkt-0066",
+      "ref": "INC-1066",
+      "title": "Cold chain secondary probe failed automated CRC checksum (Unit 66)",
+      "text": "Incident report for Depot Kiosk. Automated monitoring alerted on anomaly. Assigned on-call engineer responded. Status is in-progress.",
+      "state": "in-progress",
+      "closed_at": null
+    },
+    {
+      "id": "tkt-0067",
+      "ref": "INC-1067",
+      "title": "Cross-border declaration pre-arrival filing validation error (Unit 67)",
+      "text": "Incident report for Payments Gateway. Automated monitoring alerted on anomaly. Assigned on-call engineer responded. Status is in-progress.",
+      "state": "in-progress",
+      "closed_at": null
+    },
+    {
+      "id": "tkt-0068",
+      "ref": "INC-1068",
+      "title": "Cross-border declaration pre-arrival filing validation error (Unit 68)",
+      "text": "Incident report for Carrier Billing. Automated monitoring alerted on anomaly. Assigned on-call engineer responded. Status is closed.",
+      "state": "closed",
+      "closed_at": 1737049600
+    },
+    {
+      "id": "tkt-0069",
+      "ref": "INC-1069",
+      "title": "Solver timeout during bulk route recalculation (Unit 69)",
+      "text": "Incident report for Cold Chain Monitor. Automated monitoring alerted on anomaly. Assigned on-call engineer responded. Status is closed.",
+      "state": "closed",
+      "closed_at": 1737069600
+    },
+    {
+      "id": "tkt-0070",
+      "ref": "INC-1070",
+      "title": "Cross-border declaration pre-arrival filing validation error (Unit 70)",
+      "text": "Incident report for Warehouse WMS. Automated monitoring alerted on anomaly. Assigned on-call engineer responded. Status is open.",
+      "state": "open",
+      "closed_at": null
+    },
+    {
+      "id": "tkt-0071",
+      "ref": "INC-1071",
+      "title": "Carrier billing invoice dispute window expired without review (Unit 71)",
+      "text": "Incident report for Customs Gateway. Automated monitoring alerted on anomaly. Assigned on-call engineer responded. Status is closed.",
+      "state": "closed",
+      "closed_at": 1737109600
+    },
+    {
+      "id": "tkt-0072",
+      "ref": "INC-1072",
+      "title": "Carrier billing invoice dispute window expired without review (Unit 72)",
+      "text": "Incident report for Customs Gateway. Automated monitoring alerted on anomaly. Assigned on-call engineer responded. Status is closed.",
+      "state": "closed",
+      "closed_at": 1737129600
+    },
+    {
+      "id": "tkt-0073",
+      "ref": "INC-1073",
+      "title": "Idempotency cache eviction causing duplicate charge warning (Unit 73)",
+      "text": "Incident report for Dispatch Router. Automated monitoring alerted on anomaly. Assigned on-call engineer responded. Status is closed.",
+      "state": "closed",
+      "closed_at": 1737149600
+    },
+    {
+      "id": "tkt-0074",
+      "ref": "INC-1074",
+      "title": "Replication lag exceeded threshold during morning peak (Unit 74)",
+      "text": "Incident report for Inventory Service. Automated monitoring alerted on anomaly. Assigned on-call engineer responded. Status is closed.",
+      "state": "closed",
+      "closed_at": 1737169600
+    },
+    {
+      "id": "tkt-0075",
+      "ref": "INC-1075",
+      "title": "Missing accessorial fee in carrier EDI transmission (Unit 75)",
+      "text": "Incident report for Warehouse WMS. Automated monitoring alerted on anomaly. Assigned on-call engineer responded. Status is closed.",
+      "state": "closed",
+      "closed_at": 1737189600
+    },
+    {
+      "id": "tkt-0076",
+      "ref": "INC-1076",
+      "title": "Cross-border declaration pre-arrival filing validation error (Unit 76)",
+      "text": "Incident report for Cold Chain Monitor. Automated monitoring alerted on anomaly. Assigned on-call engineer responded. Status is open.",
+      "state": "open",
+      "closed_at": null
+    },
+    {
+      "id": "tkt-0077",
+      "ref": "INC-1077",
+      "title": "Replication lag exceeded threshold during morning peak (Unit 77)",
+      "text": "Incident report for Finance Ledger. Automated monitoring alerted on anomaly. Assigned on-call engineer responded. Status is closed.",
+      "state": "closed",
+      "closed_at": 1737229600
+    },
+    {
+      "id": "tkt-0078",
+      "ref": "INC-1078",
+      "title": "Missing accessorial fee in carrier EDI transmission (Unit 78)",
+      "text": "Incident report for Dispatch Router. Automated monitoring alerted on anomaly. Assigned on-call engineer responded. Status is open.",
+      "state": "open",
+      "closed_at": null
+    },
+    {
+      "id": "tkt-0079",
+      "ref": "INC-1079",
+      "title": "Handheld scanner barcode reconciliation failure in aisle 4 (Unit 79)",
+      "text": "Incident report for Driver App. Automated monitoring alerted on anomaly. Assigned on-call engineer responded. Status is open.",
+      "state": "open",
+      "closed_at": null
+    },
+    {
+      "id": "tkt-0080",
+      "ref": "INC-1080",
+      "title": "Cross-border declaration pre-arrival filing validation error (Unit 80)",
+      "text": "Incident report for Depot Kiosk. Automated monitoring alerted on anomaly. Assigned on-call engineer responded. Status is open.",
+      "state": "open",
+      "closed_at": null
+    },
+    {
+      "id": "tkt-0081",
+      "ref": "INC-1081",
+      "title": "Idempotency cache eviction causing duplicate charge warning (Unit 81)",
+      "text": "Incident report for Customs Gateway. Automated monitoring alerted on anomaly. Assigned on-call engineer responded. Status is closed.",
+      "state": "closed",
+      "closed_at": 1737309600
+    },
+    {
+      "id": "tkt-0082",
+      "ref": "INC-1082",
+      "title": "Idempotency cache eviction causing duplicate charge warning (Unit 82)",
+      "text": "Incident report for Warehouse WMS. Automated monitoring alerted on anomaly. Assigned on-call engineer responded. Status is closed.",
+      "state": "closed",
+      "closed_at": 1737329600
+    },
+    {
+      "id": "tkt-0083",
+      "ref": "INC-1083",
+      "title": "Replication lag exceeded threshold during morning peak (Unit 83)",
+      "text": "Incident report for Payments Gateway. Automated monitoring alerted on anomaly. Assigned on-call engineer responded. Status is open.",
+      "state": "open",
+      "closed_at": null
+    },
+    {
+      "id": "tkt-0084",
+      "ref": "INC-1084",
+      "title": "Solver timeout during bulk route recalculation (Unit 84)",
+      "text": "Incident report for Inventory Service. Automated monitoring alerted on anomaly. Assigned on-call engineer responded. Status is open.",
+      "state": "open",
+      "closed_at": null
+    },
+    {
+      "id": "tkt-0085",
+      "ref": "INC-1085",
+      "title": "Missing accessorial fee in carrier EDI transmission (Unit 85)",
+      "text": "Incident report for Finance Ledger. Automated monitoring alerted on anomaly. Assigned on-call engineer responded. Status is closed.",
+      "state": "closed",
+      "closed_at": 1737389600
+    },
+    {
+      "id": "tkt-0086",
+      "ref": "INC-1086",
+      "title": "Driver app GPS telemetry stream disconnected on interstate 80 (Unit 86)",
+      "text": "Incident report for Analytics Pipeline. Automated monitoring alerted on anomaly. Assigned on-call engineer responded. Status is closed.",
+      "state": "closed",
+      "closed_at": 1737409600
+    },
+    {
+      "id": "tkt-0087",
+      "ref": "INC-1087",
+      "title": "Solver timeout during bulk route recalculation (Unit 87)",
+      "text": "Incident report for Depot Kiosk. Automated monitoring alerted on anomaly. Assigned on-call engineer responded. Status is closed.",
+      "state": "closed",
+      "closed_at": 1737429600
+    },
+    {
+      "id": "tkt-0088",
+      "ref": "INC-1088",
+      "title": "Driver app GPS telemetry stream disconnected on interstate 80 (Unit 88)",
+      "text": "Incident report for Depot Kiosk. Automated monitoring alerted on anomaly. Assigned on-call engineer responded. Status is open.",
+      "state": "open",
+      "closed_at": null
+    },
+    {
+      "id": "tkt-0089",
+      "ref": "INC-1089",
+      "title": "Handheld scanner barcode reconciliation failure in aisle 4 (Unit 89)",
+      "text": "Incident report for Notification Engine. Automated monitoring alerted on anomaly. Assigned on-call engineer responded. Status is closed.",
+      "state": "closed",
+      "closed_at": 1737469600
+    },
+    {
+      "id": "tkt-0090",
+      "ref": "INC-1090",
+      "title": "Handheld scanner barcode reconciliation failure in aisle 4 (Unit 90)",
+      "text": "Incident report for Customs Gateway. Automated monitoring alerted on anomaly. Assigned on-call engineer responded. Status is closed.",
+      "state": "closed",
+      "closed_at": 1737489600
+    },
+    {
+      "id": "tkt-0091",
+      "ref": "INC-1091",
+      "title": "Cold chain secondary probe failed automated CRC checksum (Unit 91)",
+      "text": "Incident report for Fleet Telematics. Automated monitoring alerted on anomaly. Assigned on-call engineer responded. Status is closed.",
+      "state": "closed",
+      "closed_at": 1737509600
+    },
+    {
+      "id": "tkt-0092",
+      "ref": "INC-1092",
+      "title": "Dock gate appointment rescheduled after 45 minute arrival delay (Unit 92)",
+      "text": "Incident report for Carrier Billing. Automated monitoring alerted on anomaly. Assigned on-call engineer responded. Status is closed.",
+      "state": "closed",
+      "closed_at": 1737529600
+    },
+    {
+      "id": "tkt-0093",
+      "ref": "INC-1093",
+      "title": "Idempotency cache eviction causing duplicate charge warning (Unit 93)",
+      "text": "Incident report for Cold Chain Monitor. Automated monitoring alerted on anomaly. Assigned on-call engineer responded. Status is closed.",
+      "state": "closed",
+      "closed_at": 1737549600
+    },
+    {
+      "id": "tkt-0094",
+      "ref": "INC-1094",
+      "title": "Cold chain secondary probe failed automated CRC checksum (Unit 94)",
+      "text": "Incident report for Inventory Service. Automated monitoring alerted on anomaly. Assigned on-call engineer responded. Status is closed.",
+      "state": "closed",
+      "closed_at": 1737569600
+    },
+    {
+      "id": "tkt-0095",
+      "ref": "INC-1095",
+      "title": "Cross-border declaration pre-arrival filing validation error (Unit 95)",
+      "text": "Incident report for Customs Gateway. Automated monitoring alerted on anomaly. Assigned on-call engineer responded. Status is closed.",
+      "state": "closed",
+      "closed_at": 1737589600
+    },
+    {
+      "id": "tkt-0096",
+      "ref": "INC-1096",
+      "title": "Handheld scanner barcode reconciliation failure in aisle 4 (Unit 96)",
+      "text": "Incident report for Driver App. Automated monitoring alerted on anomaly. Assigned on-call engineer responded. Status is closed.",
+      "state": "closed",
+      "closed_at": 1737609600
+    },
+    {
+      "id": "tkt-0097",
+      "ref": "INC-1097",
+      "title": "Handheld scanner barcode reconciliation failure in aisle 4 (Unit 97)",
+      "text": "Incident report for Warehouse WMS. Automated monitoring alerted on anomaly. Assigned on-call engineer responded. Status is closed.",
+      "state": "closed",
+      "closed_at": 1737629600
+    },
+    {
+      "id": "tkt-0098",
+      "ref": "INC-1098",
+      "title": "Driver app GPS telemetry stream disconnected on interstate 80 (Unit 98)",
+      "text": "Incident report for Driver App. Automated monitoring alerted on anomaly. Assigned on-call engineer responded. Status is closed.",
+      "state": "closed",
+      "closed_at": 1737649600
+    },
+    {
+      "id": "tkt-0099",
+      "ref": "INC-1099",
+      "title": "Missing accessorial fee in carrier EDI transmission (Unit 99)",
+      "text": "Incident report for Depot Kiosk. Automated monitoring alerted on anomaly. Assigned on-call engineer responded. Status is closed.",
+      "state": "closed",
+      "closed_at": 1737669600
+    },
+    {
+      "id": "tkt-0100",
+      "ref": "INC-1100",
+      "title": "Carrier billing invoice dispute window expired without review (Unit 100)",
+      "text": "Incident report for Warehouse WMS. Automated monitoring alerted on anomaly. Assigned on-call engineer responded. Status is open.",
+      "state": "open",
+      "closed_at": null
+    },
+    {
+      "id": "tkt-0101",
+      "ref": "INC-1101",
+      "title": "Handheld scanner barcode reconciliation failure in aisle 4 (Unit 101)",
+      "text": "Incident report for Dispatch Router. Automated monitoring alerted on anomaly. Assigned on-call engineer responded. Status is closed.",
+      "state": "closed",
+      "closed_at": 1737709600
+    },
+    {
+      "id": "tkt-0102",
+      "ref": "INC-1102",
+      "title": "Carrier billing invoice dispute window expired without review (Unit 102)",
+      "text": "Incident report for Depot Kiosk. Automated monitoring alerted on anomaly. Assigned on-call engineer responded. Status is open.",
+      "state": "open",
+      "closed_at": null
+    },
+    {
+      "id": "tkt-0103",
+      "ref": "INC-1103",
+      "title": "Carrier billing invoice dispute window expired without review (Unit 103)",
+      "text": "Incident report for Cold Chain Monitor. Automated monitoring alerted on anomaly. Assigned on-call engineer responded. Status is closed.",
+      "state": "closed",
+      "closed_at": 1737749600
+    },
+    {
+      "id": "tkt-0104",
+      "ref": "INC-1104",
+      "title": "Solver timeout during bulk route recalculation (Unit 104)",
+      "text": "Incident report for Finance Ledger. Automated monitoring alerted on anomaly. Assigned on-call engineer responded. Status is closed.",
+      "state": "closed",
+      "closed_at": 1737769600
+    },
+    {
+      "id": "tkt-0105",
+      "ref": "INC-1105",
+      "title": "Dock gate appointment rescheduled after 45 minute arrival delay (Unit 105)",
+      "text": "Incident report for Warehouse WMS. Automated monitoring alerted on anomaly. Assigned on-call engineer responded. Status is in-progress.",
+      "state": "in-progress",
+      "closed_at": null
+    },
+    {
+      "id": "tkt-0106",
+      "ref": "INC-1106",
+      "title": "Idempotency cache eviction causing duplicate charge warning (Unit 106)",
+      "text": "Incident report for Depot Kiosk. Automated monitoring alerted on anomaly. Assigned on-call engineer responded. Status is closed.",
+      "state": "closed",
+      "closed_at": 1737809600
+    },
+    {
+      "id": "tkt-0107",
+      "ref": "INC-1107",
+      "title": "Replication lag exceeded threshold during morning peak (Unit 107)",
+      "text": "Incident report for Driver App. Automated monitoring alerted on anomaly. Assigned on-call engineer responded. Status is closed.",
+      "state": "closed",
+      "closed_at": 1737829600
+    },
+    {
+      "id": "tkt-0108",
+      "ref": "INC-1108",
+      "title": "Cold chain secondary probe failed automated CRC checksum (Unit 108)",
+      "text": "Incident report for Depot Kiosk. Automated monitoring alerted on anomaly. Assigned on-call engineer responded. Status is closed.",
+      "state": "closed",
+      "closed_at": 1737849600
+    },
+    {
+      "id": "tkt-0109",
+      "ref": "INC-1109",
+      "title": "Missing accessorial fee in carrier EDI transmission (Unit 109)",
+      "text": "Incident report for Customs Gateway. Automated monitoring alerted on anomaly. Assigned on-call engineer responded. Status is closed.",
+      "state": "closed",
+      "closed_at": 1737869600
+    },
+    {
+      "id": "tkt-0110",
+      "ref": "INC-1110",
+      "title": "Idempotency cache eviction causing duplicate charge warning (Unit 110)",
+      "text": "Incident report for Inventory Service. Automated monitoring alerted on anomaly. Assigned on-call engineer responded. Status is closed.",
+      "state": "closed",
+      "closed_at": 1737889600
+    },
+    {
+      "id": "tkt-0111",
+      "ref": "INC-1111",
+      "title": "Dock gate appointment rescheduled after 45 minute arrival delay (Unit 111)",
+      "text": "Incident report for Notification Engine. Automated monitoring alerted on anomaly. Assigned on-call engineer responded. Status is closed.",
+      "state": "closed",
+      "closed_at": 1737909600
+    },
+    {
+      "id": "tkt-0112",
+      "ref": "INC-1112",
+      "title": "Replication lag exceeded threshold during morning peak (Unit 112)",
+      "text": "Incident report for Notification Engine. Automated monitoring alerted on anomaly. Assigned on-call engineer responded. Status is open.",
+      "state": "open",
+      "closed_at": null
+    },
+    {
+      "id": "tkt-0113",
+      "ref": "INC-1113",
+      "title": "Idempotency cache eviction causing duplicate charge warning (Unit 113)",
+      "text": "Incident report for Notification Engine. Automated monitoring alerted on anomaly. Assigned on-call engineer responded. Status is closed.",
+      "state": "closed",
+      "closed_at": 1737949600
+    },
+    {
+      "id": "tkt-0114",
+      "ref": "INC-1114",
+      "title": "Cross-border declaration pre-arrival filing validation error (Unit 114)",
+      "text": "Incident report for Dispatch Router. Automated monitoring alerted on anomaly. Assigned on-call engineer responded. Status is open.",
+      "state": "open",
+      "closed_at": null
+    },
+    {
+      "id": "tkt-0115",
+      "ref": "INC-1115",
+      "title": "Dock gate appointment rescheduled after 45 minute arrival delay (Unit 115)",
+      "text": "Incident report for Inventory Service. Automated monitoring alerted on anomaly. Assigned on-call engineer responded. Status is closed.",
+      "state": "closed",
+      "closed_at": 1737989600
+    },
+    {
+      "id": "tkt-0116",
+      "ref": "INC-1116",
+      "title": "Cold chain secondary probe failed automated CRC checksum (Unit 116)",
+      "text": "Incident report for Notification Engine. Automated monitoring alerted on anomaly. Assigned on-call engineer responded. Status is open.",
+      "state": "open",
+      "closed_at": null
+    },
+    {
+      "id": "tkt-0117",
+      "ref": "INC-1117",
+      "title": "Handheld scanner barcode reconciliation failure in aisle 4 (Unit 117)",
+      "text": "Incident report for Tracking API. Automated monitoring alerted on anomaly. Assigned on-call engineer responded. Status is closed.",
+      "state": "closed",
+      "closed_at": 1738029600
+    },
+    {
+      "id": "tkt-0118",
+      "ref": "INC-1118",
+      "title": "Cold chain secondary probe failed automated CRC checksum (Unit 118)",
+      "text": "Incident report for Driver App. Automated monitoring alerted on anomaly. Assigned on-call engineer responded. Status is closed.",
+      "state": "closed",
+      "closed_at": 1738049600
+    },
+    {
+      "id": "tkt-0119",
+      "ref": "INC-1119",
+      "title": "Dock gate appointment rescheduled after 45 minute arrival delay (Unit 119)",
+      "text": "Incident report for Payments Gateway. Automated monitoring alerted on anomaly. Assigned on-call engineer responded. Status is in-progress.",
+      "state": "in-progress",
+      "closed_at": null
+    },
+    {
+      "id": "tkt-0120",
+      "ref": "INC-1120",
+      "title": "Cold chain secondary probe failed automated CRC checksum (Unit 120)",
+      "text": "Incident report for Cold Chain Monitor. Automated monitoring alerted on anomaly. Assigned on-call engineer responded. Status is closed.",
+      "state": "closed",
+      "closed_at": 1738089600
+    },
+    {
+      "id": "tkt-0121",
+      "ref": "INC-1121",
+      "title": "Cold chain secondary probe failed automated CRC checksum (Unit 121)",
+      "text": "Incident report for Cold Chain Monitor. Automated monitoring alerted on anomaly. Assigned on-call engineer responded. Status is open.",
+      "state": "open",
+      "closed_at": null
+    },
+    {
+      "id": "tkt-0122",
+      "ref": "INC-1122",
+      "title": "Cross-border declaration pre-arrival filing validation error (Unit 122)",
+      "text": "Incident report for Analytics Pipeline. Automated monitoring alerted on anomaly. Assigned on-call engineer responded. Status is closed.",
+      "state": "closed",
+      "closed_at": 1738129600
+    },
+    {
+      "id": "tkt-0123",
+      "ref": "INC-1123",
+      "title": "Cold chain secondary probe failed automated CRC checksum (Unit 123)",
+      "text": "Incident report for Driver App. Automated monitoring alerted on anomaly. Assigned on-call engineer responded. Status is open.",
+      "state": "open",
+      "closed_at": null
+    },
+    {
+      "id": "tkt-0124",
+      "ref": "INC-1124",
+      "title": "Replication lag exceeded threshold during morning peak (Unit 124)",
+      "text": "Incident report for Depot Kiosk. Automated monitoring alerted on anomaly. Assigned on-call engineer responded. Status is in-progress.",
+      "state": "in-progress",
+      "closed_at": null
+    },
+    {
+      "id": "tkt-0125",
+      "ref": "INC-1125",
+      "title": "Driver app GPS telemetry stream disconnected on interstate 80 (Unit 125)",
+      "text": "Incident report for Notification Engine. Automated monitoring alerted on anomaly. Assigned on-call engineer responded. Status is closed.",
+      "state": "closed",
+      "closed_at": 1738189600
+    },
+    {
+      "id": "tkt-0126",
+      "ref": "INC-1126",
+      "title": "Replication lag exceeded threshold during morning peak (Unit 126)",
+      "text": "Incident report for Tracking API. Automated monitoring alerted on anomaly. Assigned on-call engineer responded. Status is closed.",
+      "state": "closed",
+      "closed_at": 1738209600
+    },
+    {
+      "id": "tkt-0127",
+      "ref": "INC-1127",
+      "title": "Carrier billing invoice dispute window expired without review (Unit 127)",
+      "text": "Incident report for Finance Ledger. Automated monitoring alerted on anomaly. Assigned on-call engineer responded. Status is closed.",
+      "state": "closed",
+      "closed_at": 1738229600
+    },
+    {
+      "id": "tkt-0128",
+      "ref": "INC-1128",
+      "title": "Solver timeout during bulk route recalculation (Unit 128)",
+      "text": "Incident report for Fleet Telematics. Automated monitoring alerted on anomaly. Assigned on-call engineer responded. Status is in-progress.",
+      "state": "in-progress",
+      "closed_at": null
+    },
+    {
+      "id": "tkt-0129",
+      "ref": "INC-1129",
+      "title": "Driver app GPS telemetry stream disconnected on interstate 80 (Unit 129)",
+      "text": "Incident report for Finance Ledger. Automated monitoring alerted on anomaly. Assigned on-call engineer responded. Status is in-progress.",
+      "state": "in-progress",
+      "closed_at": null
+    },
+    {
+      "id": "tkt-0130",
+      "ref": "INC-1130",
+      "title": "Dock gate appointment rescheduled after 45 minute arrival delay (Unit 130)",
+      "text": "Incident report for Depot Kiosk. Automated monitoring alerted on anomaly. Assigned on-call engineer responded. Status is in-progress.",
+      "state": "in-progress",
+      "closed_at": null
+    },
+    {
+      "id": "tkt-0131",
+      "ref": "INC-1131",
+      "title": "Missing accessorial fee in carrier EDI transmission (Unit 131)",
+      "text": "Incident report for Tracking API. Automated monitoring alerted on anomaly. Assigned on-call engineer responded. Status is closed.",
+      "state": "closed",
+      "closed_at": 1738309600
+    },
+    {
+      "id": "tkt-0132",
+      "ref": "INC-1132",
+      "title": "Idempotency cache eviction causing duplicate charge warning (Unit 132)",
+      "text": "Incident report for Carrier Billing. Automated monitoring alerted on anomaly. Assigned on-call engineer responded. Status is closed.",
+      "state": "closed",
+      "closed_at": 1738329600
+    },
+    {
+      "id": "tkt-0133",
+      "ref": "INC-1133",
+      "title": "Solver timeout during bulk route recalculation (Unit 133)",
+      "text": "Incident report for Warehouse WMS. Automated monitoring alerted on anomaly. Assigned on-call engineer responded. Status is in-progress.",
+      "state": "in-progress",
+      "closed_at": null
+    },
+    {
+      "id": "tkt-0134",
+      "ref": "INC-1134",
+      "title": "Solver timeout during bulk route recalculation (Unit 134)",
+      "text": "Incident report for Dispatch Router. Automated monitoring alerted on anomaly. Assigned on-call engineer responded. Status is closed.",
+      "state": "closed",
+      "closed_at": 1738369600
+    },
+    {
+      "id": "tkt-0135",
+      "ref": "INC-1135",
+      "title": "Missing accessorial fee in carrier EDI transmission (Unit 135)",
+      "text": "Incident report for Analytics Pipeline. Automated monitoring alerted on anomaly. Assigned on-call engineer responded. Status is closed.",
+      "state": "closed",
+      "closed_at": 1738389600
+    },
+    {
+      "id": "tkt-0136",
+      "ref": "INC-1136",
+      "title": "Handheld scanner barcode reconciliation failure in aisle 4 (Unit 136)",
+      "text": "Incident report for Warehouse WMS. Automated monitoring alerted on anomaly. Assigned on-call engineer responded. Status is open.",
+      "state": "open",
+      "closed_at": null
+    },
+    {
+      "id": "tkt-0137",
+      "ref": "INC-1137",
+      "title": "Handheld scanner barcode reconciliation failure in aisle 4 (Unit 137)",
+      "text": "Incident report for Warehouse WMS. Automated monitoring alerted on anomaly. Assigned on-call engineer responded. Status is closed.",
+      "state": "closed",
+      "closed_at": 1738429600
+    },
+    {
+      "id": "tkt-0138",
+      "ref": "INC-1138",
+      "title": "Carrier billing invoice dispute window expired without review (Unit 138)",
+      "text": "Incident report for Fleet Telematics. Automated monitoring alerted on anomaly. Assigned on-call engineer responded. Status is open.",
+      "state": "open",
+      "closed_at": null
+    },
+    {
+      "id": "tkt-0139",
+      "ref": "INC-1139",
+      "title": "Dock gate appointment rescheduled after 45 minute arrival delay (Unit 139)",
+      "text": "Incident report for Inventory Service. Automated monitoring alerted on anomaly. Assigned on-call engineer responded. Status is in-progress.",
+      "state": "in-progress",
+      "closed_at": null
+    },
+    {
+      "id": "tkt-0140",
+      "ref": "INC-1140",
+      "title": "Carrier billing invoice dispute window expired without review (Unit 140)",
+      "text": "Incident report for Payments Gateway. Automated monitoring alerted on anomaly. Assigned on-call engineer responded. Status is closed.",
+      "state": "closed",
+      "closed_at": 1738489600
+    },
+    {
+      "id": "tkt-0141",
+      "ref": "INC-1141",
+      "title": "Idempotency cache eviction causing duplicate charge warning (Unit 141)",
+      "text": "Incident report for Finance Ledger. Automated monitoring alerted on anomaly. Assigned on-call engineer responded. Status is in-progress.",
+      "state": "in-progress",
+      "closed_at": null
+    },
+    {
+      "id": "tkt-0142",
+      "ref": "INC-1142",
+      "title": "Solver timeout during bulk route recalculation (Unit 142)",
+      "text": "Incident report for Dispatch Router. Automated monitoring alerted on anomaly. Assigned on-call engineer responded. Status is closed.",
+      "state": "closed",
+      "closed_at": 1738529600
+    },
+    {
+      "id": "tkt-0143",
+      "ref": "INC-1143",
+      "title": "Dock gate appointment rescheduled after 45 minute arrival delay (Unit 143)",
+      "text": "Incident report for Analytics Pipeline. Automated monitoring alerted on anomaly. Assigned on-call engineer responded. Status is closed.",
+      "state": "closed",
+      "closed_at": 1738549600
+    },
+    {
+      "id": "tkt-0144",
+      "ref": "INC-1144",
+      "title": "Dock gate appointment rescheduled after 45 minute arrival delay (Unit 144)",
+      "text": "Incident report for Depot Kiosk. Automated monitoring alerted on anomaly. Assigned on-call engineer responded. Status is closed.",
+      "state": "closed",
+      "closed_at": 1738569600
+    },
+    {
+      "id": "tkt-0145",
+      "ref": "INC-1145",
+      "title": "Idempotency cache eviction causing duplicate charge warning (Unit 145)",
+      "text": "Incident report for Inventory Service. Automated monitoring alerted on anomaly. Assigned on-call engineer responded. Status is open.",
+      "state": "open",
+      "closed_at": null
+    },
+    {
+      "id": "tkt-0146",
+      "ref": "INC-1146",
+      "title": "Idempotency cache eviction causing duplicate charge warning (Unit 146)",
+      "text": "Incident report for Depot Kiosk. Automated monitoring alerted on anomaly. Assigned on-call engineer responded. Status is closed.",
+      "state": "closed",
+      "closed_at": 1738609600
+    },
+    {
+      "id": "tkt-0147",
+      "ref": "INC-1147",
+      "title": "Carrier billing invoice dispute window expired without review (Unit 147)",
+      "text": "Incident report for Payments Gateway. Automated monitoring alerted on anomaly. Assigned on-call engineer responded. Status is in-progress.",
+      "state": "in-progress",
+      "closed_at": null
+    },
+    {
+      "id": "tkt-0148",
+      "ref": "INC-1148",
+      "title": "Replication lag exceeded threshold during morning peak (Unit 148)",
+      "text": "Incident report for Notification Engine. Automated monitoring alerted on anomaly. Assigned on-call engineer responded. Status is closed.",
+      "state": "closed",
+      "closed_at": 1738649600
+    },
+    {
+      "id": "tkt-0149",
+      "ref": "INC-1149",
+      "title": "Cross-border declaration pre-arrival filing validation error (Unit 149)",
+      "text": "Incident report for Warehouse WMS. Automated monitoring alerted on anomaly. Assigned on-call engineer responded. Status is closed.",
+      "state": "closed",
+      "closed_at": 1738669600
+    },
+    {
+      "id": "tkt-0150",
+      "ref": "INC-1150",
+      "title": "Cold chain secondary probe failed automated CRC checksum (Unit 150)",
+      "text": "Incident report for Warehouse WMS. Automated monitoring alerted on anomaly. Assigned on-call engineer responded. Status is closed.",
+      "state": "closed",
+      "closed_at": 1738689600
+    },
+    {
+      "id": "tkt-0151",
+      "ref": "INC-1151",
+      "title": "Handheld scanner barcode reconciliation failure in aisle 4 (Unit 151)",
+      "text": "Incident report for Inventory Service. Automated monitoring alerted on anomaly. Assigned on-call engineer responded. Status is open.",
+      "state": "open",
+      "closed_at": null
+    },
+    {
+      "id": "tkt-0152",
+      "ref": "INC-1152",
+      "title": "Handheld scanner barcode reconciliation failure in aisle 4 (Unit 152)",
+      "text": "Incident report for Finance Ledger. Automated monitoring alerted on anomaly. Assigned on-call engineer responded. Status is in-progress.",
+      "state": "in-progress",
+      "closed_at": null
+    },
+    {
+      "id": "tkt-0153",
+      "ref": "INC-1153",
+      "title": "Handheld scanner barcode reconciliation failure in aisle 4 (Unit 153)",
+      "text": "Incident report for Tracking API. Automated monitoring alerted on anomaly. Assigned on-call engineer responded. Status is closed.",
+      "state": "closed",
+      "closed_at": 1738749600
+    },
+    {
+      "id": "tkt-0154",
+      "ref": "INC-1154",
+      "title": "Cold chain secondary probe failed automated CRC checksum (Unit 154)",
+      "text": "Incident report for Notification Engine. Automated monitoring alerted on anomaly. Assigned on-call engineer responded. Status is in-progress.",
+      "state": "in-progress",
+      "closed_at": null
+    },
+    {
+      "id": "tkt-0155",
+      "ref": "INC-1155",
+      "title": "Driver app GPS telemetry stream disconnected on interstate 80 (Unit 155)",
+      "text": "Incident report for Notification Engine. Automated monitoring alerted on anomaly. Assigned on-call engineer responded. Status is closed.",
+      "state": "closed",
+      "closed_at": 1738789600
+    },
+    {
+      "id": "tkt-0156",
+      "ref": "INC-1156",
+      "title": "Carrier billing invoice dispute window expired without review (Unit 156)",
+      "text": "Incident report for Driver App. Automated monitoring alerted on anomaly. Assigned on-call engineer responded. Status is open.",
+      "state": "open",
+      "closed_at": null
+    },
+    {
+      "id": "tkt-0157",
+      "ref": "INC-1157",
+      "title": "Driver app GPS telemetry stream disconnected on interstate 80 (Unit 157)",
+      "text": "Incident report for Warehouse WMS. Automated monitoring alerted on anomaly. Assigned on-call engineer responded. Status is closed.",
+      "state": "closed",
+      "closed_at": 1738829600
+    },
+    {
+      "id": "tkt-0158",
+      "ref": "INC-1158",
+      "title": "Missing accessorial fee in carrier EDI transmission (Unit 158)",
+      "text": "Incident report for Inventory Service. Automated monitoring alerted on anomaly. Assigned on-call engineer responded. Status is open.",
+      "state": "open",
+      "closed_at": null
+    },
+    {
+      "id": "tkt-0159",
+      "ref": "INC-1159",
+      "title": "Cold chain secondary probe failed automated CRC checksum (Unit 159)",
+      "text": "Incident report for Driver App. Automated monitoring alerted on anomaly. Assigned on-call engineer responded. Status is closed.",
+      "state": "closed",
+      "closed_at": 1738869600
+    },
+    {
+      "id": "tkt-0160",
+      "ref": "INC-1160",
+      "title": "Cold chain secondary probe failed automated CRC checksum (Unit 160)",
+      "text": "Incident report for Tracking API. Automated monitoring alerted on anomaly. Assigned on-call engineer responded. Status is open.",
+      "state": "open",
+      "closed_at": null
+    },
+    {
+      "id": "tkt-0161",
+      "ref": "INC-1161",
+      "title": "Idempotency cache eviction causing duplicate charge warning (Unit 161)",
+      "text": "Incident report for Driver App. Automated monitoring alerted on anomaly. Assigned on-call engineer responded. Status is in-progress.",
+      "state": "in-progress",
+      "closed_at": null
+    },
+    {
+      "id": "tkt-0162",
+      "ref": "INC-1162",
+      "title": "Idempotency cache eviction causing duplicate charge warning (Unit 162)",
+      "text": "Incident report for Analytics Pipeline. Automated monitoring alerted on anomaly. Assigned on-call engineer responded. Status is closed.",
+      "state": "closed",
+      "closed_at": 1738929600
+    },
+    {
+      "id": "tkt-0163",
+      "ref": "INC-1163",
+      "title": "Driver app GPS telemetry stream disconnected on interstate 80 (Unit 163)",
+      "text": "Incident report for Depot Kiosk. Automated monitoring alerted on anomaly. Assigned on-call engineer responded. Status is open.",
+      "state": "open",
+      "closed_at": null
+    },
+    {
+      "id": "tkt-0164",
+      "ref": "INC-1164",
+      "title": "Idempotency cache eviction causing duplicate charge warning (Unit 164)",
+      "text": "Incident report for Tracking API. Automated monitoring alerted on anomaly. Assigned on-call engineer responded. Status is closed.",
+      "state": "closed",
+      "closed_at": 1738969600
+    },
+    {
+      "id": "tkt-0165",
+      "ref": "INC-1165",
+      "title": "Carrier billing invoice dispute window expired without review (Unit 165)",
+      "text": "Incident report for Inventory Service. Automated monitoring alerted on anomaly. Assigned on-call engineer responded. Status is closed.",
+      "state": "closed",
+      "closed_at": 1738989600
+    },
+    {
+      "id": "tkt-0166",
+      "ref": "INC-1166",
+      "title": "Driver app GPS telemetry stream disconnected on interstate 80 (Unit 166)",
+      "text": "Incident report for Depot Kiosk. Automated monitoring alerted on anomaly. Assigned on-call engineer responded. Status is in-progress.",
+      "state": "in-progress",
+      "closed_at": null
+    },
+    {
+      "id": "tkt-0167",
+      "ref": "INC-1167",
+      "title": "Cross-border declaration pre-arrival filing validation error (Unit 167)",
+      "text": "Incident report for Driver App. Automated monitoring alerted on anomaly. Assigned on-call engineer responded. Status is open.",
+      "state": "open",
+      "closed_at": null
+    },
+    {
+      "id": "tkt-0168",
+      "ref": "INC-1168",
+      "title": "Dock gate appointment rescheduled after 45 minute arrival delay (Unit 168)",
+      "text": "Incident report for Carrier Billing. Automated monitoring alerted on anomaly. Assigned on-call engineer responded. Status is closed.",
+      "state": "closed",
+      "closed_at": 1739049600
+    },
+    {
+      "id": "tkt-0169",
+      "ref": "INC-1169",
+      "title": "Replication lag exceeded threshold during morning peak (Unit 169)",
+      "text": "Incident report for Payments Gateway. Automated monitoring alerted on anomaly. Assigned on-call engineer responded. Status is in-progress.",
+      "state": "in-progress",
+      "closed_at": null
+    },
+    {
+      "id": "tkt-0170",
+      "ref": "INC-1170",
+      "title": "Replication lag exceeded threshold during morning peak (Unit 170)",
+      "text": "Incident report for Inventory Service. Automated monitoring alerted on anomaly. Assigned on-call engineer responded. Status is closed.",
+      "state": "closed",
+      "closed_at": 1739089600
+    },
+    {
+      "id": "tkt-0171",
+      "ref": "INC-1171",
+      "title": "Cross-border declaration pre-arrival filing validation error (Unit 171)",
+      "text": "Incident report for Dispatch Router. Automated monitoring alerted on anomaly. Assigned on-call engineer responded. Status is closed.",
+      "state": "closed",
+      "closed_at": 1739109600
+    },
+    {
+      "id": "tkt-0172",
+      "ref": "INC-1172",
+      "title": "Handheld scanner barcode reconciliation failure in aisle 4 (Unit 172)",
+      "text": "Incident report for Finance Ledger. Automated monitoring alerted on anomaly. Assigned on-call engineer responded. Status is closed.",
+      "state": "closed",
+      "closed_at": 1739129600
+    },
+    {
+      "id": "tkt-0173",
+      "ref": "INC-1173",
+      "title": "Replication lag exceeded threshold during morning peak (Unit 173)",
+      "text": "Incident report for Depot Kiosk. Automated monitoring alerted on anomaly. Assigned on-call engineer responded. Status is closed.",
+      "state": "closed",
+      "closed_at": 1739149600
+    },
+    {
+      "id": "tkt-0174",
+      "ref": "INC-1174",
+      "title": "Cold chain secondary probe failed automated CRC checksum (Unit 174)",
+      "text": "Incident report for Inventory Service. Automated monitoring alerted on anomaly. Assigned on-call engineer responded. Status is in-progress.",
+      "state": "in-progress",
+      "closed_at": null
+    },
+    {
+      "id": "tkt-0175",
+      "ref": "INC-1175",
+      "title": "Carrier billing invoice dispute window expired without review (Unit 175)",
+      "text": "Incident report for Tracking API. Automated monitoring alerted on anomaly. Assigned on-call engineer responded. Status is closed.",
+      "state": "closed",
+      "closed_at": 1739189600
+    },
+    {
+      "id": "tkt-0176",
+      "ref": "INC-1176",
+      "title": "Solver timeout during bulk route recalculation (Unit 176)",
+      "text": "Incident report for Dispatch Router. Automated monitoring alerted on anomaly. Assigned on-call engineer responded. Status is open.",
+      "state": "open",
+      "closed_at": null
+    },
+    {
+      "id": "tkt-0177",
+      "ref": "INC-1177",
+      "title": "Idempotency cache eviction causing duplicate charge warning (Unit 177)",
+      "text": "Incident report for Cold Chain Monitor. Automated monitoring alerted on anomaly. Assigned on-call engineer responded. Status is closed.",
+      "state": "closed",
+      "closed_at": 1739229600
+    },
+    {
+      "id": "tkt-0178",
+      "ref": "INC-1178",
+      "title": "Cross-border declaration pre-arrival filing validation error (Unit 178)",
+      "text": "Incident report for Driver App. Automated monitoring alerted on anomaly. Assigned on-call engineer responded. Status is in-progress.",
+      "state": "in-progress",
+      "closed_at": null
+    },
+    {
+      "id": "tkt-0179",
+      "ref": "INC-1179",
+      "title": "Handheld scanner barcode reconciliation failure in aisle 4 (Unit 179)",
+      "text": "Incident report for Finance Ledger. Automated monitoring alerted on anomaly. Assigned on-call engineer responded. Status is closed.",
+      "state": "closed",
+      "closed_at": 1739269600
+    },
+    {
+      "id": "tkt-0180",
+      "ref": "INC-1180",
+      "title": "Cross-border declaration pre-arrival filing validation error (Unit 180)",
+      "text": "Incident report for Warehouse WMS. Automated monitoring alerted on anomaly. Assigned on-call engineer responded. Status is in-progress.",
+      "state": "in-progress",
+      "closed_at": null
+    },
+    {
+      "id": "tkt-0181",
+      "ref": "INC-1181",
+      "title": "Driver app GPS telemetry stream disconnected on interstate 80 (Unit 181)",
+      "text": "Incident report for Tracking API. Automated monitoring alerted on anomaly. Assigned on-call engineer responded. Status is closed.",
+      "state": "closed",
+      "closed_at": 1739309600
+    },
+    {
+      "id": "tkt-0182",
+      "ref": "INC-1182",
+      "title": "Solver timeout during bulk route recalculation (Unit 182)",
+      "text": "Incident report for Notification Engine. Automated monitoring alerted on anomaly. Assigned on-call engineer responded. Status is closed.",
+      "state": "closed",
+      "closed_at": 1739329600
+    },
+    {
+      "id": "tkt-0183",
+      "ref": "INC-1183",
+      "title": "Dock gate appointment rescheduled after 45 minute arrival delay (Unit 183)",
+      "text": "Incident report for Cold Chain Monitor. Automated monitoring alerted on anomaly. Assigned on-call engineer responded. Status is open.",
+      "state": "open",
+      "closed_at": null
+    },
+    {
+      "id": "tkt-0184",
+      "ref": "INC-1184",
+      "title": "Carrier billing invoice dispute window expired without review (Unit 184)",
+      "text": "Incident report for Analytics Pipeline. Automated monitoring alerted on anomaly. Assigned on-call engineer responded. Status is closed.",
+      "state": "closed",
+      "closed_at": 1739369600
+    },
+    {
+      "id": "tkt-0185",
+      "ref": "INC-1185",
+      "title": "Carrier billing invoice dispute window expired without review (Unit 185)",
+      "text": "Incident report for Fleet Telematics. Automated monitoring alerted on anomaly. Assigned on-call engineer responded. Status is closed.",
+      "state": "closed",
+      "closed_at": 1739389600
+    },
+    {
+      "id": "tkt-0186",
+      "ref": "INC-1186",
+      "title": "Replication lag exceeded threshold during morning peak (Unit 186)",
+      "text": "Incident report for Notification Engine. Automated monitoring alerted on anomaly. Assigned on-call engineer responded. Status is in-progress.",
+      "state": "in-progress",
+      "closed_at": null
+    },
+    {
+      "id": "tkt-0187",
+      "ref": "INC-1187",
+      "title": "Driver app GPS telemetry stream disconnected on interstate 80 (Unit 187)",
+      "text": "Incident report for Warehouse WMS. Automated monitoring alerted on anomaly. Assigned on-call engineer responded. Status is closed.",
+      "state": "closed",
+      "closed_at": 1739429600
+    },
+    {
+      "id": "tkt-0188",
+      "ref": "INC-1188",
+      "title": "Idempotency cache eviction causing duplicate charge warning (Unit 188)",
+      "text": "Incident report for Driver App. Automated monitoring alerted on anomaly. Assigned on-call engineer responded. Status is open.",
+      "state": "open",
+      "closed_at": null
+    }
+  ],
+  "messages": [
+    {
+      "id": "msg-0000906",
+      "channel": "#fleet-safety",
+      "sent_at": 1736776800,
+      "text": "database snapshot for Customs Gateway finished in 14 seconds"
+    },
+    {
+      "id": "msg-0000919",
+      "channel": "#warehouse-ops",
+      "sent_at": 1736792400,
+      "text": "database snapshot for Analytics Pipeline finished in 14 seconds"
+    },
+    {
+      "id": "msg-0000926",
+      "channel": "#dispatch-oncall",
+      "sent_at": 1736800800,
+      "text": "database snapshot for Carrier Billing finished in 14 seconds"
+    },
+    {
+      "id": "msg-0000931",
+      "channel": "#cold-chain-ops",
+      "sent_at": 1736806800,
+      "text": "database snapshot for Finance Ledger finished in 14 seconds"
+    },
+    {
+      "id": "msg-0000936",
+      "channel": "#architecture-decisions",
+      "sent_at": 1736812800,
+      "text": "database snapshot for Tracking API finished in 14 seconds"
+    },
+    {
+      "id": "msg-0000955",
+      "channel": "#customs-brokerage",
+      "sent_at": 1736835600,
+      "text": "database snapshot for Warehouse WMS finished in 14 seconds"
+    },
+    {
+      "id": "msg-0000973",
+      "channel": "#fleet-safety",
+      "sent_at": 1736857200,
+      "text": "database snapshot for Driver App finished in 14 seconds"
+    },
+    {
+      "id": "msg-0000982",
+      "channel": "#payments",
+      "sent_at": 1736868000,
+      "text": "database snapshot for Inventory Service finished in 14 seconds"
+    },
+    {
+      "id": "msg-0000998",
+      "channel": "#dispatch-oncall",
+      "sent_at": 1736887200,
+      "text": "database snapshot for Inventory Service finished in 14 seconds"
+    },
+    {
+      "id": "msg-0001008",
+      "channel": "#architecture-decisions",
+      "sent_at": 1736899200,
+      "text": "database snapshot for Driver App finished in 14 seconds"
+    },
+    {
+      "id": "msg-0001011",
+      "channel": "#architecture-decisions",
+      "sent_at": 1736902800,
+      "text": "database snapshot for Tracking API finished in 14 seconds"
+    },
+    {
+      "id": "msg-0001015",
+      "channel": "#warehouse-ops",
+      "sent_at": 1736907600,
+      "text": "database snapshot for Finance Ledger finished in 14 seconds"
+    },
+    {
+      "id": "msg-0001032",
+      "channel": "#dispatch-oncall",
+      "sent_at": 1736928000,
+      "text": "database snapshot for Inventory Service finished in 14 seconds"
+    },
+    {
+      "id": "msg-0001037",
+      "channel": "#customs-brokerage",
+      "sent_at": 1736934000,
+      "text": "database snapshot for Warehouse WMS finished in 14 seconds"
+    },
+    {
+      "id": "msg-0001039",
+      "channel": "#fleet-safety",
+      "sent_at": 1736936400,
+      "text": "database snapshot for Inventory Service finished in 14 seconds"
+    },
+    {
+      "id": "msg-0001041",
+      "channel": "#infra",
+      "sent_at": 1736938800,
+      "text": "database snapshot for Depot Kiosk finished in 14 seconds"
+    },
+    {
+      "id": "msg-0001045",
+      "channel": "#warehouse-ops",
+      "sent_at": 1736943600,
+      "text": "database snapshot for Customs Gateway finished in 14 seconds"
+    },
+    {
+      "id": "msg-0001050",
+      "channel": "#cold-chain-ops",
+      "sent_at": 1736949600,
+      "text": "database snapshot for Customs Gateway finished in 14 seconds"
+    },
+    {
+      "id": "msg-0001051",
+      "channel": "#fleet-safety",
+      "sent_at": 1736950800,
+      "text": "database snapshot for Notification Engine finished in 14 seconds"
+    },
+    {
+      "id": "msg-0001055",
+      "channel": "#oncall",
+      "sent_at": 1736955600,
+      "text": "database snapshot for Finance Ledger finished in 14 seconds"
+    },
+    {
+      "id": "msg-0001058",
+      "channel": "#infra",
+      "sent_at": 1736959200,
+      "text": "database snapshot for Fleet Telematics finished in 14 seconds"
+    },
+    {
+      "id": "msg-0001067",
+      "channel": "#fleet-safety",
+      "sent_at": 1736970000,
+      "text": "database snapshot for Cold Chain Monitor finished in 14 seconds"
+    },
+    {
+      "id": "msg-0001069",
+      "channel": "#customer-escalations",
+      "sent_at": 1736972400,
+      "text": "database snapshot for Fleet Telematics finished in 14 seconds"
+    },
+    {
+      "id": "msg-0001070",
+      "channel": "#architecture-decisions",
+      "sent_at": 1736973600,
+      "text": "database snapshot for Payments Gateway finished in 14 seconds"
+    },
+    {
+      "id": "msg-0001075",
+      "channel": "#infra",
+      "sent_at": 1736979600,
+      "text": "database snapshot for Warehouse WMS finished in 14 seconds"
+    },
+    {
+      "id": "msg-0001082",
+      "channel": "#dispatch-oncall",
+      "sent_at": 1736988000,
+      "text": "database snapshot for Payments Gateway finished in 14 seconds"
+    },
+    {
+      "id": "msg-0001085",
+      "channel": "#payments",
+      "sent_at": 1736991600,
+      "text": "database snapshot for Payments Gateway finished in 14 seconds"
+    },
+    {
+      "id": "msg-0001096",
+      "channel": "#cold-chain-ops",
+      "sent_at": 1737004800,
+      "text": "database snapshot for Fleet Telematics finished in 14 seconds"
+    },
+    {
+      "id": "msg-0001098",
+      "channel": "#payments",
+      "sent_at": 1737007200,
+      "text": "database snapshot for Dispatch Router finished in 14 seconds"
+    },
+    {
+      "id": "msg-0001117",
+      "channel": "#oncall",
+      "sent_at": 1737030000,
+      "text": "database snapshot for Driver App finished in 14 seconds"
+    },
+    {
+      "id": "msg-0001123",
+      "channel": "#payments",
+      "sent_at": 1737037200,
+      "text": "database snapshot for Fleet Telematics finished in 14 seconds"
+    },
+    {
+      "id": "msg-0001132",
+      "channel": "#dispatch-oncall",
+      "sent_at": 1737048000,
+      "text": "database snapshot for Analytics Pipeline finished in 14 seconds"
+    },
+    {
+      "id": "msg-0001143",
+      "channel": "#customs-brokerage",
+      "sent_at": 1737061200,
+      "text": "database snapshot for Payments Gateway finished in 14 seconds"
+    },
+    {
+      "id": "msg-0001148",
+      "channel": "#oncall",
+      "sent_at": 1737067200,
+      "text": "database snapshot for Dispatch Router finished in 14 seconds"
+    },
+    {
+      "id": "msg-0001150",
+      "channel": "#cold-chain-ops",
+      "sent_at": 1737069600,
+      "text": "database snapshot for Depot Kiosk finished in 14 seconds"
+    },
+    {
+      "id": "msg-0001168",
+      "channel": "#architecture-decisions",
+      "sent_at": 1737091200,
+      "text": "database snapshot for Cold Chain Monitor finished in 14 seconds"
+    },
+    {
+      "id": "msg-0001169",
+      "channel": "#payments",
+      "sent_at": 1737092400,
+      "text": "database snapshot for Depot Kiosk finished in 14 seconds"
+    },
+    {
+      "id": "msg-0001189",
+      "channel": "#cold-chain-ops",
+      "sent_at": 1737116400,
+      "text": "database snapshot for Inventory Service finished in 14 seconds"
+    },
+    {
+      "id": "msg-0001206",
+      "channel": "#customer-escalations",
+      "sent_at": 1737136800,
+      "text": "database snapshot for Tracking API finished in 14 seconds"
+    },
+    {
+      "id": "msg-0001207",
+      "channel": "#oncall",
+      "sent_at": 1737138000,
+      "text": "database snapshot for Driver App finished in 14 seconds"
+    },
+    {
+      "id": "msg-0001210",
+      "channel": "#payments",
+      "sent_at": 1737141600,
+      "text": "database snapshot for Fleet Telematics finished in 14 seconds"
+    },
+    {
+      "id": "msg-0001214",
+      "channel": "#warehouse-ops",
+      "sent_at": 1737146400,
+      "text": "database snapshot for Dispatch Router finished in 14 seconds"
+    },
+    {
+      "id": "msg-0001222",
+      "channel": "#customer-escalations",
+      "sent_at": 1737156000,
+      "text": "database snapshot for Tracking API finished in 14 seconds"
+    },
+    {
+      "id": "msg-0001227",
+      "channel": "#dispatch-oncall",
+      "sent_at": 1737162000,
+      "text": "database snapshot for Fleet Telematics finished in 14 seconds"
+    },
+    {
+      "id": "msg-0001267",
+      "channel": "#oncall",
+      "sent_at": 1737210000,
+      "text": "database snapshot for Cold Chain Monitor finished in 14 seconds"
+    },
+    {
+      "id": "msg-0001274",
+      "channel": "#oncall",
+      "sent_at": 1737218400,
+      "text": "database snapshot for Driver App finished in 14 seconds"
+    },
+    {
+      "id": "msg-0001275",
+      "channel": "#customer-escalations",
+      "sent_at": 1737219600,
+      "text": "database snapshot for Notification Engine finished in 14 seconds"
+    },
+    {
+      "id": "msg-0001282",
+      "channel": "#customs-brokerage",
+      "sent_at": 1737228000,
+      "text": "database snapshot for Warehouse WMS finished in 14 seconds"
+    },
+    {
+      "id": "msg-0001285",
+      "channel": "#warehouse-ops",
+      "sent_at": 1737231600,
+      "text": "database snapshot for Notification Engine finished in 14 seconds"
+    },
+    {
+      "id": "msg-0001289",
+      "channel": "#dispatch-oncall",
+      "sent_at": 1737236400,
+      "text": "database snapshot for Warehouse WMS finished in 14 seconds"
+    },
+    {
+      "id": "msg-0001292",
+      "channel": "#payments",
+      "sent_at": 1737240000,
+      "text": "database snapshot for Analytics Pipeline finished in 14 seconds"
+    },
+    {
+      "id": "msg-0001297",
+      "channel": "#warehouse-ops",
+      "sent_at": 1737246000,
+      "text": "database snapshot for Driver App finished in 14 seconds"
+    },
+    {
+      "id": "msg-0001301",
+      "channel": "#warehouse-ops",
+      "sent_at": 1737250800,
+      "text": "database snapshot for Tracking API finished in 14 seconds"
+    },
+    {
+      "id": "msg-0001318",
+      "channel": "#fleet-safety",
+      "sent_at": 1737271200,
+      "text": "database snapshot for Warehouse WMS finished in 14 seconds"
+    },
+    {
+      "id": "msg-0001322",
+      "channel": "#dispatch-oncall",
+      "sent_at": 1737276000,
+      "text": "database snapshot for Notification Engine finished in 14 seconds"
+    },
+    {
+      "id": "msg-0001325",
+      "channel": "#fleet-safety",
+      "sent_at": 1737279600,
+      "text": "database snapshot for Inventory Service finished in 14 seconds"
+    },
+    {
+      "id": "msg-0001344",
+      "channel": "#architecture-decisions",
+      "sent_at": 1737302400,
+      "text": "database snapshot for Warehouse WMS finished in 14 seconds"
+    },
+    {
+      "id": "msg-0001348",
+      "channel": "#architecture-decisions",
+      "sent_at": 1737307200,
+      "text": "database snapshot for Fleet Telematics finished in 14 seconds"
+    },
+    {
+      "id": "msg-0001349",
+      "channel": "#oncall",
+      "sent_at": 1737308400,
+      "text": "database snapshot for Customs Gateway finished in 14 seconds"
+    },
+    {
+      "id": "msg-0001357",
+      "channel": "#fleet-safety",
+      "sent_at": 1737318000,
+      "text": "database snapshot for Finance Ledger finished in 14 seconds"
+    },
+    {
+      "id": "msg-0001359",
+      "channel": "#infra",
+      "sent_at": 1737320400,
+      "text": "database snapshot for Tracking API finished in 14 seconds"
+    },
+    {
+      "id": "msg-0001374",
+      "channel": "#warehouse-ops",
+      "sent_at": 1737338400,
+      "text": "database snapshot for Finance Ledger finished in 14 seconds"
+    },
+    {
+      "id": "msg-0001379",
+      "channel": "#architecture-decisions",
+      "sent_at": 1737344400,
+      "text": "database snapshot for Cold Chain Monitor finished in 14 seconds"
+    },
+    {
+      "id": "msg-0001386",
+      "channel": "#oncall",
+      "sent_at": 1737352800,
+      "text": "database snapshot for Driver App finished in 14 seconds"
+    },
+    {
+      "id": "msg-0001388",
+      "channel": "#payments",
+      "sent_at": 1737355200,
+      "text": "database snapshot for Warehouse WMS finished in 14 seconds"
+    },
+    {
+      "id": "msg-0001390",
+      "channel": "#oncall",
+      "sent_at": 1737357600,
+      "text": "database snapshot for Cold Chain Monitor finished in 14 seconds"
+    },
+    {
+      "id": "msg-0001391",
+      "channel": "#cold-chain-ops",
+      "sent_at": 1737358800,
+      "text": "database snapshot for Driver App finished in 14 seconds"
+    },
+    {
+      "id": "msg-0001396",
+      "channel": "#customer-escalations",
+      "sent_at": 1737364800,
+      "text": "database snapshot for Analytics Pipeline finished in 14 seconds"
+    },
+    {
+      "id": "msg-0001397",
+      "channel": "#payments",
+      "sent_at": 1737366000,
+      "text": "database snapshot for Tracking API finished in 14 seconds"
+    },
+    {
+      "id": "msg-0001411",
+      "channel": "#infra",
+      "sent_at": 1737382800,
+      "text": "database snapshot for Tracking API finished in 14 seconds"
+    },
+    {
+      "id": "msg-0001418",
+      "channel": "#customer-escalations",
+      "sent_at": 1737391200,
+      "text": "database snapshot for Cold Chain Monitor finished in 14 seconds"
+    },
+    {
+      "id": "msg-0001427",
+      "channel": "#customs-brokerage",
+      "sent_at": 1737402000,
+      "text": "database snapshot for Driver App finished in 14 seconds"
+    },
+    {
+      "id": "msg-0001443",
+      "channel": "#infra",
+      "sent_at": 1737421200,
+      "text": "database snapshot for Tracking API finished in 14 seconds"
+    },
+    {
+      "id": "msg-0001476",
+      "channel": "#payments",
+      "sent_at": 1737460800,
+      "text": "database snapshot for Carrier Billing finished in 14 seconds"
+    },
+    {
+      "id": "msg-0001492",
+      "channel": "#oncall",
+      "sent_at": 1737480000,
+      "text": "database snapshot for Finance Ledger finished in 14 seconds"
+    },
+    {
+      "id": "msg-0001500",
+      "channel": "#payments",
+      "sent_at": 1737489600,
+      "text": "database snapshot for Depot Kiosk finished in 14 seconds"
+    },
+    {
+      "id": "msg-0001511",
+      "channel": "#customs-brokerage",
+      "sent_at": 1737502800,
+      "text": "database snapshot for Fleet Telematics finished in 14 seconds"
+    },
+    {
+      "id": "msg-0001514",
+      "channel": "#payments",
+      "sent_at": 1737506400,
+      "text": "database snapshot for Cold Chain Monitor finished in 14 seconds"
+    },
+    {
+      "id": "msg-0001516",
+      "channel": "#oncall",
+      "sent_at": 1737508800,
+      "text": "database snapshot for Inventory Service finished in 14 seconds"
+    },
+    {
+      "id": "msg-0001517",
+      "channel": "#warehouse-ops",
+      "sent_at": 1737510000,
+      "text": "database snapshot for Analytics Pipeline finished in 14 seconds"
+    },
+    {
+      "id": "msg-0001528",
+      "channel": "#fleet-safety",
+      "sent_at": 1737523200,
+      "text": "database snapshot for Analytics Pipeline finished in 14 seconds"
+    },
+    {
+      "id": "msg-0001531",
+      "channel": "#warehouse-ops",
+      "sent_at": 1737526800,
+      "text": "database snapshot for Analytics Pipeline finished in 14 seconds"
+    },
+    {
+      "id": "msg-0001532",
+      "channel": "#dispatch-oncall",
+      "sent_at": 1737528000,
+      "text": "database snapshot for Dispatch Router finished in 14 seconds"
+    },
+    {
+      "id": "msg-0001537",
+      "channel": "#fleet-safety",
+      "sent_at": 1737534000,
+      "text": "database snapshot for Finance Ledger finished in 14 seconds"
+    },
+    {
+      "id": "msg-0001539",
+      "channel": "#fleet-safety",
+      "sent_at": 1737536400,
+      "text": "database snapshot for Cold Chain Monitor finished in 14 seconds"
+    },
+    {
+      "id": "msg-0001546",
+      "channel": "#payments",
+      "sent_at": 1737544800,
+      "text": "database snapshot for Warehouse WMS finished in 14 seconds"
+    },
+    {
+      "id": "msg-0001562",
+      "channel": "#dispatch-oncall",
+      "sent_at": 1737564000,
+      "text": "database snapshot for Fleet Telematics finished in 14 seconds"
+    },
+    {
+      "id": "msg-0001587",
+      "channel": "#customer-escalations",
+      "sent_at": 1737594000,
+      "text": "database snapshot for Payments Gateway finished in 14 seconds"
+    },
+    {
+      "id": "msg-0001590",
+      "channel": "#oncall",
+      "sent_at": 1737597600,
+      "text": "database snapshot for Depot Kiosk finished in 14 seconds"
+    },
+    {
+      "id": "msg-0001600",
+      "channel": "#architecture-decisions",
+      "sent_at": 1737609600,
+      "text": "database snapshot for Fleet Telematics finished in 14 seconds"
+    },
+    {
+      "id": "msg-0001603",
+      "channel": "#customs-brokerage",
+      "sent_at": 1737613200,
+      "text": "database snapshot for Dispatch Router finished in 14 seconds"
+    },
+    {
+      "id": "msg-0001605",
+      "channel": "#architecture-decisions",
+      "sent_at": 1737615600,
+      "text": "database snapshot for Driver App finished in 14 seconds"
+    },
+    {
+      "id": "msg-0001611",
+      "channel": "#payments",
+      "sent_at": 1737622800,
+      "text": "database snapshot for Customs Gateway finished in 14 seconds"
+    },
+    {
+      "id": "msg-0001614",
+      "channel": "#customs-brokerage",
+      "sent_at": 1737626400,
+      "text": "database snapshot for Tracking API finished in 14 seconds"
+    },
+    {
+      "id": "msg-0001624",
+      "channel": "#cold-chain-ops",
+      "sent_at": 1737638400,
+      "text": "database snapshot for Notification Engine finished in 14 seconds"
+    },
+    {
+      "id": "msg-0001636",
+      "channel": "#dispatch-oncall",
+      "sent_at": 1737652800,
+      "text": "database snapshot for Customs Gateway finished in 14 seconds"
+    },
+    {
+      "id": "msg-0001643",
+      "channel": "#customer-escalations",
+      "sent_at": 1737661200,
+      "text": "database snapshot for Finance Ledger finished in 14 seconds"
+    },
+    {
+      "id": "msg-0001644",
+      "channel": "#dispatch-oncall",
+      "sent_at": 1737662400,
+      "text": "database snapshot for Warehouse WMS finished in 14 seconds"
+    },
+    {
+      "id": "msg-0001651",
+      "channel": "#fleet-safety",
+      "sent_at": 1737670800,
+      "text": "database snapshot for Finance Ledger finished in 14 seconds"
+    },
+    {
+      "id": "msg-0001654",
+      "channel": "#payments",
+      "sent_at": 1737674400,
+      "text": "database snapshot for Dispatch Router finished in 14 seconds"
+    },
+    {
+      "id": "msg-0001689",
+      "channel": "#dispatch-oncall",
+      "sent_at": 1737716400,
+      "text": "database snapshot for Tracking API finished in 14 seconds"
+    },
+    {
+      "id": "msg-0001710",
+      "channel": "#oncall",
+      "sent_at": 1737741600,
+      "text": "database snapshot for Notification Engine finished in 14 seconds"
+    },
+    {
+      "id": "msg-0001713",
+      "channel": "#dispatch-oncall",
+      "sent_at": 1737745200,
+      "text": "database snapshot for Depot Kiosk finished in 14 seconds"
+    },
+    {
+      "id": "msg-0001721",
+      "channel": "#customer-escalations",
+      "sent_at": 1737754800,
+      "text": "database snapshot for Cold Chain Monitor finished in 14 seconds"
+    },
+    {
+      "id": "msg-0001726",
+      "channel": "#customer-escalations",
+      "sent_at": 1737760800,
+      "text": "database snapshot for Dispatch Router finished in 14 seconds"
+    },
+    {
+      "id": "msg-0001731",
+      "channel": "#infra",
+      "sent_at": 1737766800,
+      "text": "database snapshot for Depot Kiosk finished in 14 seconds"
+    },
+    {
+      "id": "msg-0001759",
+      "channel": "#customs-brokerage",
+      "sent_at": 1737800400,
+      "text": "database snapshot for Carrier Billing finished in 14 seconds"
+    },
+    {
+      "id": "msg-0001782",
+      "channel": "#payments",
+      "sent_at": 1737828000,
+      "text": "database snapshot for Cold Chain Monitor finished in 14 seconds"
+    },
+    {
+      "id": "msg-0001794",
+      "channel": "#infra",
+      "sent_at": 1737842400,
+      "text": "database snapshot for Driver App finished in 14 seconds"
+    },
+    {
+      "id": "msg-0001813",
+      "channel": "#infra",
+      "sent_at": 1737865200,
+      "text": "database snapshot for Dispatch Router finished in 14 seconds"
+    },
+    {
+      "id": "msg-0001822",
+      "channel": "#dispatch-oncall",
+      "sent_at": 1737876000,
+      "text": "database snapshot for Fleet Telematics finished in 14 seconds"
+    },
+    {
+      "id": "msg-0001825",
+      "channel": "#customer-escalations",
+      "sent_at": 1737879600,
+      "text": "database snapshot for Tracking API finished in 14 seconds"
+    },
+    {
+      "id": "msg-0001839",
+      "channel": "#warehouse-ops",
+      "sent_at": 1737896400,
+      "text": "database snapshot for Cold Chain Monitor finished in 14 seconds"
+    },
+    {
+      "id": "msg-0001847",
+      "channel": "#payments",
+      "sent_at": 1737906000,
+      "text": "database snapshot for Dispatch Router finished in 14 seconds"
+    },
+    {
+      "id": "msg-0001857",
+      "channel": "#fleet-safety",
+      "sent_at": 1737918000,
+      "text": "database snapshot for Customs Gateway finished in 14 seconds"
+    },
+    {
+      "id": "msg-0001859",
+      "channel": "#dispatch-oncall",
+      "sent_at": 1737920400,
+      "text": "database snapshot for Carrier Billing finished in 14 seconds"
+    },
+    {
+      "id": "msg-0001865",
+      "channel": "#architecture-decisions",
+      "sent_at": 1737927600,
+      "text": "database snapshot for Carrier Billing finished in 14 seconds"
+    },
+    {
+      "id": "msg-0001873",
+      "channel": "#warehouse-ops",
+      "sent_at": 1737937200,
+      "text": "database snapshot for Driver App finished in 14 seconds"
+    },
+    {
+      "id": "msg-0001897",
+      "channel": "#architecture-decisions",
+      "sent_at": 1737966000,
+      "text": "database snapshot for Driver App finished in 14 seconds"
+    },
+    {
+      "id": "msg-0001910",
+      "channel": "#architecture-decisions",
+      "sent_at": 1737981600,
+      "text": "database snapshot for Fleet Telematics finished in 14 seconds"
+    },
+    {
+      "id": "msg-0001917",
+      "channel": "#dispatch-oncall",
+      "sent_at": 1737990000,
+      "text": "database snapshot for Customs Gateway finished in 14 seconds"
+    },
+    {
+      "id": "msg-0001922",
+      "channel": "#customer-escalations",
+      "sent_at": 1737996000,
+      "text": "database snapshot for Finance Ledger finished in 14 seconds"
+    },
+    {
+      "id": "msg-0001925",
+      "channel": "#cold-chain-ops",
+      "sent_at": 1737999600,
+      "text": "database snapshot for Warehouse WMS finished in 14 seconds"
+    },
+    {
+      "id": "msg-0001933",
+      "channel": "#customer-escalations",
+      "sent_at": 1738009200,
+      "text": "database snapshot for Carrier Billing finished in 14 seconds"
+    },
+    {
+      "id": "msg-0001948",
+      "channel": "#customer-escalations",
+      "sent_at": 1738027200,
+      "text": "database snapshot for Tracking API finished in 14 seconds"
+    },
+    {
+      "id": "msg-0001976",
+      "channel": "#dispatch-oncall",
+      "sent_at": 1738060800,
+      "text": "database snapshot for Cold Chain Monitor finished in 14 seconds"
+    },
+    {
+      "id": "msg-0001988",
+      "channel": "#customs-brokerage",
+      "sent_at": 1738075200,
+      "text": "database snapshot for Depot Kiosk finished in 14 seconds"
+    },
+    {
+      "id": "msg-0001998",
+      "channel": "#dispatch-oncall",
+      "sent_at": 1738087200,
+      "text": "database snapshot for Analytics Pipeline finished in 14 seconds"
+    },
+    {
+      "id": "msg-0002000",
+      "channel": "#warehouse-ops",
+      "sent_at": 1738089600,
+      "text": "database snapshot for Fleet Telematics finished in 14 seconds"
+    }
+  ]
+}

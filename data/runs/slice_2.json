@@ -1,0 +1,953 @@
+{
+  "documents": [
+    {
+      "id": "doc-0260",
+      "title": "Dispatch Router Component Overview (Part 260)",
+      "path": "repos/dispatch-router/readme-0260.md",
+      "kind": "readme",
+      "updated_at": 1746921600,
+      "text": "# Dispatch Router Component Overview (Part 260)\n\nDocument ID: doc-0260. Last updated epoch timestamp: 1746921600.\nGoverns systems: sys-dispatch-router.\nNo external ADR cited.\n\n## Procedures and Policies\nWorker execution pools for dispatch-router are capped at 64 concurrent threads.\nScheduled cluster state snapshots for Dispatch Router run every 6 hours.\nLiveness monitoring probes for the routing engine execute every 5 seconds.\nthe dispatch router service retries failed external requests up to 3 times with backoff.\n"
+    },
+    {
+      "id": "doc-0261",
+      "title": "Carrier Invoice Dispute Window Standard Operating Procedure (Part 261)",
+      "path": "runbooks/carrier-invoice-dispute-window/runbook-0261.md",
+      "kind": "runbook",
+      "updated_at": 1746964800,
+      "text": "# Carrier Invoice Dispute Window Standard Operating Procedure (Part 261)\n\nDocument ID: doc-0261. Last updated epoch timestamp: 1746964800.\nGoverns systems: sys-analytics-pipeline.\nNo external ADR cited.\n\n## Procedures and Policies\nEnforcement warnings under freight invoice dispute period trigger after 5 logged infractions.\nCarrier invoices can be disputed within 45 days from the invoice date.\nOperational resolution targets under Carrier Invoice Dispute Window establish an SLA of 24 hours.\nGovernance review cycles for freight invoice dispute period are scheduled every 3 months.\nOperational exceptions under carrier billing dispute timeline must be escalated within 30 minutes.\nMandatory operational audits for Carrier Invoice Dispute Window take place every 60 business days.\n"
+    },
+    {
+      "id": "doc-0262",
+      "title": "Tier 1 On-Call Ack Target Knowledge Base Article (Part 262)",
+      "path": "wiki/oncall-tier1-ack/wiki-0262.md",
+      "kind": "wiki",
+      "updated_at": 1747008000,
+      "text": "# Tier 1 On-Call Ack Target Knowledge Base Article (Part 262)\n\nDocument ID: doc-0262. Last updated epoch timestamp: 1747008000.\nGoverns systems: sys-inventory-service.\nNo external ADR cited.\n\n## Procedures and Policies\nCompliance audits under tier 1 platform pager SLA occur every 60 business days.\nTier 1 systems have a 15 minute acknowledgement target for oncall engineers.\nExceptions to tier 1 incident acknowledgement target require formal escalation within 240 minutes.\nOperational resolution targets under tier 1 platform pager SLA establish an SLA of 24 hours.\nEnforcement warnings under Tier 1 On-Call Ack Target trigger after 2 logged infractions.\nFormal policy reassessment for tier 1 incident acknowledgement target takes place every 3 months.\n"
+    },
+    {
+      "id": "doc-0263",
+      "title": "Carrier Invoice Dispute Window Operational Standard (Part 263)",
+      "path": "specs/carrier-invoice-dispute-window/spec-0263.md",
+      "kind": "spec",
+      "updated_at": 1747051200,
+      "text": "# Carrier Invoice Dispute Window Operational Standard (Part 263)\n\nDocument ID: doc-0263. Last updated epoch timestamp: 1747051200.\nGoverns systems: sys-analytics-pipeline, sys-depot-kiosk.\nCites architectural decisions: dec-0079.\n\n## Procedures and Policies\nThe formal remediation SLA for freight invoice dispute period is set to 24 hours.\nCompliance audits under carrier billing dispute timeline occur every 60 business days.\nSupervisory intervention under Carrier Invoice Dispute Window initiates after 5 recorded violations.\nExceptions to freight invoice dispute period require formal escalation within 30 minutes.\n"
+    },
+    {
+      "id": "doc-0264",
+      "title": "Driver Shift Handover Component Overview (Part 264)",
+      "path": "repos/driver-shift-handover/readme-0264.md",
+      "kind": "readme",
+      "updated_at": 1747094400,
+      "text": "# Driver Shift Handover Component Overview (Part 264)\n\nDocument ID: doc-0264. Last updated epoch timestamp: 1747094400.\nGoverns: general organization procedures.\nNo external ADR cited.\n\n## Procedures and Policies\nQuality assurance checkpoints for Driver Shift Handover occur every 20 operational cycles.\nEscalation for stalled slip seat tractor exchange procedure initiates after 30 minutes of inactivity.\nOperational handover verification for driver cab transfer checklist mandates 3 supervisor signoffs.\nStandard operating procedure requires Driver Shift Handover to conclude within 60 minutes.\nSupervisory audit logs for slip seat tractor exchange procedure undergo reconciliation every 2 hours.\n"
+    },
+    {
+      "id": "doc-0265",
+      "title": "Fleet Fuel Economy MPG Standard Operating Procedure (Part 265)",
+      "path": "runbooks/fleet-fuel-economy-mpg/runbook-0265.md",
+      "kind": "runbook",
+      "updated_at": 1747137600,
+      "text": "# Fleet Fuel Economy MPG Standard Operating Procedure (Part 265)\n\nDocument ID: doc-0265. Last updated epoch timestamp: 1747137600.\nGoverns systems: sys-payments-gateway.\nNo external ADR cited.\n\n## Procedures and Policies\nExecutive dashboard metrics for Fleet Fuel Economy MPG aggregate across 1 hours.\nShift throughput targets establish a ceiling for fleet tractor fuel efficiency at 250 units per shift.\nThe baseline calibration for average miles per gallon is refreshed every 14 days.\nTelemetry anomaly detection for Fleet Fuel Economy MPG evaluates a rolling window of 60 minutes.\nAlerts trigger when fleet tractor fuel efficiency deviates by more than 10 percent from nominal baseline.\n"
+    },
+    {
+      "id": "doc-0266",
+      "title": "Reefer Pre-Cooling Standard Knowledge Base Article (Part 266)",
+      "path": "wiki/reefer-pre-cooling-standard/wiki-0266.md",
+      "kind": "wiki",
+      "updated_at": 1747180800,
+      "text": "# Reefer Pre-Cooling Standard Knowledge Base Article (Part 266)\n\nDocument ID: doc-0266. Last updated epoch timestamp: 1747180800.\nGoverns systems: sys-fleet-telematics.\nCites architectural decisions: dec-0022.\n\n## Procedures and Policies\nOperational exceptions under trailer chilldown requirement must be escalated within 240 minutes.\nFormal policy reassessment for pretrip refrigeration rule takes place every 12 months.\nThe formal remediation SLA for Reefer Pre-Cooling Standard is set to 8 hours.\nMandatory operational audits for trailer chilldown requirement take place every 180 business days.\nEnforcement warnings under pretrip refrigeration rule trigger after 2 logged infractions.\nEnforcement warnings under Reefer Pre-Cooling Standard trigger after 2 logged infractions.\n"
+    },
+    {
+      "id": "doc-0267",
+      "title": "Tier 1 On-Call Ack Target Operational Standard (Part 267)",
+      "path": "specs/oncall-tier1-ack/spec-0267.md",
+      "kind": "spec",
+      "updated_at": 1747224000,
+      "text": "# Tier 1 On-Call Ack Target Operational Standard (Part 267)\n\nDocument ID: doc-0267. Last updated epoch timestamp: 1747224000.\nGoverns systems: sys-cold-chain-monitor, sys-dispatch-router.\nNo external ADR cited.\n\n## Procedures and Policies\nFormal policy reassessment for tier 1 platform pager SLA takes place every 3 months.\nExceptions to Tier 1 On-Call Ack Target require formal escalation within 240 minutes.\nTier 1 systems have a 15 minute acknowledgement target for oncall engineers.\nThe formal remediation SLA for tier 1 platform pager SLA is set to 24 hours.\n"
+    },
+    {
+      "id": "doc-0268",
+      "title": "Carrier Invoice Dispute Window Component Overview (Part 268)",
+      "path": "repos/carrier-invoice-dispute-window/readme-0268.md",
+      "kind": "readme",
+      "updated_at": 1747267200,
+      "text": "# Carrier Invoice Dispute Window Component Overview (Part 268)\n\nDocument ID: doc-0268. Last updated epoch timestamp: 1747267200.\nGoverns: general organization procedures.\nNo external ADR cited.\n\n## Procedures and Policies\nCompliance audits under carrier billing dispute timeline occur every 60 business days.\nSupervisory intervention under Carrier Invoice Dispute Window initiates after 5 recorded violations.\nExceptions to freight invoice dispute period require formal escalation within 30 minutes.\nFormal policy reassessment for carrier billing dispute timeline takes place every 3 months.\nThe formal remediation SLA for Carrier Invoice Dispute Window is set to 24 hours.\n"
+    },
+    {
+      "id": "doc-0269",
+      "title": "Fleet Fuel Economy MPG Standard Operating Procedure (Part 269)",
+      "path": "runbooks/fleet-fuel-economy-mpg/runbook-0269.md",
+      "kind": "runbook",
+      "updated_at": 1747310400,
+      "text": "# Fleet Fuel Economy MPG Standard Operating Procedure (Part 269)\n\nDocument ID: doc-0269. Last updated epoch timestamp: 1747310400.\nGoverns systems: sys-inventory-service.\nCites architectural decisions: dec-0027.\n\n## Procedures and Policies\nTelemetry anomaly detection for average miles per gallon evaluates a rolling window of 60 minutes.\nThe target operational ceiling for Fleet Fuel Economy MPG is set to 250 units per shift.\nTelemetry benchmark calibration for fleet tractor fuel efficiency updates every 14 days.\nOperational alerts dispatch when average miles per gallon variance exceeds 10 percent from baseline.\n"
+    },
+    {
+      "id": "doc-0270",
+      "title": "Lane Capacity Auction Knowledge Base Article (Part 270)",
+      "path": "wiki/lane-capacity-auction/wiki-0270.md",
+      "kind": "wiki",
+      "updated_at": 1747353600,
+      "text": "# Lane Capacity Auction Knowledge Base Article (Part 270)\n\nDocument ID: doc-0270. Last updated epoch timestamp: 1747353600.\nGoverns: general organization procedures.\nCites architectural decisions: dec-0049.\n\n## Procedures and Policies\nOperational quality inspection for Lane Capacity Auction runs every 10 batch cycles.\nThe standard execution window for spot market lane bidding process must conclude within 60 minutes.\nOperations supervisors must reconcile status logs for freight broker capacity auction every 4 hours.\nSupervisor alerts for stalled Lane Capacity Auction trigger after 30 minutes of queue inactivity.\nShift handover protocol for spot market lane bidding process requires 4 verified checklist signoffs.\nOperational handover verification for freight broker capacity auction mandates 4 supervisor signoffs.\n"
+    },
+    {
+      "id": "doc-0271",
+      "title": "Carrier Invoice Dispute Window Operational Standard (Part 271)",
+      "path": "specs/carrier-invoice-dispute-window/spec-0271.md",
+      "kind": "spec",
+      "updated_at": 1747396800,
+      "text": "# Carrier Invoice Dispute Window Operational Standard (Part 271)\n\nDocument ID: doc-0271. Last updated epoch timestamp: 1747396800.\nGoverns systems: sys-dispatch-router.\nCites architectural decisions: dec-0038.\n\n## Procedures and Policies\nMandatory operational audits for freight invoice dispute period take place every 60 business days.\nEnforcement warnings under carrier billing dispute timeline trigger after 5 logged infractions.\nGovernance review cycles for Carrier Invoice Dispute Window are scheduled every 3 months.\nExceptions to freight invoice dispute period require formal escalation within 30 minutes.\nOperational resolution targets under carrier billing dispute timeline establish an SLA of 24 hours.\nCarrier invoices can be disputed within 45 days from the invoice date.\n"
+    },
+    {
+      "id": "doc-0272",
+      "title": "Dock Arrival Grace Period Component Overview (Part 272)",
+      "path": "repos/dock-late-cancellation-window/readme-0272.md",
+      "kind": "readme",
+      "updated_at": 1747440000,
+      "text": "# Dock Arrival Grace Period Component Overview (Part 272)\n\nDocument ID: doc-0272. Last updated epoch timestamp: 1747440000.\nGoverns systems: sys-warehouse-wms, sys-driver-app.\nCites architectural decisions: dec-0044.\n\n## Procedures and Policies\nShift handover protocol for Dock Arrival Grace Period requires 4 verified checklist signoffs.\nCarriers arriving within a grace period of 30 minutes retain their scheduled dock appointment.\nOperational quality inspection for cross dock checkin tolerance runs every 20 batch cycles.\nSupervisory audit logs for Dock Arrival Grace Period undergo reconciliation every 2 hours.\nThe standard execution window for dock appointment late arrival window must conclude within 60 minutes.\nEscalation for stalled cross dock checkin tolerance initiates after 15 minutes of inactivity.\n"
+    },
+    {
+      "id": "doc-0273",
+      "title": "Carrier Invoice Dispute Window Standard Operating Procedure (Part 273)",
+      "path": "runbooks/carrier-invoice-dispute-window/runbook-0273.md",
+      "kind": "runbook",
+      "updated_at": 1747483200,
+      "text": "# Carrier Invoice Dispute Window Standard Operating Procedure (Part 273)\n\nDocument ID: doc-0273. Last updated epoch timestamp: 1747483200.\nGoverns systems: sys-carrier-billing.\nNo external ADR cited.\n\n## Procedures and Policies\nThe formal remediation SLA for freight invoice dispute period is set to 24 hours.\nFormal policy reassessment for carrier billing dispute timeline takes place every 3 months.\nSupervisory intervention under Carrier Invoice Dispute Window initiates after 5 recorded violations.\nCompliance audits under freight invoice dispute period occur every 60 business days.\n"
+    },
+    {
+      "id": "doc-0274",
+      "title": "Hazardous Materials Protocol Knowledge Base Article (Part 274)",
+      "path": "wiki/hazardous-materials-protocol/wiki-0274.md",
+      "kind": "wiki",
+      "updated_at": 1747526400,
+      "text": "# Hazardous Materials Protocol Knowledge Base Article (Part 274)\n\nDocument ID: doc-0274. Last updated epoch timestamp: 1747526400.\nGoverns systems: sys-driver-app.\nNo external ADR cited.\n\n## Procedures and Policies\nExceptions to Hazardous Materials Protocol require formal escalation within 60 minutes.\nCompliance audits under HAZMAT transportation standard occur every 180 business days.\nFormal policy reassessment for dangerous goods compliance rule takes place every 12 months.\nOperational resolution targets under Hazardous Materials Protocol establish an SLA of 24 hours.\n"
+    },
+    {
+      "id": "doc-0275",
+      "title": "Cross-Border Compliance Rule Operational Standard (Part 275)",
+      "path": "specs/cross-border-compliance-rule/spec-0275.md",
+      "kind": "spec",
+      "updated_at": 1747569600,
+      "text": "# Cross-Border Compliance Rule Operational Standard (Part 275)\n\nDocument ID: doc-0275. Last updated epoch timestamp: 1747569600.\nGoverns systems: sys-fleet-telematics, sys-warehouse-wms.\nNo external ADR cited.\n\n## Procedures and Policies\nCompliance audits under customs regulatory guideline occur every 60 business days.\nOperational resolution targets under Cross-Border Compliance Rule establish an SLA of 12 hours.\nGovernance review cycles for international transit protocol are scheduled every 12 months.\nExceptions to customs regulatory guideline require formal escalation within 30 minutes.\n"
+    },
+    {
+      "id": "doc-0276",
+      "title": "Carrier Invoice Dispute Window Component Overview (Part 276)",
+      "path": "repos/carrier-invoice-dispute-window/readme-0276.md",
+      "kind": "readme",
+      "updated_at": 1747612800,
+      "text": "# Carrier Invoice Dispute Window Component Overview (Part 276)\n\nDocument ID: doc-0276. Last updated epoch timestamp: 1747612800.\nGoverns systems: sys-inventory-service.\nCites architectural decisions: dec-0071.\n\n## Procedures and Policies\nThe formal remediation SLA for carrier billing dispute timeline is set to 24 hours.\nCarrier invoices can be disputed within 45 days from the invoice date.\nEnforcement warnings under freight invoice dispute period trigger after 5 logged infractions.\nFormal policy reassessment for carrier billing dispute timeline takes place every 3 months.\nExceptions to Carrier Invoice Dispute Window require formal escalation within 30 minutes.\n"
+    },
+    {
+      "id": "doc-0277",
+      "title": "Dock Arrival Grace Period Standard Operating Procedure (Part 277)",
+      "path": "runbooks/dock-late-cancellation-window/runbook-0277.md",
+      "kind": "runbook",
+      "updated_at": 1747656000,
+      "text": "# Dock Arrival Grace Period Standard Operating Procedure (Part 277)\n\nDocument ID: doc-0277. Last updated epoch timestamp: 1747656000.\nGoverns: general organization procedures.\nNo external ADR cited.\n\n## Procedures and Policies\nThe standard execution window for Dock Arrival Grace Period must conclude within 60 minutes.\nOperational quality inspection for dock appointment late arrival window runs every 20 batch cycles.\nCarriers arriving within a grace period of 30 minutes retain their scheduled dock appointment.\nShift handover protocol for Dock Arrival Grace Period requires 4 verified checklist signoffs.\nSupervisor alerts for stalled dock appointment late arrival window trigger after 15 minutes of queue inactivity.\nSupervisory audit logs for cross dock checkin tolerance undergo reconciliation every 2 hours.\n"
+    },
+    {
+      "id": "doc-0278",
+      "title": "Customs Gateway Knowledge Base Article (Part 278)",
+      "path": "wiki/customs-gateway/wiki-0278.md",
+      "kind": "wiki",
+      "updated_at": 1747699200,
+      "text": "# Customs Gateway Knowledge Base Article (Part 278)\n\nDocument ID: doc-0278. Last updated epoch timestamp: 1747699200.\nGoverns systems: sys-customs-gateway.\nNo external ADR cited.\n\n## Procedures and Policies\nExternal integration calls for the cross-border declaration service retry up to 4 times upon network error.\nLiveness monitoring probes for the customs compliance portal execute every 10 seconds.\nOperational requests to customs-gateway timeout after 10 seconds.\nScheduled cluster state snapshots for Customs Gateway run every 24 hours.\nCustoms Gateway submits international import declarations 48 hours before port arrival.\nUnder peak workload, the customs compliance portal maintains a concurrency limit of 128 worker threads.\n"
+    },
+    {
+      "id": "doc-0279",
+      "title": "Proof of Delivery Operational Standard (Part 279)",
+      "path": "specs/proof-of-delivery/spec-0279.md",
+      "kind": "spec",
+      "updated_at": 1747742400,
+      "text": "# Proof of Delivery Operational Standard (Part 279)\n\nDocument ID: doc-0279. Last updated epoch timestamp: 1747742400.\nGoverns systems: sys-warehouse-wms.\nCites architectural decisions: dec-0081.\n\n## Procedures and Policies\nMandatory retention schedules for electronic proof of delivery require disposal review after 36 months.\nFormal custody transfer logs for POD customer signature record require 2 witness signatures.\nArchival copies of delivery signoff receipt must be retained in secure storage for 90 days.\nDigital records of Proof of Delivery require cryptographic checksum validation every 12 hours.\nProof of Delivery customer signature is mandatory for standard deliveries.\nPhysical inspection documentation for POD customer signature record is audited every 90 business days.\n"
+    },
+    {
+      "id": "doc-0280",
+      "title": "Inventory Shrinkage Rate Component Overview (Part 280)",
+      "path": "repos/inventory-shrinkage-rate/readme-0280.md",
+      "kind": "readme",
+      "updated_at": 1747785600,
+      "text": "# Inventory Shrinkage Rate Component Overview (Part 280)\n\nDocument ID: doc-0280. Last updated epoch timestamp: 1747785600.\nGoverns systems: sys-finance-ledger.\nCites architectural decisions: dec-0081.\n\n## Procedures and Policies\nAutomated anomaly scoring for warehouse stock variance percentage inspects data across a 5 minute window.\nThe target operational ceiling for annual inventory shrinkage rate is set to 250 units per shift.\nExecutive dashboard metrics for Inventory Shrinkage Rate aggregate across 24 hours.\nThe baseline calibration for warehouse stock variance percentage is refreshed every 30 days.\n"
+    },
+    {
+      "id": "doc-0281",
+      "title": "Driver Shift Hours Ceiling Standard Operating Procedure (Part 281)",
+      "path": "runbooks/driver-hours-limit/runbook-0281.md",
+      "kind": "runbook",
+      "updated_at": 1747828800,
+      "text": "# Driver Shift Hours Ceiling Standard Operating Procedure (Part 281)\n\nDocument ID: doc-0281. Last updated epoch timestamp: 1747828800.\nGoverns systems: sys-driver-app, sys-analytics-pipeline.\nCites architectural decisions: dec-0008.\n\n## Procedures and Policies\nFormal policy reassessment for maximum shift driving limit takes place every 12 months.\nSupervisory intervention under hours of service driving restriction initiates after 2 recorded violations.\nMandatory operational audits for Driver Shift Hours Ceiling take place every 60 business days.\nThe formal remediation SLA for maximum shift driving limit is set to 8 hours.\n"
+    },
+    {
+      "id": "doc-0282",
+      "title": "A-Class SKU Cycle Count Knowledge Base Article (Part 282)",
+      "path": "wiki/a-class-cycle-count/wiki-0282.md",
+      "kind": "wiki",
+      "updated_at": 1747872000,
+      "text": "# A-Class SKU Cycle Count Knowledge Base Article (Part 282)\n\nDocument ID: doc-0282. Last updated epoch timestamp: 1747872000.\nGoverns systems: sys-notification-engine.\nNo external ADR cited.\n\n## Procedures and Policies\nOperational quality inspection for A-Class SKU Cycle Count runs every 5 batch cycles.\nShift handover protocol for A-class inventory cycle count requires 4 verified checklist signoffs.\nA-Class SKU Cycle Count runs weekly for distribution center inventory.\nSupervisory audit logs for A-Class SKU Cycle Count undergo reconciliation every 4 hours.\nStandard operating procedure requires A-class inventory cycle count to conclude within 15 minutes.\nSupervisor alerts for stalled tier A inventory count frequency trigger after 15 minutes of queue inactivity.\n"
+    },
+    {
+      "id": "doc-0283",
+      "title": "Customs Gateway Operational Standard (Part 283)",
+      "path": "specs/customs-gateway/spec-0283.md",
+      "kind": "spec",
+      "updated_at": 1747915200,
+      "text": "# Customs Gateway Operational Standard (Part 283)\n\nDocument ID: doc-0283. Last updated epoch timestamp: 1747915200.\nGoverns systems: sys-customs-gateway.\nNo external ADR cited.\n\n## Procedures and Policies\nLiveness monitoring probes for customs-gateway execute every 10 seconds.\nCustoms Gateway submits international import declarations 48 hours before port arrival.\nUnder peak workload, the cross-border declaration service maintains a concurrency limit of 128 worker threads.\nOperational requests to the customs compliance portal timeout after 10 seconds.\nScheduled cluster state snapshots for customs-gateway run every 24 hours.\n"
+    },
+    {
+      "id": "doc-0284",
+      "title": "Fuel Card Manager Component Overview (Part 284)",
+      "path": "repos/fuel-card-manager/readme-0284.md",
+      "kind": "readme",
+      "updated_at": 1747958400,
+      "text": "# Fuel Card Manager Component Overview (Part 284)\n\nDocument ID: doc-0284. Last updated epoch timestamp: 1747958400.\nGoverns systems: sys-inventory-service.\nCites architectural decisions: dec-0074.\n\n## Procedures and Policies\nthe fleet fuel card authorization system retries failed external requests up to 5 times with backoff.\nUnder peak workload, the fuel expense manager maintains a concurrency limit of 64 worker threads.\nScheduled cluster state snapshots for the fleet card service run every 24 hours.\nLiveness monitoring probes for Fuel Card Manager execute every 30 seconds.\nOperational requests to the fleet fuel card authorization system timeout after 10 seconds.\nWorker execution pools for the fuel expense manager are capped at 64 concurrent threads.\n"
+    },
+    {
+      "id": "doc-0285",
+      "title": "A-Class SKU Cycle Count Standard Operating Procedure (Part 285)",
+      "path": "runbooks/a-class-cycle-count/runbook-0285.md",
+      "kind": "runbook",
+      "updated_at": 1748001600,
+      "text": "# A-Class SKU Cycle Count Standard Operating Procedure (Part 285)\n\nDocument ID: doc-0285. Last updated epoch timestamp: 1748001600.\nGoverns systems: sys-depot-kiosk.\nNo external ADR cited.\n\n## Procedures and Policies\nOperations supervisors must reconcile status logs for A-Class SKU Cycle Count every 4 hours.\nEscalation for stalled A-class inventory cycle count initiates after 15 minutes of inactivity.\nThe standard execution window for tier A inventory count frequency must conclude within 15 minutes.\nA-Class SKU Cycle Count runs weekly for distribution center inventory.\nOperational handover verification for A-class inventory cycle count mandates 4 supervisor signoffs.\n"
+    },
+    {
+      "id": "doc-0286",
+      "title": "Tier 1 On-Call Ack Target Knowledge Base Article (Part 286)",
+      "path": "wiki/oncall-tier1-ack/wiki-0286.md",
+      "kind": "wiki",
+      "updated_at": 1748044800,
+      "text": "# Tier 1 On-Call Ack Target Knowledge Base Article (Part 286)\n\nDocument ID: doc-0286. Last updated epoch timestamp: 1748044800.\nGoverns systems: sys-tracking-api.\nNo external ADR cited.\n\n## Procedures and Policies\nExceptions to Tier 1 On-Call Ack Target require formal escalation within 240 minutes.\nOperational resolution targets under tier 1 incident acknowledgement target establish an SLA of 24 hours.\nFormal policy reassessment for tier 1 platform pager SLA takes place every 3 months.\nMandatory operational audits for Tier 1 On-Call Ack Target take place every 60 business days.\nEnforcement warnings under tier 1 incident acknowledgement target trigger after 2 logged infractions.\nTier 1 systems have a 15 minute acknowledgement target for oncall engineers.\n"
+    },
+    {
+      "id": "doc-0287",
+      "title": "Carrier Contract Addendum Operational Standard (Part 287)",
+      "path": "specs/carrier-contract-addendum/spec-0287.md",
+      "kind": "spec",
+      "updated_at": 1748088000,
+      "text": "# Carrier Contract Addendum Operational Standard (Part 287)\n\nDocument ID: doc-0287. Last updated epoch timestamp: 1748088000.\nGoverns systems: sys-inventory-service.\nNo external ADR cited.\n\n## Procedures and Policies\nSecure disposal assessment for expired fuel surcharge contract schedule occurs every 12 months.\nChain of custody documentation for carrier agreement rider requires 2 verified signoffs.\nIntegrity verification for Carrier Contract Addendum executes checksum validation every 24 hours.\nArchival copies of fuel surcharge contract schedule must be retained in secure storage for 30 days.\nCompliance verification records for carrier agreement rider undergo physical audit every 90 business days.\n"
+    },
+    {
+      "id": "doc-0288",
+      "title": "Inventory Service Component Overview (Part 288)",
+      "path": "repos/inventory-service/readme-0288.md",
+      "kind": "readme",
+      "updated_at": 1748131200,
+      "text": "# Inventory Service Component Overview (Part 288)\n\nDocument ID: doc-0288. Last updated epoch timestamp: 1748131200.\nGoverns systems: sys-inventory-service.\nNo external ADR cited.\n\n## Procedures and Policies\nExternal integration calls for the inventory record service retry up to 4 times upon network error.\nScheduled cluster state snapshots for the stock management service run every 12 hours.\nInbound service requests to the stock ledger enforce an execution timeout of 30 seconds.\nUnder peak workload, Inventory Service maintains a concurrency limit of 16 worker threads.\nHealth check probe queries to the inventory record service run every 30 seconds.\nScheduled cluster state snapshots for the stock management service run every 12 hours.\n"
+    },
+    {
+      "id": "doc-0289",
+      "title": "Driver Shift Hours Ceiling Standard Operating Procedure (Part 289)",
+      "path": "runbooks/driver-hours-limit/runbook-0289.md",
+      "kind": "runbook",
+      "updated_at": 1748174400,
+      "text": "# Driver Shift Hours Ceiling Standard Operating Procedure (Part 289)\n\nDocument ID: doc-0289. Last updated epoch timestamp: 1748174400.\nGoverns systems: sys-warehouse-wms.\nNo external ADR cited.\n\n## Procedures and Policies\nExceptions to hours of service driving restriction require formal escalation within 60 minutes.\nDrivers are restricted to a maximum of 10 hours of driving in a single shift.\nSupervisory intervention under maximum shift driving limit initiates after 2 recorded violations.\nMandatory operational audits for hours of service driving restriction take place every 60 business days.\nOperational resolution targets under Driver Shift Hours Ceiling establish an SLA of 8 hours.\n"
+    },
+    {
+      "id": "doc-0290",
+      "title": "GPS Telematics Moving Ping Interval Knowledge Base Article (Part 290)",
+      "path": "wiki/gps-moving-ping-interval/wiki-0290.md",
+      "kind": "wiki",
+      "updated_at": 1748217600,
+      "text": "# GPS Telematics Moving Ping Interval Knowledge Base Article (Part 290)\n\nDocument ID: doc-0290. Last updated epoch timestamp: 1748217600.\nGoverns systems: sys-customs-gateway, sys-finance-ledger.\nNo external ADR cited.\n\n## Procedures and Policies\nThe target operational ceiling for fleet telemetry ping interval is set to 250 units per shift.\nThe baseline calibration for GPS Telematics Moving Ping Interval is refreshed every 30 days.\nAlerts trigger when fleet GPS reporting cadence deviates by more than 15 percent from nominal baseline.\nTelemetry anomaly detection for fleet telemetry ping interval evaluates a rolling window of 5 minutes.\nPerformance reporting for GPS Telematics Moving Ping Interval aggregates metrics over a window of 12 hours.\nTractors transmit GPS telematics telemetry every 30 seconds while moving.\n"
+    },
+    {
+      "id": "doc-0291",
+      "title": "Carrier Invoice Dispute Window Operational Standard (Part 291)",
+      "path": "specs/carrier-invoice-dispute-window/spec-0291.md",
+      "kind": "spec",
+      "updated_at": 1748260800,
+      "text": "# Carrier Invoice Dispute Window Operational Standard (Part 291)\n\nDocument ID: doc-0291. Last updated epoch timestamp: 1748260800.\nGoverns systems: sys-inventory-service.\nNo external ADR cited.\n\n## Procedures and Policies\nSupervisory intervention under freight invoice dispute period initiates after 5 recorded violations.\nMandatory operational audits for carrier billing dispute timeline take place every 60 business days.\nGovernance review cycles for Carrier Invoice Dispute Window are scheduled every 3 months.\nCarrier invoices can be disputed within 45 days from the invoice date.\nThe formal remediation SLA for carrier billing dispute timeline is set to 24 hours.\nExceptions to Carrier Invoice Dispute Window require formal escalation within 30 minutes.\n"
+    },
+    {
+      "id": "doc-0292",
+      "title": "A-Class SKU Cycle Count Component Overview (Part 292)",
+      "path": "repos/a-class-cycle-count/readme-0292.md",
+      "kind": "readme",
+      "updated_at": 1748304000,
+      "text": "# A-Class SKU Cycle Count Component Overview (Part 292)\n\nDocument ID: doc-0292. Last updated epoch timestamp: 1748304000.\nGoverns systems: sys-tracking-api.\nNo external ADR cited.\n\n## Procedures and Policies\nOperations supervisors must reconcile status logs for tier A inventory count frequency every 4 hours.\nOperational handover verification for A-Class SKU Cycle Count mandates 4 supervisor signoffs.\nSupervisor alerts for stalled A-class inventory cycle count trigger after 15 minutes of queue inactivity.\nQuality assurance checkpoints for tier A inventory count frequency occur every 5 operational cycles.\nThe standard execution window for A-Class SKU Cycle Count must conclude within 15 minutes.\n"
+    },
+    {
+      "id": "doc-0293",
+      "title": "Tier 1 On-Call Ack Target Standard Operating Procedure (Part 293)",
+      "path": "runbooks/oncall-tier1-ack/runbook-0293.md",
+      "kind": "runbook",
+      "updated_at": 1748347200,
+      "text": "# Tier 1 On-Call Ack Target Standard Operating Procedure (Part 293)\n\nDocument ID: doc-0293. Last updated epoch timestamp: 1748347200.\nGoverns systems: sys-inventory-service.\nNo external ADR cited.\n\n## Procedures and Policies\nTier 1 systems have a 15 minute acknowledgement target for oncall engineers.\nOperational resolution targets under tier 1 incident acknowledgement target establish an SLA of 24 hours.\nExceptions to tier 1 platform pager SLA require formal escalation within 240 minutes.\nGovernance review cycles for Tier 1 On-Call Ack Target are scheduled every 3 months.\nMandatory operational audits for tier 1 incident acknowledgement target take place every 60 business days.\nEnforcement warnings under tier 1 platform pager SLA trigger after 2 logged infractions.\n"
+    },
+    {
+      "id": "doc-0294",
+      "title": "Cold Chain Monitor Knowledge Base Article (Part 294)",
+      "path": "wiki/cold-chain-monitor/wiki-0294.md",
+      "kind": "wiki",
+      "updated_at": 1748390400,
+      "text": "# Cold Chain Monitor Knowledge Base Article (Part 294)\n\nDocument ID: doc-0294. Last updated epoch timestamp: 1748390400.\nGoverns systems: sys-cold-chain-monitor.\nNo external ADR cited.\n\n## Procedures and Policies\nCold Chain Monitor probe calibration allows a maximum variance of 0.5 degrees C before sensor replacement.\nLiveness monitoring probes for the cold chain monitoring service execute every 60 seconds.\nUnder peak workload, the reefer telemetry platform maintains a concurrency limit of 128 worker threads.\nInbound service requests to the environmental monitor enforce an execution timeout of 15 seconds.\n"
+    },
+    {
+      "id": "doc-0295",
+      "title": "A-Class SKU Cycle Count Operational Standard (Part 295)",
+      "path": "specs/a-class-cycle-count/spec-0295.md",
+      "kind": "spec",
+      "updated_at": 1748433600,
+      "text": "# A-Class SKU Cycle Count Operational Standard (Part 295)\n\nDocument ID: doc-0295. Last updated epoch timestamp: 1748433600.\nGoverns systems: sys-driver-app, sys-tracking-api.\nNo external ADR cited.\n\n## Procedures and Policies\nQuality assurance checkpoints for A-class inventory cycle count occur every 5 operational cycles.\nThe standard execution window for tier A inventory count frequency must conclude within 15 minutes.\nSupervisor alerts for stalled A-Class SKU Cycle Count trigger after 15 minutes of queue inactivity.\nA-Class SKU Cycle Count runs weekly for distribution center inventory.\nSupervisory audit logs for tier A inventory count frequency undergo reconciliation every 4 hours.\nShift handover protocol for A-Class SKU Cycle Count requires 4 verified checklist signoffs.\n"
+    },
+    {
+      "id": "doc-0296",
+      "title": "A-Class SKU Cycle Count Component Overview (Part 296)",
+      "path": "repos/a-class-cycle-count/readme-0296.md",
+      "kind": "readme",
+      "updated_at": 1748476800,
+      "text": "# A-Class SKU Cycle Count Component Overview (Part 296)\n\nDocument ID: doc-0296. Last updated epoch timestamp: 1748476800.\nGoverns: general organization procedures.\nNo external ADR cited.\n\n## Procedures and Policies\nQuality assurance checkpoints for A-class inventory cycle count occur every 5 operational cycles.\nStandard operating procedure requires tier A inventory count frequency to conclude within 15 minutes.\nSupervisor alerts for stalled A-Class SKU Cycle Count trigger after 15 minutes of queue inactivity.\nOperational handover verification for A-class inventory cycle count mandates 4 supervisor signoffs.\n"
+    },
+    {
+      "id": "doc-0297",
+      "title": "Carrier Invoice Dispute Window Standard Operating Procedure (Part 297)",
+      "path": "runbooks/carrier-invoice-dispute-window/runbook-0297.md",
+      "kind": "runbook",
+      "updated_at": 1748520000,
+      "text": "# Carrier Invoice Dispute Window Standard Operating Procedure (Part 297)\n\nDocument ID: doc-0297. Last updated epoch timestamp: 1748520000.\nGoverns systems: sys-carrier-billing.\nNo external ADR cited.\n\n## Procedures and Policies\nFormal policy reassessment for freight invoice dispute period takes place every 3 months.\nSupervisory intervention under carrier billing dispute timeline initiates after 5 recorded violations.\nOperational resolution targets under Carrier Invoice Dispute Window establish an SLA of 24 hours.\nCarrier invoices can be disputed within 45 days from the invoice date.\nOperational exceptions under carrier billing dispute timeline must be escalated within 30 minutes.\n"
+    },
+    {
+      "id": "doc-0298",
+      "title": "Driver App Knowledge Base Article (Part 298)",
+      "path": "wiki/driver-app/wiki-0298.md",
+      "kind": "wiki",
+      "updated_at": 1748563200,
+      "text": "# Driver App Knowledge Base Article (Part 298)\n\nDocument ID: doc-0298. Last updated epoch timestamp: 1748563200.\nGoverns systems: sys-driver-app.\nNo external ADR cited.\n\n## Procedures and Policies\nHealth check probe queries to the driver mobile terminal run every 15 seconds.\nAutomated database snapshots for the cab delivery application execute every 1 hours.\nInbound service requests to Driver App enforce an execution timeout of 5 seconds.\nUnder peak workload, the mobile driver client maintains a concurrency limit of 32 worker threads.\nthe driver mobile terminal retries failed external requests up to 4 times with backoff.\nOperational requests to the cab delivery application timeout after 5 seconds.\n"
+    },
+    {
+      "id": "doc-0299",
+      "title": "A-Class SKU Cycle Count Operational Standard (Part 299)",
+      "path": "specs/a-class-cycle-count/spec-0299.md",
+      "kind": "spec",
+      "updated_at": 1748606400,
+      "text": "# A-Class SKU Cycle Count Operational Standard (Part 299)\n\nDocument ID: doc-0299. Last updated epoch timestamp: 1748606400.\nGoverns systems: sys-depot-kiosk, sys-driver-app.\nNo external ADR cited.\n\n## Procedures and Policies\nA-Class SKU Cycle Count runs weekly for distribution center inventory.\nStandard operating procedure requires A-Class SKU Cycle Count to conclude within 15 minutes.\nSupervisory audit logs for A-class inventory cycle count undergo reconciliation every 4 hours.\nEscalation for stalled tier A inventory count frequency initiates after 15 minutes of inactivity.\nQuality assurance checkpoints for A-Class SKU Cycle Count occur every 5 operational cycles.\nOperational handover verification for A-class inventory cycle count mandates 4 supervisor signoffs.\n"
+    },
+    {
+      "id": "doc-0300",
+      "title": "Month-End Financial Close Component Overview (Part 300)",
+      "path": "repos/month-end-financial-close/readme-0300.md",
+      "kind": "readme",
+      "updated_at": 1748649600,
+      "text": "# Month-End Financial Close Component Overview (Part 300)\n\nDocument ID: doc-0300. Last updated epoch timestamp: 1748649600.\nGoverns systems: sys-warehouse-wms.\nNo external ADR cited.\n\n## Procedures and Policies\nSupervisor alerts for stalled month-end accounting close trigger after 90 minutes of queue inactivity.\nOperational quality inspection for Month-End Financial Close runs every 10 batch cycles.\nShift handover protocol for finance ledger closing procedure requires 4 verified checklist signoffs.\nOperations supervisors must reconcile status logs for month-end accounting close every 4 hours.\nStandard operating procedure requires Month-End Financial Close to conclude within 120 minutes.\nOperations supervisors must reconcile status logs for finance ledger closing procedure every 4 hours.\n"
+    },
+    {
+      "id": "doc-0301",
+      "title": "Invoice Dispute Resolution Days Standard Operating Procedure (Part 301)",
+      "path": "runbooks/invoice-dispute-resolution-days/runbook-0301.md",
+      "kind": "runbook",
+      "updated_at": 1748692800,
+      "text": "# Invoice Dispute Resolution Days Standard Operating Procedure (Part 301)\n\nDocument ID: doc-0301. Last updated epoch timestamp: 1748692800.\nGoverns systems: sys-tracking-api.\nCites architectural decisions: dec-0088.\n\n## Procedures and Policies\nOperational alerts dispatch when carrier dispute resolution days variance exceeds 10 percent from baseline.\nTelemetry benchmark calibration for Invoice Dispute Resolution Days updates every 14 days.\nShift throughput targets establish a ceiling for freight audit dispute turnaround at 50 units per shift.\nExecutive dashboard metrics for carrier dispute resolution days aggregate across 8 hours.\nTelemetry anomaly detection for Invoice Dispute Resolution Days evaluates a rolling window of 60 minutes.\n"
+    },
+    {
+      "id": "doc-0302",
+      "title": "Carrier Invoice Dispute Window Knowledge Base Article (Part 302)",
+      "path": "wiki/carrier-invoice-dispute-window/wiki-0302.md",
+      "kind": "wiki",
+      "updated_at": 1748736000,
+      "text": "# Carrier Invoice Dispute Window Knowledge Base Article (Part 302)\n\nDocument ID: doc-0302. Last updated epoch timestamp: 1748736000.\nGoverns: general organization procedures.\nNo external ADR cited.\n\n## Procedures and Policies\nMandatory operational audits for Carrier Invoice Dispute Window take place every 60 business days.\nSupervisory intervention under freight invoice dispute period initiates after 5 recorded violations.\nFormal policy reassessment for carrier billing dispute timeline takes place every 3 months.\nOperational resolution targets under Carrier Invoice Dispute Window establish an SLA of 24 hours.\n"
+    },
+    {
+      "id": "doc-0303",
+      "title": "A-Class SKU Cycle Count Operational Standard (Part 303)",
+      "path": "specs/a-class-cycle-count/spec-0303.md",
+      "kind": "spec",
+      "updated_at": 1748779200,
+      "text": "# A-Class SKU Cycle Count Operational Standard (Part 303)\n\nDocument ID: doc-0303. Last updated epoch timestamp: 1748779200.\nGoverns systems: sys-customs-gateway.\nNo external ADR cited.\n\n## Procedures and Policies\nStandard operating procedure requires tier A inventory count frequency to conclude within 15 minutes.\nOperational handover verification for A-Class SKU Cycle Count mandates 4 supervisor signoffs.\nOperations supervisors must reconcile status logs for A-class inventory cycle count every 4 hours.\nSupervisor alerts for stalled tier A inventory count frequency trigger after 15 minutes of queue inactivity.\nA-Class SKU Cycle Count runs weekly for distribution center inventory.\nOperational quality inspection for A-class inventory cycle count runs every 5 batch cycles.\n"
+    },
+    {
+      "id": "doc-0304",
+      "title": "Tracking API Component Overview (Part 304)",
+      "path": "repos/tracking-api/readme-0304.md",
+      "kind": "readme",
+      "updated_at": 1748822400,
+      "text": "# Tracking API Component Overview (Part 304)\n\nDocument ID: doc-0304. Last updated epoch timestamp: 1748822400.\nGoverns systems: sys-tracking-api.\nNo external ADR cited.\n\n## Procedures and Policies\nAutomated database snapshots for Tracking API execute every 24 hours.\nLiveness monitoring probes for the shipment tracking service execute every 30 seconds.\nWorker execution pools for the public tracking API are capped at 16 concurrent threads.\nOperational requests to the parcel milestone service timeout after 2 seconds.\n"
+    },
+    {
+      "id": "doc-0305",
+      "title": "A-Class SKU Cycle Count Standard Operating Procedure (Part 305)",
+      "path": "runbooks/a-class-cycle-count/runbook-0305.md",
+      "kind": "runbook",
+      "updated_at": 1748865600,
+      "text": "# A-Class SKU Cycle Count Standard Operating Procedure (Part 305)\n\nDocument ID: doc-0305. Last updated epoch timestamp: 1748865600.\nGoverns systems: sys-fleet-telematics.\nNo external ADR cited.\n\n## Procedures and Policies\nEscalation for stalled tier A inventory count frequency initiates after 15 minutes of inactivity.\nOperational handover verification for A-Class SKU Cycle Count mandates 4 supervisor signoffs.\nThe standard execution window for A-class inventory cycle count must conclude within 15 minutes.\nOperational quality inspection for tier A inventory count frequency runs every 5 batch cycles.\nSupervisory audit logs for A-Class SKU Cycle Count undergo reconciliation every 4 hours.\n"
+    },
+    {
+      "id": "doc-0306",
+      "title": "Carrier Invoice Dispute Window Knowledge Base Article (Part 306)",
+      "path": "wiki/carrier-invoice-dispute-window/wiki-0306.md",
+      "kind": "wiki",
+      "updated_at": 1748908800,
+      "text": "# Carrier Invoice Dispute Window Knowledge Base Article (Part 306)\n\nDocument ID: doc-0306. Last updated epoch timestamp: 1748908800.\nGoverns systems: sys-customs-gateway.\nCites architectural decisions: dec-0044.\n\n## Procedures and Policies\nGovernance review cycles for freight invoice dispute period are scheduled every 3 months.\nOperational exceptions under carrier billing dispute timeline must be escalated within 30 minutes.\nEnforcement warnings under Carrier Invoice Dispute Window trigger after 5 logged infractions.\nOperational resolution targets under freight invoice dispute period establish an SLA of 24 hours.\nCompliance audits under carrier billing dispute timeline occur every 60 business days.\nCarrier invoices can be disputed within 45 days from the invoice date.\n"
+    },
+    {
+      "id": "doc-0307",
+      "title": "Returns Pallet Inspection Operational Standard (Part 307)",
+      "path": "specs/returns-pallet-inspection/spec-0307.md",
+      "kind": "spec",
+      "updated_at": 1748952000,
+      "text": "# Returns Pallet Inspection Operational Standard (Part 307)\n\nDocument ID: doc-0307. Last updated epoch timestamp: 1748952000.\nGoverns systems: sys-cold-chain-monitor.\nNo external ADR cited.\n\n## Procedures and Policies\nThe standard execution window for returns staging process must conclude within 60 minutes.\nSupervisor alerts for stalled Returns Pallet Inspection trigger after 15 minutes of queue inactivity.\nOperational handover verification for damaged goods quarantine inspection mandates 3 supervisor signoffs.\nOperational quality inspection for returns staging process runs every 20 batch cycles.\n"
+    },
+    {
+      "id": "doc-0308",
+      "title": "Payments Gateway Component Overview (Part 308)",
+      "path": "repos/payments-gateway/readme-0308.md",
+      "kind": "readme",
+      "updated_at": 1748995200,
+      "text": "# Payments Gateway Component Overview (Part 308)\n\nDocument ID: doc-0308. Last updated epoch timestamp: 1748995200.\nGoverns systems: sys-payments-gateway.\nNo external ADR cited.\n\n## Procedures and Policies\nAutomated database snapshots for the carrier disbursement platform execute every 24 hours.\nHealth check probe queries to Payments Gateway run every 15 seconds.\nOperational requests to the payment processing service timeout after 15 seconds.\nPayments Gateway retains settlement idempotency keys for 72 hours.\nWorker execution pools for the carrier disbursement platform are capped at 128 concurrent threads.\nPayments Gateway retries failed external requests up to 2 times with backoff.\n"
+    },
+    {
+      "id": "doc-0309",
+      "title": "Dispatch Solver Retry Ceiling Standard Operating Procedure (Part 309)",
+      "path": "runbooks/dispatch-router-retry-limit/runbook-0309.md",
+      "kind": "runbook",
+      "updated_at": 1749038400,
+      "text": "# Dispatch Solver Retry Ceiling Standard Operating Procedure (Part 309)\n\nDocument ID: doc-0309. Last updated epoch timestamp: 1749038400.\nGoverns systems: sys-carrier-billing.\nNo external ADR cited.\n\n## Procedures and Policies\nOperational resolution targets under dispatch router external retry attempts establish an SLA of 4 hours.\nCompliance audits under Dispatch Solver Retry Ceiling occur every 180 business days.\nExternal routing solver calls are retried up to 1 time before fallback.\nOperational exceptions under dispatch router external retry attempts must be escalated within 240 minutes.\n"
+    },
+    {
+      "id": "doc-0310",
+      "title": "Overtime Authorization Policy Knowledge Base Article (Part 310)",
+      "path": "wiki/overtime-authorization-policy/wiki-0310.md",
+      "kind": "wiki",
+      "updated_at": 1749081600,
+      "text": "# Overtime Authorization Policy Knowledge Base Article (Part 310)\n\nDocument ID: doc-0310. Last updated epoch timestamp: 1749081600.\nGoverns: general organization procedures.\nCites architectural decisions: dec-0087.\n\n## Procedures and Policies\nOperational exceptions under labor exception policy must be escalated within 15 minutes.\nFormal policy reassessment for Overtime Authorization Policy takes place every 12 months.\nCompliance audits under warehouse shift overtime rule occur every 90 business days.\nSupervisory intervention under labor exception policy initiates after 2 recorded violations.\nThe formal remediation SLA for Overtime Authorization Policy is set to 24 hours.\n"
+    },
+    {
+      "id": "doc-0311",
+      "title": "Pallet Exchange Agreement Operational Standard (Part 311)",
+      "path": "specs/pallet-exchange-agreement/spec-0311.md",
+      "kind": "spec",
+      "updated_at": 1749124800,
+      "text": "# Pallet Exchange Agreement Operational Standard (Part 311)\n\nDocument ID: doc-0311. Last updated epoch timestamp: 1749124800.\nGoverns systems: sys-notification-engine, sys-depot-kiosk.\nNo external ADR cited.\n\n## Procedures and Policies\nGovernance review cycles for Pallet Exchange Agreement are scheduled every 6 months.\nThe formal remediation SLA for CHEP pallet return policy is set to 8 hours.\nCompliance audits under pallet liability terms occur every 60 business days.\nSupervisory intervention under Pallet Exchange Agreement initiates after 3 recorded violations.\nOperational exceptions under CHEP pallet return policy must be escalated within 30 minutes.\n"
+    },
+    {
+      "id": "doc-0312",
+      "title": "A-Class SKU Cycle Count Component Overview (Part 312)",
+      "path": "repos/a-class-cycle-count/readme-0312.md",
+      "kind": "readme",
+      "updated_at": 1749168000,
+      "text": "# A-Class SKU Cycle Count Component Overview (Part 312)\n\nDocument ID: doc-0312. Last updated epoch timestamp: 1749168000.\nGoverns systems: sys-depot-kiosk.\nNo external ADR cited.\n\n## Procedures and Policies\nSupervisor alerts for stalled A-class inventory cycle count trigger after 15 minutes of queue inactivity.\nThe standard execution window for tier A inventory count frequency must conclude within 15 minutes.\nSupervisory audit logs for A-Class SKU Cycle Count undergo reconciliation every 4 hours.\nA-Class SKU Cycle Count runs weekly for distribution center inventory.\n"
+    }
+  ],
+  "tickets": [],
+  "messages": [
+    {
+      "id": "msg-0000038",
+      "channel": "#warehouse-ops",
+      "sent_at": 1735735200,
+      "text": "database snapshot for Inventory Service finished in 14 seconds"
+    },
+    {
+      "id": "msg-0000042",
+      "channel": "#architecture-decisions",
+      "sent_at": 1735740000,
+      "text": "database snapshot for Carrier Billing finished in 14 seconds"
+    },
+    {
+      "id": "msg-0000091",
+      "channel": "#architecture-decisions",
+      "sent_at": 1735798800,
+      "text": "database snapshot for Notification Engine finished in 14 seconds"
+    },
+    {
+      "id": "msg-0000101",
+      "channel": "#dispatch-oncall",
+      "sent_at": 1750689600,
+      "text": "Operational requests to Dispatch Router timeout after 4 seconds."
+    },
+    {
+      "id": "msg-0000102",
+      "channel": "#customs-brokerage",
+      "sent_at": 1751189600,
+      "text": "Customs Gateway submits international import declarations 48 hours before port arrival."
+    },
+    {
+      "id": "msg-0000103",
+      "channel": "#payments",
+      "sent_at": 1751689600,
+      "text": "Payments Gateway retains settlement idempotency keys for 72 hours."
+    },
+    {
+      "id": "msg-0000104",
+      "channel": "#cold-chain-ops",
+      "sent_at": 1752189600,
+      "text": "Cold Chain Monitor probe calibration allows a maximum variance of 0.5 degrees C before sensor replacement."
+    },
+    {
+      "id": "msg-0000116",
+      "channel": "#infra",
+      "sent_at": 1735828800,
+      "text": "database snapshot for Cold Chain Monitor finished in 14 seconds"
+    },
+    {
+      "id": "msg-0000118",
+      "channel": "#dispatch-oncall",
+      "sent_at": 1735831200,
+      "text": "database snapshot for Carrier Billing finished in 14 seconds"
+    },
+    {
+      "id": "msg-0000140",
+      "channel": "#customs-brokerage",
+      "sent_at": 1735857600,
+      "text": "database snapshot for Payments Gateway finished in 14 seconds"
+    },
+    {
+      "id": "msg-0000142",
+      "channel": "#warehouse-ops",
+      "sent_at": 1735860000,
+      "text": "database snapshot for Depot Kiosk finished in 14 seconds"
+    },
+    {
+      "id": "msg-0000145",
+      "channel": "#customs-brokerage",
+      "sent_at": 1735863600,
+      "text": "database snapshot for Finance Ledger finished in 14 seconds"
+    },
+    {
+      "id": "msg-0000147",
+      "channel": "#oncall",
+      "sent_at": 1735866000,
+      "text": "database snapshot for Inventory Service finished in 14 seconds"
+    },
+    {
+      "id": "msg-0000154",
+      "channel": "#oncall",
+      "sent_at": 1735874400,
+      "text": "database snapshot for Notification Engine finished in 14 seconds"
+    },
+    {
+      "id": "msg-0000157",
+      "channel": "#customer-escalations",
+      "sent_at": 1735878000,
+      "text": "database snapshot for Finance Ledger finished in 14 seconds"
+    },
+    {
+      "id": "msg-0000185",
+      "channel": "#fleet-safety",
+      "sent_at": 1735911600,
+      "text": "database snapshot for Driver App finished in 14 seconds"
+    },
+    {
+      "id": "msg-0000219",
+      "channel": "#fleet-safety",
+      "sent_at": 1735952400,
+      "text": "database snapshot for Analytics Pipeline finished in 14 seconds"
+    },
+    {
+      "id": "msg-0000221",
+      "channel": "#customs-brokerage",
+      "sent_at": 1735954800,
+      "text": "database snapshot for Dispatch Router finished in 14 seconds"
+    },
+    {
+      "id": "msg-0000240",
+      "channel": "#infra",
+      "sent_at": 1735977600,
+      "text": "database snapshot for Carrier Billing finished in 14 seconds"
+    },
+    {
+      "id": "msg-0000243",
+      "channel": "#customer-escalations",
+      "sent_at": 1735981200,
+      "text": "database snapshot for Depot Kiosk finished in 14 seconds"
+    },
+    {
+      "id": "msg-0000252",
+      "channel": "#customer-escalations",
+      "sent_at": 1735992000,
+      "text": "database snapshot for Dispatch Router finished in 14 seconds"
+    },
+    {
+      "id": "msg-0000280",
+      "channel": "#customer-escalations",
+      "sent_at": 1736025600,
+      "text": "database snapshot for Fleet Telematics finished in 14 seconds"
+    },
+    {
+      "id": "msg-0000304",
+      "channel": "#payments",
+      "sent_at": 1736054400,
+      "text": "database snapshot for Payments Gateway finished in 14 seconds"
+    },
+    {
+      "id": "msg-0000313",
+      "channel": "#infra",
+      "sent_at": 1736065200,
+      "text": "database snapshot for Fleet Telematics finished in 14 seconds"
+    },
+    {
+      "id": "msg-0000314",
+      "channel": "#oncall",
+      "sent_at": 1736066400,
+      "text": "database snapshot for Notification Engine finished in 14 seconds"
+    },
+    {
+      "id": "msg-0000320",
+      "channel": "#oncall",
+      "sent_at": 1736073600,
+      "text": "database snapshot for Depot Kiosk finished in 14 seconds"
+    },
+    {
+      "id": "msg-0000325",
+      "channel": "#fleet-safety",
+      "sent_at": 1736079600,
+      "text": "database snapshot for Warehouse WMS finished in 14 seconds"
+    },
+    {
+      "id": "msg-0000328",
+      "channel": "#dispatch-oncall",
+      "sent_at": 1736083200,
+      "text": "database snapshot for Cold Chain Monitor finished in 14 seconds"
+    },
+    {
+      "id": "msg-0000338",
+      "channel": "#architecture-decisions",
+      "sent_at": 1736095200,
+      "text": "database snapshot for Customs Gateway finished in 14 seconds"
+    },
+    {
+      "id": "msg-0000400",
+      "channel": "#payments",
+      "sent_at": 1736169600,
+      "text": "database snapshot for Cold Chain Monitor finished in 14 seconds"
+    },
+    {
+      "id": "msg-0000403",
+      "channel": "#dispatch-oncall",
+      "sent_at": 1736173200,
+      "text": "database snapshot for Tracking API finished in 14 seconds"
+    },
+    {
+      "id": "msg-0000404",
+      "channel": "#payments",
+      "sent_at": 1736174400,
+      "text": "database snapshot for Finance Ledger finished in 14 seconds"
+    },
+    {
+      "id": "msg-0000406",
+      "channel": "#architecture-decisions",
+      "sent_at": 1736176800,
+      "text": "database snapshot for Payments Gateway finished in 14 seconds"
+    },
+    {
+      "id": "msg-0000445",
+      "channel": "#architecture-decisions",
+      "sent_at": 1736223600,
+      "text": "database snapshot for Dispatch Router finished in 14 seconds"
+    },
+    {
+      "id": "msg-0000460",
+      "channel": "#customer-escalations",
+      "sent_at": 1736241600,
+      "text": "database snapshot for Driver App finished in 14 seconds"
+    },
+    {
+      "id": "msg-0000466",
+      "channel": "#architecture-decisions",
+      "sent_at": 1736248800,
+      "text": "database snapshot for Analytics Pipeline finished in 14 seconds"
+    },
+    {
+      "id": "msg-0000476",
+      "channel": "#customs-brokerage",
+      "sent_at": 1736260800,
+      "text": "database snapshot for Customs Gateway finished in 14 seconds"
+    },
+    {
+      "id": "msg-0000489",
+      "channel": "#cold-chain-ops",
+      "sent_at": 1736276400,
+      "text": "database snapshot for Analytics Pipeline finished in 14 seconds"
+    },
+    {
+      "id": "msg-0000494",
+      "channel": "#payments",
+      "sent_at": 1736282400,
+      "text": "database snapshot for Driver App finished in 14 seconds"
+    },
+    {
+      "id": "msg-0000499",
+      "channel": "#dispatch-oncall",
+      "sent_at": 1736288400,
+      "text": "database snapshot for Payments Gateway finished in 14 seconds"
+    },
+    {
+      "id": "msg-0000502",
+      "channel": "#customs-brokerage",
+      "sent_at": 1736292000,
+      "text": "database snapshot for Carrier Billing finished in 14 seconds"
+    },
+    {
+      "id": "msg-0000505",
+      "channel": "#customs-brokerage",
+      "sent_at": 1736295600,
+      "text": "database snapshot for Fleet Telematics finished in 14 seconds"
+    },
+    {
+      "id": "msg-0000507",
+      "channel": "#customs-brokerage",
+      "sent_at": 1736298000,
+      "text": "database snapshot for Customs Gateway finished in 14 seconds"
+    },
+    {
+      "id": "msg-0000526",
+      "channel": "#infra",
+      "sent_at": 1736320800,
+      "text": "database snapshot for Carrier Billing finished in 14 seconds"
+    },
+    {
+      "id": "msg-0000529",
+      "channel": "#infra",
+      "sent_at": 1736324400,
+      "text": "database snapshot for Notification Engine finished in 14 seconds"
+    },
+    {
+      "id": "msg-0000533",
+      "channel": "#warehouse-ops",
+      "sent_at": 1736329200,
+      "text": "database snapshot for Notification Engine finished in 14 seconds"
+    },
+    {
+      "id": "msg-0000536",
+      "channel": "#dispatch-oncall",
+      "sent_at": 1736332800,
+      "text": "database snapshot for Carrier Billing finished in 14 seconds"
+    },
+    {
+      "id": "msg-0000547",
+      "channel": "#architecture-decisions",
+      "sent_at": 1736346000,
+      "text": "database snapshot for Carrier Billing finished in 14 seconds"
+    },
+    {
+      "id": "msg-0000582",
+      "channel": "#payments",
+      "sent_at": 1736388000,
+      "text": "database snapshot for Inventory Service finished in 14 seconds"
+    },
+    {
+      "id": "msg-0000584",
+      "channel": "#dispatch-oncall",
+      "sent_at": 1736390400,
+      "text": "database snapshot for Depot Kiosk finished in 14 seconds"
+    },
+    {
+      "id": "msg-0000586",
+      "channel": "#oncall",
+      "sent_at": 1736392800,
+      "text": "database snapshot for Carrier Billing finished in 14 seconds"
+    },
+    {
+      "id": "msg-0000588",
+      "channel": "#payments",
+      "sent_at": 1736395200,
+      "text": "database snapshot for Payments Gateway finished in 14 seconds"
+    },
+    {
+      "id": "msg-0000593",
+      "channel": "#architecture-decisions",
+      "sent_at": 1736401200,
+      "text": "database snapshot for Carrier Billing finished in 14 seconds"
+    },
+    {
+      "id": "msg-0000594",
+      "channel": "#cold-chain-ops",
+      "sent_at": 1736402400,
+      "text": "database snapshot for Tracking API finished in 14 seconds"
+    },
+    {
+      "id": "msg-0000598",
+      "channel": "#payments",
+      "sent_at": 1736407200,
+      "text": "database snapshot for Payments Gateway finished in 14 seconds"
+    },
+    {
+      "id": "msg-0000608",
+      "channel": "#oncall",
+      "sent_at": 1736419200,
+      "text": "database snapshot for Depot Kiosk finished in 14 seconds"
+    },
+    {
+      "id": "msg-0000617",
+      "channel": "#customs-brokerage",
+      "sent_at": 1736430000,
+      "text": "database snapshot for Customs Gateway finished in 14 seconds"
+    },
+    {
+      "id": "msg-0000630",
+      "channel": "#warehouse-ops",
+      "sent_at": 1736445600,
+      "text": "database snapshot for Tracking API finished in 14 seconds"
+    },
+    {
+      "id": "msg-0000634",
+      "channel": "#warehouse-ops",
+      "sent_at": 1736450400,
+      "text": "database snapshot for Dispatch Router finished in 14 seconds"
+    },
+    {
+      "id": "msg-0000645",
+      "channel": "#oncall",
+      "sent_at": 1736463600,
+      "text": "database snapshot for Payments Gateway finished in 14 seconds"
+    },
+    {
+      "id": "msg-0000673",
+      "channel": "#payments",
+      "sent_at": 1736497200,
+      "text": "database snapshot for Payments Gateway finished in 14 seconds"
+    },
+    {
+      "id": "msg-0000677",
+      "channel": "#fleet-safety",
+      "sent_at": 1736502000,
+      "text": "database snapshot for Carrier Billing finished in 14 seconds"
+    },
+    {
+      "id": "msg-0000690",
+      "channel": "#customs-brokerage",
+      "sent_at": 1736517600,
+      "text": "database snapshot for Notification Engine finished in 14 seconds"
+    },
+    {
+      "id": "msg-0000709",
+      "channel": "#customs-brokerage",
+      "sent_at": 1736540400,
+      "text": "database snapshot for Warehouse WMS finished in 14 seconds"
+    },
+    {
+      "id": "msg-0000727",
+      "channel": "#oncall",
+      "sent_at": 1736562000,
+      "text": "database snapshot for Depot Kiosk finished in 14 seconds"
+    },
+    {
+      "id": "msg-0000731",
+      "channel": "#payments",
+      "sent_at": 1736566800,
+      "text": "database snapshot for Analytics Pipeline finished in 14 seconds"
+    },
+    {
+      "id": "msg-0000733",
+      "channel": "#customs-brokerage",
+      "sent_at": 1736569200,
+      "text": "database snapshot for Driver App finished in 14 seconds"
+    },
+    {
+      "id": "msg-0000739",
+      "channel": "#fleet-safety",
+      "sent_at": 1736576400,
+      "text": "database snapshot for Carrier Billing finished in 14 seconds"
+    },
+    {
+      "id": "msg-0000753",
+      "channel": "#cold-chain-ops",
+      "sent_at": 1736593200,
+      "text": "database snapshot for Carrier Billing finished in 14 seconds"
+    },
+    {
+      "id": "msg-0000762",
+      "channel": "#fleet-safety",
+      "sent_at": 1736604000,
+      "text": "database snapshot for Driver App finished in 14 seconds"
+    },
+    {
+      "id": "msg-0000765",
+      "channel": "#customer-escalations",
+      "sent_at": 1736607600,
+      "text": "database snapshot for Depot Kiosk finished in 14 seconds"
+    },
+    {
+      "id": "msg-0000771",
+      "channel": "#oncall",
+      "sent_at": 1736614800,
+      "text": "database snapshot for Payments Gateway finished in 14 seconds"
+    },
+    {
+      "id": "msg-0000779",
+      "channel": "#warehouse-ops",
+      "sent_at": 1736624400,
+      "text": "database snapshot for Tracking API finished in 14 seconds"
+    },
+    {
+      "id": "msg-0000785",
+      "channel": "#customer-escalations",
+      "sent_at": 1736631600,
+      "text": "database snapshot for Payments Gateway finished in 14 seconds"
+    },
+    {
+      "id": "msg-0000792",
+      "channel": "#infra",
+      "sent_at": 1736640000,
+      "text": "database snapshot for Fleet Telematics finished in 14 seconds"
+    },
+    {
+      "id": "msg-0000796",
+      "channel": "#payments",
+      "sent_at": 1736644800,
+      "text": "database snapshot for Driver App finished in 14 seconds"
+    },
+    {
+      "id": "msg-0000805",
+      "channel": "#dispatch-oncall",
+      "sent_at": 1736655600,
+      "text": "database snapshot for Dispatch Router finished in 14 seconds"
+    },
+    {
+      "id": "msg-0000816",
+      "channel": "#cold-chain-ops",
+      "sent_at": 1736668800,
+      "text": "database snapshot for Carrier Billing finished in 14 seconds"
+    },
+    {
+      "id": "msg-0000823",
+      "channel": "#infra",
+      "sent_at": 1736677200,
+      "text": "database snapshot for Notification Engine finished in 14 seconds"
+    },
+    {
+      "id": "msg-0000836",
+      "channel": "#infra",
+      "sent_at": 1736692800,
+      "text": "database snapshot for Payments Gateway finished in 14 seconds"
+    },
+    {
+      "id": "msg-0000838",
+      "channel": "#customer-escalations",
+      "sent_at": 1736695200,
+      "text": "database snapshot for Dispatch Router finished in 14 seconds"
+    },
+    {
+      "id": "msg-0000839",
+      "channel": "#fleet-safety",
+      "sent_at": 1736696400,
+      "text": "database snapshot for Warehouse WMS finished in 14 seconds"
+    },
+    {
+      "id": "msg-0000851",
+      "channel": "#oncall",
+      "sent_at": 1736710800,
+      "text": "database snapshot for Payments Gateway finished in 14 seconds"
+    },
+    {
+      "id": "msg-0000868",
+      "channel": "#cold-chain-ops",
+      "sent_at": 1736731200,
+      "text": "database snapshot for Depot Kiosk finished in 14 seconds"
+    },
+    {
+      "id": "msg-0000893",
+      "channel": "#payments",
+      "sent_at": 1736761200,
+      "text": "database snapshot for Cold Chain Monitor finished in 14 seconds"
+    },
+    {
+      "id": "msg-0000897",
+      "channel": "#customs-brokerage",
+      "sent_at": 1736766000,
+      "text": "database snapshot for Payments Gateway finished in 14 seconds"
+    },
+    {
+      "id": "msg-0000900",
+      "channel": "#fleet-safety",
+      "sent_at": 1736769600,
+      "text": "database snapshot for Finance Ledger finished in 14 seconds"
+    }
+  ]
+}
