@@ -12,7 +12,8 @@
 A "contradicts" verdict at or above the 0.65 floor writes a CONTRADICTS edge between the two
 judged claims, with `method` set to the model that actually answered (rule 8), and an open
 Conflict that INVOLVES them as sides a and b. Conflict ids are derived from the disagreement,
-so re-running never duplicates; already-judged pairs drop out of §7.1 on their own.
+so re-running never duplicates: a disagreement that already has a Conflict is skipped before
+judging, and a Conflict's two INVOLVES edges are only written when the Conflict is created.
 
 Kind is decided from the graph, not by the model:
   undocumented  one side is asserted only by a Message or Ticket, never by a Document
@@ -81,9 +82,13 @@ MERGE (a)-[r:CONTRADICTS]->(b)
 SET r.confidence = $confidence, r.evidence_span = $span, r.method = $method
 MERGE (k:Conflict {id: $conflict_id})
 ON CREATE SET k.blast_radius = $blast_radius, k.status = 'open', k.kind = $kind, k.found_at = $found_at
-MERGE (k)-[ia:INVOLVES]->(a) SET ia.side = 'a'
-MERGE (k)-[ib:INVOLVES]->(b) SET ib.side = 'b'
+WITH k, a, b
+WHERE NOT (k)-[:INVOLVES]->()
+CREATE (k)-[:INVOLVES {side: 'a'}]->(a), (k)-[:INVOLVES {side: 'b'}]->(b)
+RETURN count(k) AS created
 """
+
+SURFACED = "MATCH (k:Conflict {id: $id}) RETURN k.id AS id"
 
 
 @dataclass
@@ -94,6 +99,7 @@ class Stats:
     judged_live: int = 0
     judged_cached: int = 0
     precedent_settled: int = 0
+    already_surfaced: int = 0
     verdicts: dict[str, int] = field(default_factory=dict)
     conflicts_written: int = 0
     failures: list[str] = field(default_factory=list)
@@ -192,6 +198,12 @@ def adjudicate(tenant: str = "northwind", workers: int = 2) -> Stats:
 
     def one(item: tuple[str, list[dict]]) -> None:
         sig, pairs = item
+        # A Conflict for this disagreement already exists: other copies of the same two values
+        # are still unjudged pairs in §7.1, but they are the same finding, not a new one.
+        if _rows(g, SURFACED, {"id": conflict_id(sig)}):
+            with st.lock:
+                st.already_surfaced += 1
+            return
         p = pick(pairs)
         try:
             settled = [r for r in precedent(g, p["entity_id"]) if r["winner_id"] in (p["a_id"], p["b_id"])]
@@ -218,15 +230,16 @@ def adjudicate(tenant: str = "northwind", workers: int = 2) -> Stats:
 
         a_src, b_src = sources_of(g, a["id"]), sources_of(g, b["id"])
         kind, _states = classify(g, a_src, b_src)
-        g.query(WRITE, {
+        created = g.query(WRITE, {
             "a": a["id"], "b": b["id"],
             "confidence": verdict["confidence"], "span": verdict["evidence_span"], "method": r.model,
             "conflict_id": conflict_id(sig),
             "blast_radius": max(radius[a["id"]]["score"], radius[b["id"]]["score"]),
             "kind": kind, "found_at": int(time.time()),
-        })
-        with st.lock:
-            st.conflicts_written += 1
+        }).result_set
+        if created and created[0][0]:
+            with st.lock:
+                st.conflicts_written += 1
 
     with ThreadPoolExecutor(max_workers=workers) as pool:
         list(pool.map(one, sorted(groups.items())))
@@ -253,7 +266,8 @@ def main() -> int:
     print(f"stage 3  prefilter        {st.prefiltered:8}")
     print(f"group    disagreements    {st.groups:8}   same entity, predicate and value pair")
     print(f"stage 4  judged           {st.judged_live + st.judged_cached:8}   "
-          f"live {st.judged_live}, cached {st.judged_cached}, settled by precedent {st.precedent_settled}")
+          f"live {st.judged_live}, cached {st.judged_cached}, settled by precedent {st.precedent_settled}, "
+          f"already a conflict {st.already_surfaced}")
     print(f"verdicts {st.verdicts}   models {st.models}")
     print(f"conflicts written {st.conflicts_written}   failures {len(st.failures)}   {time.perf_counter() - t0:.0f}s")
     for f in st.failures[:10]:

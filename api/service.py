@@ -230,7 +230,10 @@ def build_path(g: Graph, conflict: dict) -> dict:
         for x in (dec, sup):
             if x:
                 decisions.add(x["id"])
-                node(x["id"], f"{x.get('ref', x['id'])}: {x.get('title', '')}".rstrip(": "), "decision",
+                ref, title = x.get("ref", x["id"]), x.get("title", "")
+                # Northwind titles already start with the ref ("ADR-41: ..."); never print it twice.
+                label = title if title.startswith(ref) else f"{ref}: {title}".rstrip(": ")
+                node(x["id"], label, "decision",
                      {"superseded": "superseded", "accepted": "live"}.get(x.get("status", "")), x.get("decided_at"))
         if s:
             node(s["id"], s.get("name", s["id"]), "system")

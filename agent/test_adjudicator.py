@@ -108,6 +108,19 @@ def test_adjudicate_writes_one_conflict_per_disagreement(graph, fake_judge):
     again = adjudicator.adjudicate(TENANT, workers=1)
     assert (again.prefiltered, again.conflicts_written) == (0, 0)
 
+    # Another document repeating one side's value is a new unjudged pair for the same
+    # disagreement: it is skipped, and the Conflict keeps exactly two claims.
+    graph.query("MATCH (d:Document {id: 'doc-4'}), (e:Entity {id: 'limit'}) "
+                "CREATE (d)-[:ASSERTS]->(:Claim {id: 'c-7', text: 'Loads above 8 C for 30 minutes are rejected.', "
+                "polarity: 'affirm', subject_ref: 'limit', predicate: 'tolerance', object: '30 minutes', "
+                "evidence_span: 'for 30 minutes', confidence: 0.9, extracted_at: 1})-[:ABOUT]->(e)")
+    calls_before = len(fake_judge)
+    third = adjudicator.adjudicate(TENANT, workers=1)
+    assert (third.prefiltered, third.already_surfaced, third.conflicts_written) == (1, 1, 0)
+    assert len(fake_judge) == calls_before
+    counts = service.rows(graph, "MATCH (k:Conflict)-[i:INVOLVES]->() RETURN k.id AS k, count(i) AS n")
+    assert all(r["n"] == 2 for r in counts)
+
 
 def test_api_shapes_match_the_fixture(graph, fake_judge):
     if not service.rows(graph, "MATCH (k:Conflict) RETURN count(k) AS n")[0]["n"]:
