@@ -38,14 +38,16 @@ class Conflicting(Exception):
 CONFLICTS = """
 MATCH (k:Conflict)
 WHERE $status IS NULL OR k.status = $status
-RETURN k.id AS id, k.kind AS kind, k.status AS status, k.blast_radius AS blast_radius, k.found_at AS found_at
+RETURN k.id AS id, k.kind AS kind, k.status AS status, k.blast_radius AS blast_radius, k.found_at AS found_at,
+       k.dismissed_by AS dismissed_by, k.dismiss_rationale AS dismiss_rationale, k.dismissed_at AS dismissed_at
 ORDER BY k.blast_radius DESC, k.id
 LIMIT $limit
 """
 
 CONFLICT = """
 MATCH (k:Conflict {id: $id})
-RETURN k.id AS id, k.kind AS kind, k.status AS status, k.blast_radius AS blast_radius, k.found_at AS found_at
+RETURN k.id AS id, k.kind AS kind, k.status AS status, k.blast_radius AS blast_radius, k.found_at AS found_at,
+       k.dismissed_by AS dismissed_by, k.dismiss_rationale AS dismiss_rationale, k.dismissed_at AS dismissed_at
 """
 
 SIDES = """
@@ -142,6 +144,10 @@ def build_conflict(g: Graph, k: dict) -> dict:
         # Optional in CONTRACT §9 v5: the judgement behind CONTRADICTS, and the RESOLVED_AS record.
         "judgement": judged[0] if judged else None,
         "resolution": resolution,
+        # v7: who dismissed it and why, null unless status is "dismissed"
+        "dismissal": ({"rationale": k.get("dismiss_rationale") or "", "dismissed_by": k.get("dismissed_by") or "",
+                       "dismissed_at": int(k["dismissed_at"])}
+                      if k["status"] == "dismissed" and k.get("dismissed_at") else None),
     }
 
 
@@ -325,8 +331,8 @@ SET r.rationale = $rationale, r.resolved_at = $at, r.resolved_by = $by,
 
 
 def dismiss(conflict_id: str, rationale: str, dismissed_by: str, tenant: str = "northwind") -> dict:
-    """An open conflict judged not to be one. Status only: §5 gives Conflict no other field for it,
-    and the Adjudicator never re-flags a pair that a Conflict already involves."""
+    """An open conflict judged not to be one. The reason, who and when are kept on the Conflict
+    (§5 v7), and the Adjudicator never re-flags a pair that a Conflict already involves."""
     g = get_graph(tenant)
     found = rows(g, CONFLICT, {"id": conflict_id})
     if not found:
@@ -335,7 +341,9 @@ def dismiss(conflict_id: str, rationale: str, dismissed_by: str, tenant: str = "
         raise Conflicting(f"conflict {conflict_id!r} is {found[0]['status']}, not open")
     if not rationale.strip() or not dismissed_by.strip():
         raise Invalid("rationale and dismissed_by are both required")
-    g.query("MATCH (k:Conflict {id: $id}) SET k.status = 'dismissed'", {"id": conflict_id})
+    g.query("MATCH (k:Conflict {id: $id}) SET k.status = 'dismissed', k.dismissed_by = $by, "
+            "k.dismiss_rationale = $rationale, k.dismissed_at = $at",
+            {"id": conflict_id, "by": dismissed_by.strip(), "rationale": rationale.strip(), "at": int(time.time())})
     _stats_cache.pop(tenant, None)
     return {"ok": True, "conflict": get_conflict(conflict_id, tenant)["conflict"]}
 

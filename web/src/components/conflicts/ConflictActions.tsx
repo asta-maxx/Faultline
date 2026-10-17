@@ -462,8 +462,8 @@ function SettleForm({
         </fieldset>
       ) : (
         <p className={styles.hint}>
-          Dismissing marks this pair as not a real conflict and takes it out of the open queue. The API keeps the
-          status only: it requires a reason and a name but does not store them.
+          Dismissing marks this pair as not a real conflict and takes it out of the open queue. The reason, your name
+          and the date are recorded with it.
         </p>
       )}
 
@@ -583,7 +583,14 @@ function SettledStatus({ conflict }: { conflict: Conflict }) {
       <span className="chip" data-status="dismissed">
         Dismissed
       </span>
-      <span>Dismissed as not a real conflict. It no longer appears in the open queue.</span>
+      {conflict.dismissal ? (
+        <span>
+          Dismissed <span className={styles.mono}>{isoDate(conflict.dismissal.dismissed_at)}</span> by{' '}
+          {conflict.dismissal.dismissed_by}: {conflict.dismissal.rationale}
+        </span>
+      ) : (
+        <span>Dismissed as not a real conflict. The response carries no dismissal record.</span>
+      )}
     </p>
   )
 }

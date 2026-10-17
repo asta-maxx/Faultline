@@ -45,6 +45,14 @@ export interface Conflict {
   judgement?: Judgement | null
   /** v5, optional: the RESOLVED_AS edge; null unless status is "resolved". */
   resolution?: Resolution | null
+  /** v7, optional: who dismissed it and why; null unless status is "dismissed". */
+  dismissal?: Dismissal | null
+}
+
+export interface Dismissal {
+  rationale: string
+  dismissed_by: string
+  dismissed_at: number
 }
 
 export interface Judgement {

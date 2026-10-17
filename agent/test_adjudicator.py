@@ -197,4 +197,7 @@ def test_precedent_and_dismiss(graph, fake_judge):
         service.dismiss(und["id"], " ", "R. Menon", tenant=TENANT)
     out = service.dismiss(und["id"], "Same rule, different wording.", "R. Menon", tenant=TENANT)
     assert out["conflict"]["status"] == "dismissed"
+    d = out["conflict"]["dismissal"]
+    assert (d["rationale"], d["dismissed_by"]) == ("Same rule, different wording.", "R. Menon") and d["dismissed_at"] > 0
+    assert service.get_conflict(sup["id"], tenant=TENANT)["conflict"]["dismissal"] is None
     assert und["id"] not in {c["id"] for c in service.list_conflicts("open", 50, tenant=TENANT)["conflicts"]}
