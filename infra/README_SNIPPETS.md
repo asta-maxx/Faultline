@@ -1,4 +1,4 @@
-# Faultline README Snippets & Architectural Overview
+# Faultline README Snippets & Architectural Reference
 
 ## 1. Local Setup via Docker Compose
 
@@ -25,85 +25,66 @@ Expected response:
 
 ## 2. Related Work & Differentiation
 
-- **Graphiti**: Builds dynamic, temporal knowledge graphs via heavy LLM extraction and vector embeddings. *Faultline* operates directly on FalkorDB using deterministic Cypher graph collapse (Stage 2) and heuristic prefiltering (Stage 3), reducing LLM adjudication calls by orders of magnitude without requiring vector index infrastructure.
-- **CodeScene**: Analyzes technical debt, code churn, and organizational coordination from version control history. *Faultline* detects cross-corpus contradictions across written specifications, tickets, Slack/chat messages, and ADR chains before bad assumptions cause outages.
-- **repowise**: Provides repository semantic mapping and code architecture navigation. *Faultline* grounds operational assertions (timeouts, thresholds, SLAs, ownership) into explicit claims and traverses ADR supersession chains (`SUPERSEDES*1..10`) to distinguish active contradictions from superseded policies.
-- **Glean**: Provides enterprise search and unified retrieval across SaaS tools. *Faultline* actively flags, groups, and adjudicates logical contradictions and computes an organizational blast radius rather than performing passive keyword/semantic search.
+- **Graphiti**: Dynamically constructs temporal knowledge graphs using LLM extraction and vector index embeddings. *Faultline* operates directly on FalkorDB via exact Cypher graph collapse (Stage 2) and deterministic heuristic prefiltering (Stage 3), reducing pair comparisons without needing vector index infrastructure.
+- **CodeScene**: Evaluates behavioral code metrics, hotspots, and team churn from git history. *Faultline* targets operational policy contradictions across disparate documents, tickets, chat messages, and ADR chains before outages occur.
+- **repowise**: Maps codebase semantics and call graphs. *Faultline* models operational requirements and navigates formal ADR supersession chains (`SUPERSEDES*1..10`) to distinguish active contradictions from superseded policies.
+- **Glean**: Provides enterprise-wide search and semantic retrieval across SaaS tools. *Faultline* actively detects, isolates, and scores contradictions with an organizational blast radius rather than performing passive retrieval.
 
 ---
 
-## 3. Graph Model Summary (CONTRACT §5)
+## 3. Graph Model (CONTRACT §5 Verbatim)
 
-### Structural Subgraph (Deterministic Ingestion)
-- **Nodes**:
-  - `(:Person {id, name, email, role, team})`
-  - `(:System {id, name, tier, repo_url})`
-  - `(:Decision {id, title, status, decided_at})`
-  - `(:Document {id, title, path, kind, updated_at})`
-  - `(:Ticket {id, title, status, priority, closed_at})`
-  - `(:Message {id, channel, sent_at})`
-- **Edges**:
-  - `(:Person)-[:OWNS]->(:System)`
-  - `(:Person)-[:AUTHORED]->(:Document|:Decision|:Ticket|:Message)`
-  - `(:Decision)-[:SUPERSEDES]->(:Decision)`
-  - `(:Document)-[:GOVERNS]->(:System)`
-  - `(:Document)-[:CITES]->(:Decision)`
+### Nodes (Labels & Properties)
 
-### Contradiction Subgraph (Surveyor & Funnel)
-- **Nodes**:
-  - `(:Entity {id, name, type})` (system, policy, metric, process, artifact)
-  - `(:Claim {id, text, polarity, predicate, object, confidence, extracted_at})`
-  - `(:Conflict {id, kind, status, blast_radius, detected_at})`
-- **Edges**:
-  - `(:Document|:Ticket|:Message)-[:ASSERTS]->(:Claim)`
-  - `(:Claim)-[:ABOUT]->(:Entity)`
-  - `(:Conflict)-[:INVOLVES]->(:Claim)`
-  - `(:Claim)-[:CONTRADICTS {method, reasoning, confidence, judged_at}]->(:Claim)`
-  - `(:Conflict)-[:RESOLVED_AS]->(:Claim)`
+| Label | Properties |
+| :--- | :--- |
+| `Claim` | `id` (str, uuid), `text` (str), `polarity` (`"affirm"`\|`"deny"`), `subject_ref` (str), `predicate` (str, snake_case), `object` (str), `evidence_span` (str), `confidence` (float 0–1), `extracted_at` (int, epoch s) |
+| `Entity` | `id` (str, slug), `name` (str), `type` (`"system"`\|`"policy"`\|`"metric"`\|`"process"`\|`"artifact"`) |
+| `Document` | `id` (str), `title` (str), `path` (str), `kind` (`"runbook"`\|`"wiki"`\|`"spec"`\|`"readme"`), `updated_at` (int) |
+| `Decision` | `id` (str), `ref` (str, e.g. `"ADR-88"`), `title` (str), `status` (`"accepted"`\|`"superseded"`\|`"rejected"`), `decided_at` (int) |
+| `Person` | `id` (str), `name` (str), `role` (str), `active` (bool) |
+| `System` | `id` (str), `name` (str), `tier` (int 1–3, 1 = most critical) |
+| `Ticket` | `id` (str), `ref` (str), `title` (str), `text` (str), `state` (str), `closed_at` (int\|null) |
+| `Message` | `id` (str), `channel` (str), `text` (str), `sent_at` (int) |
+| `Conflict` | `id` (str), `blast_radius` (float), `status` (`"open"`\|`"resolved"`\|`"dismissed"`), `kind` (`"direct"`\|`"superseded"`\|`"undocumented"`), `found_at` (int) |
+
+### Edges (Types, Endpoints & Properties)
+
+| Edge | From → To | Properties |
+| :--- | :--- | :--- |
+| `ASSERTS` | Document\|Message\|Ticket → Claim | — |
+| `ABOUT` | Claim → Entity | — |
+| `CONTRADICTS` | Claim → Claim | `confidence` (float), `evidence_span` (str), `method` (str) |
+| `SUPERSEDES` | Decision → Decision | newer → older |
+| `CITES` | Document → Decision | — |
+| `GOVERNS` | Document → System | — |
+| `AUTHORED` | Person → Document\|Decision | — |
+| `OWNS` | Person → System | — |
+| `DERIVED_FROM` | Claim → Message\|Ticket | — |
+| `INVOLVES` | Conflict → Claim | `side` (`"a"`\|`"b"`) |
+| `RESOLVED_AS` | Conflict → Claim | `rationale` (str), `resolved_at` (int), `resolved_by` (str) |
 
 ---
 
-## 4. Blast Radius Formula (CONTRACT §7.3)
+## 4. Blast Radius Formula (CONTRACT §7.3 Verbatim)
 
-Organizational blast radius scores the impact of a conflict based on how deeply the conflicting claims penetrate the technical topology:
+Computed in Python from query results:
 
-$$\text{blast\_radius} = \text{doc\_count} + \text{citing\_decisions} + \sum_{s \in \text{systems}} \text{tier\_weight}(s.\text{tier}) + \text{owner\_count}$$
+$$\text{blast\_radius} = \left(\sum_{s \in \text{systems}} (4 - s.\text{tier})\right) \times 2.0 + \text{doc\_count} + (\text{citing\_decisions} \times 1.5)$$
 
 Where:
-- `tier_weight(1) = 10.0` (Tier 1 core systems)
-- `tier_weight(2) = 4.0` (Tier 2 operational systems)
-- `tier_weight(3) = 1.0` (Tier 3 internal/supporting systems)
-- `doc_count`: Count of distinct sources asserting the conflicting claims
-- `citing_decisions`: Count of distinct decisions cited by governing documents
-- `owner_count`: Count of distinct system owners impacted
+- Tier 1 weighs 3, Tier 2 weighs 2, Tier 3 weighs 1 (`sum(4 - s.tier)` over distinct governed systems).
+- `doc_count`: Count of distinct sources asserting the claim (`Document`, `Message`, `Ticket`).
+- `citing_decisions`: Count of distinct decisions cited by governing documents.
+- `Conflict.blast_radius`: Prior to resolution, computed as $\max(\text{blast\_radius}_A, \text{blast\_radius}_B)$.
 
 ---
 
-## 5. Measured Funnel & Benchmark Table
+## 5. Contradiction Funnel (CONTRACT §6)
 
-The 4-stage contradiction reduction funnel measured on the Northwind Logistics corpus:
-
-| Funnel Stage | Mechanism | Measured Pairs | Reduction Rate |
-| :--- | :--- | :--- | :--- |
-| **Stage 1: Naive Pairs** | All possible pairs: $\frac{n(n-1)}{2}$ | *Recorded from run* | Baseline |
-| **Stage 2: Graph Collapse** | `(:Claim)-[:ABOUT]->(e)<-[:ABOUT]-(:Claim)` | *Recorded from run* | ~98.5% |
-| **Stage 3: Prefilter** | Shared predicate, contrasting object/polarity | *Recorded from run* | ~85.0% |
-| **Stage 4: Adjudication** | LLM judge on prefiltered pairs | *Recorded from run* | Final conflicts |
-
-*(Final numerical values populated directly from Step 5/7 evaluation run).*
-
----
-
-## 6. Extraction Quota & Slicing Architecture Note
-
-Due to Groq free-tier daily quota constraints (200,000 tokens per day), extraction was executed with:
-1. Two tiered models: `groq:openai/gpt-oss-120b` (primary) and `groq:openai/gpt-oss-20b` (overflow).
-2. Distributed slicing: `data/runs/build_slices.py` partitioned uncached sources into 4 balanced runs (`slice_1.json` to `slice_4.json`) across teammate API keys, integrated via `data/runs/merge_cache.py`.
-
----
-
-## 7. Deterministic Message Filter Note
-
-Chat message filtering (`data/message_filter.py`) is a deterministic message filter, written after inspecting the corpus. It filters 2,000 raw Slack messages down to 221 informative operational messages by identifying:
-1. Explicit operational decision phrases (`decided`, `agreed`, `we will`, `going forward`, `switching to`, `changed to`).
-2. Numerical assertions with units of measurement (duration, temperature, storage, frequency, currency, percentage, and retry limits).
+| Stage | Mechanism | Measured Pairs |
+| :--- | :--- | :--- |
+| **1. All possible pairs** | `n*(n-1)/2`, never computed | TBD from Allen's RDB |
+| **2. Graph collapse** | Shared `Entity` traversal (7.1) | TBD from Allen's RDB |
+| **3. Deterministic prefilter** | Shared `predicate` AND (differing `object` OR opposite `polarity`) | TBD from Allen's RDB |
+| **4. LLM judgement** | Adjudicator | TBD from Allen's RDB |
