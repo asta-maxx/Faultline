@@ -70,6 +70,20 @@ This document specifies the production deployment architecture for the **Faultli
    - `GEMINI_API_KEY`
    - `PORT`
    - `RAILWAY_DOCKERFILE_PATH`
+   - `FAULTLINE_SOURCE_ROOT` — set to `/app/data/out/corpus` on Railway.
+     This is the directory that `api/workspaces.py` (on the `allen/live-pipeline`
+     branch) uses to sandbox folder-based source locations. The Dockerfile
+     generates the corpus at build time into `/app/data/out/`.
+
+### Build Notes
+- **Corpus generation**: The Dockerfile runs `python -m data.generate --seed 42 --out data/out`
+  at build time (~0.4 s, stdlib only) because `data/out/` is gitignored. The corpus
+  SHA256 is `0d44f7dbaa0441e4318ceed79c9e6e899ae36f2e6809b2af546fda2f7dedce9c`.
+  No `.dockerignore` is needed since none exists and `data/out/` is created inside
+  the image during build (not copied from host).
+- **Static file serving**: `infra/app_patch/static_mount.py` serves root-level
+  dist files (e.g. `/faultline.svg`) directly and falls back to `index.html` for
+  SPA routes. Path traversal is blocked via `Path.resolve()` + `is_relative_to()`.
 
 ### Private-Network `FALKOR_URL` Format
 In the App service settings, set `FALKOR_URL` to reference the private FalkorDB service over Railway private network:

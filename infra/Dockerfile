@@ -37,6 +37,10 @@ COPY data/ /app/data/
 COPY fixtures/ /app/fixtures/
 COPY infra/ /app/infra/
 
+# Generate the deterministic Northwind corpus (gitignored data/out/)
+# stdlib only, ~0.4 s — produces corpus.json, graph_seed.cypher, ground_truth.json
+RUN python -m data.generate --seed 42 --out data/out
+
 # Copy built frontend distribution from web-builder
 COPY --from=web-builder /app/web/dist /app/web/dist
 
