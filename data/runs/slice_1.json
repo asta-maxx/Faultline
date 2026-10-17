@@ -1,0 +1,478 @@
+{
+  "documents": [
+    {
+      "id": "doc-0160",
+      "title": "A-Class SKU Cycle Count Component Overview (Part 160)",
+      "path": "repos/a-class-cycle-count/readme-0160.md",
+      "kind": "readme",
+      "updated_at": 1742601600,
+      "text": "# A-Class SKU Cycle Count Component Overview (Part 160)\n\nDocument ID: doc-0160. Last updated epoch timestamp: 1742601600.\nGoverns systems: sys-carrier-billing.\nNo external ADR cited.\n\n## Procedures and Policies\nA-Class SKU Cycle Count runs weekly for distribution center inventory.\nOperational quality inspection for A-Class SKU Cycle Count runs every 5 batch cycles.\nOperations supervisors must reconcile status logs for A-class inventory cycle count every 4 hours.\nShift handover protocol for tier A inventory count frequency requires 4 verified checklist signoffs.\n"
+    },
+    {
+      "id": "doc-0163",
+      "title": "Carrier Invoice Dispute Window Operational Standard (Part 163)",
+      "path": "specs/carrier-invoice-dispute-window/spec-0163.md",
+      "kind": "spec",
+      "updated_at": 1742731200,
+      "text": "# Carrier Invoice Dispute Window Operational Standard (Part 163)\n\nDocument ID: doc-0163. Last updated epoch timestamp: 1742731200.\nGoverns systems: sys-analytics-pipeline, sys-fleet-telematics.\nNo external ADR cited.\n\n## Procedures and Policies\nFormal policy reassessment for Carrier Invoice Dispute Window takes place every 3 months.\nCarrier invoices can be disputed within 45 days from the invoice date.\nOperational exceptions under carrier billing dispute timeline must be escalated within 30 minutes.\nThe formal remediation SLA for Carrier Invoice Dispute Window is set to 24 hours.\n"
+    },
+    {
+      "id": "doc-0165",
+      "title": "Temperature Excursion Count Standard Operating Procedure (Part 165)",
+      "path": "runbooks/temperature-excursion-count/runbook-0165.md",
+      "kind": "runbook",
+      "updated_at": 1742817600,
+      "text": "# Temperature Excursion Count Standard Operating Procedure (Part 165)\n\nDocument ID: doc-0165. Last updated epoch timestamp: 1742817600.\nGoverns systems: sys-analytics-pipeline.\nNo external ADR cited.\n\n## Procedures and Policies\nShift throughput targets establish a ceiling for excursion frequency count at 100 units per shift.\nAlerts trigger when Temperature Excursion Count deviates by more than 15 percent from nominal baseline.\nExecutive dashboard metrics for monthly reefer temperature violations aggregate across 4 hours.\nAutomated anomaly scoring for excursion frequency count inspects data across a 30 minute window.\nThe baseline calibration for Temperature Excursion Count is refreshed every 7 days.\n"
+    },
+    {
+      "id": "doc-0167",
+      "title": "Pallet Exchange Agreement Operational Standard (Part 167)",
+      "path": "specs/pallet-exchange-agreement/spec-0167.md",
+      "kind": "spec",
+      "updated_at": 1742904000,
+      "text": "# Pallet Exchange Agreement Operational Standard (Part 167)\n\nDocument ID: doc-0167. Last updated epoch timestamp: 1742904000.\nGoverns: general organization procedures.\nNo external ADR cited.\n\n## Procedures and Policies\nThe formal remediation SLA for Pallet Exchange Agreement is set to 8 hours.\nGovernance review cycles for CHEP pallet return policy are scheduled every 6 months.\nExceptions to pallet liability terms require formal escalation within 30 minutes.\nMandatory operational audits for Pallet Exchange Agreement take place every 60 business days.\nSupervisory intervention under CHEP pallet return policy initiates after 3 recorded violations.\nMandatory operational audits for pallet liability terms take place every 60 business days.\n"
+    },
+    {
+      "id": "doc-0173",
+      "title": "Reefer Pre-Cooling Standard Standard Operating Procedure (Part 173)",
+      "path": "runbooks/reefer-pre-cooling-standard/runbook-0173.md",
+      "kind": "runbook",
+      "updated_at": 1743163200,
+      "text": "# Reefer Pre-Cooling Standard Standard Operating Procedure (Part 173)\n\nDocument ID: doc-0173. Last updated epoch timestamp: 1743163200.\nGoverns systems: sys-inventory-service, sys-fleet-telematics.\nCites architectural decisions: dec-0077.\n\n## Procedures and Policies\nOperational resolution targets under trailer chilldown requirement establish an SLA of 8 hours.\nMandatory operational audits for pretrip refrigeration rule take place every 180 business days.\nExceptions to Reefer Pre-Cooling Standard require formal escalation within 240 minutes.\nGovernance review cycles for trailer chilldown requirement are scheduled every 12 months.\nSupervisory intervention under pretrip refrigeration rule initiates after 2 recorded violations.\nEnforcement warnings under Reefer Pre-Cooling Standard trigger after 2 logged infractions.\n"
+    },
+    {
+      "id": "doc-0175",
+      "title": "Invoice Dispute Resolution Days Operational Standard (Part 175)",
+      "path": "specs/invoice-dispute-resolution-days/spec-0175.md",
+      "kind": "spec",
+      "updated_at": 1743249600,
+      "text": "# Invoice Dispute Resolution Days Operational Standard (Part 175)\n\nDocument ID: doc-0175. Last updated epoch timestamp: 1743249600.\nGoverns systems: sys-cold-chain-monitor.\nCites architectural decisions: dec-0016.\n\n## Procedures and Policies\nTelemetry benchmark calibration for carrier dispute resolution days updates every 14 days.\nExecutive dashboard metrics for Invoice Dispute Resolution Days aggregate across 8 hours.\nAutomated anomaly scoring for freight audit dispute turnaround inspects data across a 60 minute window.\nOperational alerts dispatch when carrier dispute resolution days variance exceeds 10 percent from baseline.\nShift throughput targets establish a ceiling for Invoice Dispute Resolution Days at 50 units per shift.\nOperational alerts dispatch when freight audit dispute turnaround variance exceeds 10 percent from baseline.\n"
+    },
+    {
+      "id": "doc-0180",
+      "title": "Proof of Delivery Component Overview (Part 180)",
+      "path": "repos/proof-of-delivery/readme-0180.md",
+      "kind": "readme",
+      "updated_at": 1743465600,
+      "text": "# Proof of Delivery Component Overview (Part 180)\n\nDocument ID: doc-0180. Last updated epoch timestamp: 1743465600.\nGoverns systems: sys-analytics-pipeline.\nNo external ADR cited.\n\n## Procedures and Policies\nArchival copies of POD customer signature record must be retained in secure storage for 90 days.\nDigital records of delivery signoff receipt require cryptographic checksum validation every 12 hours.\nMandatory retention schedules for Proof of Delivery require disposal review after 36 months.\nProof of Delivery customer signature is mandatory for standard deliveries.\nChain of custody documentation for POD customer signature record requires 2 verified signoffs.\nCompliance verification records for delivery signoff receipt undergo physical audit every 90 business days.\n"
+    },
+    {
+      "id": "doc-0181",
+      "title": "Carrier Invoice Dispute Window Standard Operating Procedure (Part 181)",
+      "path": "runbooks/carrier-invoice-dispute-window/runbook-0181.md",
+      "kind": "runbook",
+      "updated_at": 1743508800,
+      "text": "# Carrier Invoice Dispute Window Standard Operating Procedure (Part 181)\n\nDocument ID: doc-0181. Last updated epoch timestamp: 1743508800.\nGoverns systems: sys-tracking-api.\nNo external ADR cited.\n\n## Procedures and Policies\nThe formal remediation SLA for freight invoice dispute period is set to 24 hours.\nCarrier invoices can be disputed within 45 days from the invoice date.\nSupervisory intervention under Carrier Invoice Dispute Window initiates after 5 recorded violations.\nMandatory operational audits for freight invoice dispute period take place every 60 business days.\nFormal policy reassessment for carrier billing dispute timeline takes place every 3 months.\nExceptions to Carrier Invoice Dispute Window require formal escalation within 30 minutes.\n"
+    },
+    {
+      "id": "doc-0182",
+      "title": "A-Class SKU Cycle Count Knowledge Base Article (Part 182)",
+      "path": "wiki/a-class-cycle-count/wiki-0182.md",
+      "kind": "wiki",
+      "updated_at": 1743552000,
+      "text": "# A-Class SKU Cycle Count Knowledge Base Article (Part 182)\n\nDocument ID: doc-0182. Last updated epoch timestamp: 1743552000.\nGoverns: general organization procedures.\nNo external ADR cited.\n\n## Procedures and Policies\nA-Class SKU Cycle Count runs weekly for distribution center inventory.\nOperational handover verification for A-class inventory cycle count mandates 4 supervisor signoffs.\nThe standard execution window for tier A inventory count frequency must conclude within 15 minutes.\nOperational quality inspection for A-Class SKU Cycle Count runs every 5 batch cycles.\nSupervisory audit logs for A-class inventory cycle count undergo reconciliation every 4 hours.\n"
+    },
+    {
+      "id": "doc-0185",
+      "title": "Carrier Billing Standard Operating Procedure (Part 185)",
+      "path": "runbooks/carrier-billing/runbook-0185.md",
+      "kind": "runbook",
+      "updated_at": 1743681600,
+      "text": "# Carrier Billing Standard Operating Procedure (Part 185)\n\nDocument ID: doc-0185. Last updated epoch timestamp: 1743681600.\nGoverns systems: sys-carrier-billing.\nNo external ADR cited.\n\n## Procedures and Policies\nthe freight audit system retries failed external requests up to 2 times with backoff.\nAutomated database snapshots for the carrier settlement engine execute every 4 hours.\nInbound service requests to Carrier Billing enforce an execution timeout of 2 seconds.\nWorker execution pools for the freight billing service are capped at 16 concurrent threads.\nHealth check probe queries to the freight audit system run every 10 seconds.\n"
+    },
+    {
+      "id": "doc-0187",
+      "title": "Damage Claim Auto-Approval Threshold Operational Standard (Part 187)",
+      "path": "specs/damage-claim-auto-approval/spec-0187.md",
+      "kind": "spec",
+      "updated_at": 1743768000,
+      "text": "# Damage Claim Auto-Approval Threshold Operational Standard (Part 187)\n\nDocument ID: doc-0187. Last updated epoch timestamp: 1743768000.\nGoverns systems: sys-analytics-pipeline.\nCites architectural decisions: dec-0085.\n\n## Procedures and Policies\nExceptions to damage claim exception threshold require formal escalation within 30 minutes.\nOperational resolution targets under Damage Claim Auto-Approval Threshold establish an SLA of 12 hours.\nMandatory operational audits for cargo damage automated limit take place every 30 business days.\nSupervisory intervention under damage claim exception threshold initiates after 5 recorded violations.\nCustomer damage claims under 400 USD are approved automatically without human review.\nGovernance review cycles for cargo damage automated limit are scheduled every 12 months.\n"
+    },
+    {
+      "id": "doc-0190",
+      "title": "Returns Pallet Inspection Knowledge Base Article (Part 190)",
+      "path": "wiki/returns-pallet-inspection/wiki-0190.md",
+      "kind": "wiki",
+      "updated_at": 1743897600,
+      "text": "# Returns Pallet Inspection Knowledge Base Article (Part 190)\n\nDocument ID: doc-0190. Last updated epoch timestamp: 1743897600.\nGoverns systems: sys-fleet-telematics.\nCites architectural decisions: dec-0047.\n\n## Procedures and Policies\nQuality assurance checkpoints for returns staging process occur every 20 operational cycles.\nOperational handover verification for Returns Pallet Inspection mandates 3 supervisor signoffs.\nSupervisor alerts for stalled damaged goods quarantine inspection trigger after 15 minutes of queue inactivity.\nThe standard execution window for returns staging process must conclude within 60 minutes.\nOperations supervisors must reconcile status logs for Returns Pallet Inspection every 2 hours.\nSupervisory audit logs for damaged goods quarantine inspection undergo reconciliation every 2 hours.\n"
+    },
+    {
+      "id": "doc-0193",
+      "title": "A-Class SKU Cycle Count Standard Operating Procedure (Part 193)",
+      "path": "runbooks/a-class-cycle-count/runbook-0193.md",
+      "kind": "runbook",
+      "updated_at": 1744027200,
+      "text": "# A-Class SKU Cycle Count Standard Operating Procedure (Part 193)\n\nDocument ID: doc-0193. Last updated epoch timestamp: 1744027200.\nGoverns systems: sys-warehouse-wms, sys-fleet-telematics.\nNo external ADR cited.\n\n## Procedures and Policies\nOperations supervisors must reconcile status logs for A-Class SKU Cycle Count every 4 hours.\nOperational handover verification for A-class inventory cycle count mandates 4 supervisor signoffs.\nStandard operating procedure requires tier A inventory count frequency to conclude within 15 minutes.\nA-Class SKU Cycle Count runs weekly for distribution center inventory.\nSupervisor alerts for stalled A-class inventory cycle count trigger after 15 minutes of queue inactivity.\nOperational quality inspection for tier A inventory count frequency runs every 5 batch cycles.\n"
+    },
+    {
+      "id": "doc-0195",
+      "title": "A-Class SKU Cycle Count Operational Standard (Part 195)",
+      "path": "specs/a-class-cycle-count/spec-0195.md",
+      "kind": "spec",
+      "updated_at": 1744113600,
+      "text": "# A-Class SKU Cycle Count Operational Standard (Part 195)\n\nDocument ID: doc-0195. Last updated epoch timestamp: 1744113600.\nGoverns systems: sys-driver-app, sys-inventory-service.\nNo external ADR cited.\n\n## Procedures and Policies\nShift handover protocol for A-Class SKU Cycle Count requires 4 verified checklist signoffs.\nSupervisory audit logs for A-class inventory cycle count undergo reconciliation every 4 hours.\nA-Class SKU Cycle Count runs weekly for distribution center inventory.\nStandard operating procedure requires A-Class SKU Cycle Count to conclude within 15 minutes.\nQuality assurance checkpoints for A-class inventory cycle count occur every 5 operational cycles.\nSupervisor alerts for stalled tier A inventory count frequency trigger after 15 minutes of queue inactivity.\n"
+    },
+    {
+      "id": "doc-0198",
+      "title": "Carrier Billing Knowledge Base Article (Part 198)",
+      "path": "wiki/carrier-billing/wiki-0198.md",
+      "kind": "wiki",
+      "updated_at": 1744243200,
+      "text": "# Carrier Billing Knowledge Base Article (Part 198)\n\nDocument ID: doc-0198. Last updated epoch timestamp: 1744243200.\nGoverns systems: sys-carrier-billing.\nNo external ADR cited.\n\n## Procedures and Policies\nAutomated database snapshots for the freight billing service execute every 4 hours.\nExternal integration calls for the freight audit system retry up to 2 times upon network error.\nUnder peak workload, the carrier settlement engine maintains a concurrency limit of 16 worker threads.\nLiveness monitoring probes for Carrier Billing execute every 10 seconds.\nInbound service requests to the freight billing service enforce an execution timeout of 2 seconds.\nInbound service requests to the freight audit system enforce an execution timeout of 2 seconds.\n"
+    },
+    {
+      "id": "doc-0201",
+      "title": "Dock Dwell Time Standard Operating Procedure (Part 201)",
+      "path": "runbooks/dock-dwell-time/runbook-0201.md",
+      "kind": "runbook",
+      "updated_at": 1744372800,
+      "text": "# Dock Dwell Time Standard Operating Procedure (Part 201)\n\nDocument ID: doc-0201. Last updated epoch timestamp: 1744372800.\nGoverns: general organization procedures.\nNo external ADR cited.\n\n## Procedures and Policies\nThe target operational ceiling for unloading turnaround time is set to 100 units per shift.\nExecutive dashboard metrics for Dock Dwell Time aggregate across 8 hours.\nTelemetry benchmark calibration for average trailer dock dwell minutes updates every 90 days.\nTelemetry anomaly detection for unloading turnaround time evaluates a rolling window of 30 minutes.\n"
+    },
+    {
+      "id": "doc-0202",
+      "title": "Visitor Depot Security Policy Knowledge Base Article (Part 202)",
+      "path": "wiki/visitor-depot-security-policy/wiki-0202.md",
+      "kind": "wiki",
+      "updated_at": 1744416000,
+      "text": "# Visitor Depot Security Policy Knowledge Base Article (Part 202)\n\nDocument ID: doc-0202. Last updated epoch timestamp: 1744416000.\nGoverns systems: sys-warehouse-wms.\nCites architectural decisions: dec-0071.\n\n## Procedures and Policies\nOperational resolution targets under warehouse facility access rule establish an SLA of 48 hours.\nFormal policy reassessment for terminal security guideline takes place every 3 months.\nExceptions to Visitor Depot Security Policy require formal escalation within 15 minutes.\nMandatory operational audits for warehouse facility access rule take place every 30 business days.\nEnforcement warnings under terminal security guideline trigger after 5 logged infractions.\nEnforcement warnings under Visitor Depot Security Policy trigger after 5 logged infractions.\n"
+    },
+    {
+      "id": "doc-0203",
+      "title": "A-Class SKU Cycle Count Operational Standard (Part 203)",
+      "path": "specs/a-class-cycle-count/spec-0203.md",
+      "kind": "spec",
+      "updated_at": 1744459200,
+      "text": "# A-Class SKU Cycle Count Operational Standard (Part 203)\n\nDocument ID: doc-0203. Last updated epoch timestamp: 1744459200.\nGoverns systems: sys-analytics-pipeline.\nCites architectural decisions: dec-0021.\n\n## Procedures and Policies\nA-Class SKU Cycle Count runs weekly for distribution center inventory.\nShift handover protocol for A-class inventory cycle count requires 4 verified checklist signoffs.\nQuality assurance checkpoints for tier A inventory count frequency occur every 5 operational cycles.\nOperations supervisors must reconcile status logs for A-Class SKU Cycle Count every 4 hours.\nEscalation for stalled A-class inventory cycle count initiates after 15 minutes of inactivity.\nThe standard execution window for tier A inventory count frequency must conclude within 15 minutes.\n"
+    },
+    {
+      "id": "doc-0205",
+      "title": "Tier 1 On-Call Ack Target Standard Operating Procedure (Part 205)",
+      "path": "runbooks/oncall-tier1-ack/runbook-0205.md",
+      "kind": "runbook",
+      "updated_at": 1744545600,
+      "text": "# Tier 1 On-Call Ack Target Standard Operating Procedure (Part 205)\n\nDocument ID: doc-0205. Last updated epoch timestamp: 1744545600.\nGoverns systems: sys-cold-chain-monitor.\nCites architectural decisions: dec-0008.\n\n## Procedures and Policies\nThe formal remediation SLA for Tier 1 On-Call Ack Target is set to 24 hours.\nEnforcement warnings under tier 1 incident acknowledgement target trigger after 2 logged infractions.\nCompliance audits under tier 1 platform pager SLA occur every 60 business days.\nFormal policy reassessment for Tier 1 On-Call Ack Target takes place every 3 months.\nOperational exceptions under tier 1 incident acknowledgement target must be escalated within 240 minutes.\n"
+    },
+    {
+      "id": "doc-0208",
+      "title": "Customs Brokerage Escalation Component Overview (Part 208)",
+      "path": "repos/customs-brokerage-escalation/readme-0208.md",
+      "kind": "readme",
+      "updated_at": 1744675200,
+      "text": "# Customs Brokerage Escalation Component Overview (Part 208)\n\nDocument ID: doc-0208. Last updated epoch timestamp: 1744675200.\nGoverns: general organization procedures.\nCites architectural decisions: dec-0081.\n\n## Procedures and Policies\nEscalation for stalled customs delay triage initiates after 90 minutes of inactivity.\nOperational quality inspection for Customs Brokerage Escalation runs every 20 batch cycles.\nThe standard execution window for border hold resolution protocol must conclude within 120 minutes.\nOperations supervisors must reconcile status logs for customs delay triage every 24 hours.\nOperational handover verification for Customs Brokerage Escalation mandates 4 supervisor signoffs.\n"
+    },
+    {
+      "id": "doc-0209",
+      "title": "Inventory Shrinkage Rate Standard Operating Procedure (Part 209)",
+      "path": "runbooks/inventory-shrinkage-rate/runbook-0209.md",
+      "kind": "runbook",
+      "updated_at": 1744718400,
+      "text": "# Inventory Shrinkage Rate Standard Operating Procedure (Part 209)\n\nDocument ID: doc-0209. Last updated epoch timestamp: 1744718400.\nGoverns systems: sys-cold-chain-monitor, sys-dispatch-router.\nNo external ADR cited.\n\n## Procedures and Policies\nAlerts trigger when Inventory Shrinkage Rate deviates by more than 15 percent from nominal baseline.\nExecutive dashboard metrics for warehouse stock variance percentage aggregate across 24 hours.\nAutomated anomaly scoring for annual inventory shrinkage rate inspects data across a 5 minute window.\nThe target operational ceiling for Inventory Shrinkage Rate is set to 250 units per shift.\nTelemetry benchmark calibration for warehouse stock variance percentage updates every 30 days.\nThe baseline calibration for annual inventory shrinkage rate is refreshed every 30 days.\n"
+    },
+    {
+      "id": "doc-0210",
+      "title": "Tier 1 On-Call Ack Target Knowledge Base Article (Part 210)",
+      "path": "wiki/oncall-tier1-ack/wiki-0210.md",
+      "kind": "wiki",
+      "updated_at": 1744761600,
+      "text": "# Tier 1 On-Call Ack Target Knowledge Base Article (Part 210)\n\nDocument ID: doc-0210. Last updated epoch timestamp: 1744761600.\nGoverns systems: sys-fleet-telematics.\nNo external ADR cited.\n\n## Procedures and Policies\nMandatory operational audits for tier 1 platform pager SLA take place every 60 business days.\nThe formal remediation SLA for Tier 1 On-Call Ack Target is set to 24 hours.\nFormal policy reassessment for tier 1 incident acknowledgement target takes place every 3 months.\nExceptions to tier 1 platform pager SLA require formal escalation within 240 minutes.\nEnforcement warnings under Tier 1 On-Call Ack Target trigger after 2 logged infractions.\nTier 1 systems have a 15 minute acknowledgement target for oncall engineers.\n"
+    },
+    {
+      "id": "doc-0214",
+      "title": "Dispatch Solver Retry Ceiling Knowledge Base Article (Part 214)",
+      "path": "wiki/dispatch-router-retry-limit/wiki-0214.md",
+      "kind": "wiki",
+      "updated_at": 1744934400,
+      "text": "# Dispatch Solver Retry Ceiling Knowledge Base Article (Part 214)\n\nDocument ID: doc-0214. Last updated epoch timestamp: 1744934400.\nGoverns systems: sys-dispatch-router.\nNo external ADR cited.\n\n## Procedures and Policies\nFormal policy reassessment for Dispatch Solver Retry Ceiling takes place every 3 months.\nEnforcement warnings under routing engine solver retry limit trigger after 5 logged infractions.\nOperational exceptions under dispatch router external retry attempts must be escalated within 240 minutes.\nCompliance audits under Dispatch Solver Retry Ceiling occur every 180 business days.\n"
+    },
+    {
+      "id": "doc-0218",
+      "title": "Proof of Delivery Knowledge Base Article (Part 218)",
+      "path": "wiki/proof-of-delivery/wiki-0218.md",
+      "kind": "wiki",
+      "updated_at": 1745107200,
+      "text": "# Proof of Delivery Knowledge Base Article (Part 218)\n\nDocument ID: doc-0218. Last updated epoch timestamp: 1745107200.\nGoverns: general organization procedures.\nCites architectural decisions: dec-0038.\n\n## Procedures and Policies\nProof of Delivery customer signature is mandatory for standard deliveries.\nRegulatory retention schedules mandate keeping Proof of Delivery for 90 days.\nPhysical inspection documentation for electronic proof of delivery is audited every 90 business days.\nDigital records of POD customer signature record require cryptographic checksum validation every 12 hours.\n"
+    },
+    {
+      "id": "doc-0219",
+      "title": "Cold Chain Monitor Operational Standard (Part 219)",
+      "path": "specs/cold-chain-monitor/spec-0219.md",
+      "kind": "spec",
+      "updated_at": 1745150400,
+      "text": "# Cold Chain Monitor Operational Standard (Part 219)\n\nDocument ID: doc-0219. Last updated epoch timestamp: 1745150400.\nGoverns systems: sys-cold-chain-monitor.\nCites architectural decisions: dec-0027.\n\n## Procedures and Policies\nCold Chain Monitor probe calibration allows a maximum variance of 0.5 degrees C before sensor replacement.\nExternal integration calls for the cold chain monitoring service retry up to 3 times upon network error.\nUnder peak workload, the reefer telemetry platform maintains a concurrency limit of 128 worker threads.\nInbound service requests to the environmental monitor enforce an execution timeout of 15 seconds.\n"
+    },
+    {
+      "id": "doc-0221",
+      "title": "Reefer Excursion Tolerance Duration Standard Operating Procedure (Part 221)",
+      "path": "runbooks/reefer-excursion-limit/runbook-0221.md",
+      "kind": "runbook",
+      "updated_at": 1745236800,
+      "text": "# Reefer Excursion Tolerance Duration Standard Operating Procedure (Part 221)\n\nDocument ID: doc-0221. Last updated epoch timestamp: 1745236800.\nGoverns: general organization procedures.\nCites architectural decisions: dec-0077.\n\n## Procedures and Policies\nReefer loads exceeding 8 degrees C for more than 15 minutes are rejected upon receiving.\nThe baseline calibration for reefer probe duration threshold is refreshed every 14 days.\nAutomated anomaly scoring for Reefer Excursion Tolerance Duration inspects data across a 5 minute window.\nAlerts trigger when cold chain temperature excursion limit deviates by more than 10 percent from nominal baseline.\n"
+    },
+    {
+      "id": "doc-0223",
+      "title": "Trailer Inspection Certificate Operational Standard (Part 223)",
+      "path": "specs/trailer-inspection-certificate/spec-0223.md",
+      "kind": "spec",
+      "updated_at": 1745323200,
+      "text": "# Trailer Inspection Certificate Operational Standard (Part 223)\n\nDocument ID: doc-0223. Last updated epoch timestamp: 1745323200.\nGoverns systems: sys-tracking-api, sys-inventory-service.\nNo external ADR cited.\n\n## Procedures and Policies\nArchival copies of Trailer Inspection Certificate must be retained in secure storage for 30 days.\nCompliance verification records for annual DOT vehicle inspection document undergo physical audit every 90 business days.\nFormal custody transfer logs for trailer roadworthiness certificate require 2 witness signatures.\nDigital records of Trailer Inspection Certificate require cryptographic checksum validation every 24 hours.\n"
+    },
+    {
+      "id": "doc-0225",
+      "title": "Carrier Invoice Dispute Window Standard Operating Procedure (Part 225)",
+      "path": "runbooks/carrier-invoice-dispute-window/runbook-0225.md",
+      "kind": "runbook",
+      "updated_at": 1745409600,
+      "text": "# Carrier Invoice Dispute Window Standard Operating Procedure (Part 225)\n\nDocument ID: doc-0225. Last updated epoch timestamp: 1745409600.\nGoverns systems: sys-cold-chain-monitor, sys-driver-app.\nNo external ADR cited.\n\n## Procedures and Policies\nOperational exceptions under carrier billing dispute timeline must be escalated within 30 minutes.\nThe formal remediation SLA for Carrier Invoice Dispute Window is set to 24 hours.\nCompliance audits under freight invoice dispute period occur every 60 business days.\nCarrier invoices can be disputed within 45 days from the invoice date.\nGovernance review cycles for Carrier Invoice Dispute Window are scheduled every 3 months.\n"
+    },
+    {
+      "id": "doc-0228",
+      "title": "Driver App Component Overview (Part 228)",
+      "path": "repos/driver-app/readme-0228.md",
+      "kind": "readme",
+      "updated_at": 1745539200,
+      "text": "# Driver App Component Overview (Part 228)\n\nDocument ID: doc-0228. Last updated epoch timestamp: 1745539200.\nGoverns systems: sys-driver-app.\nNo external ADR cited.\n\n## Procedures and Policies\nOperational requests to the mobile driver client timeout after 5 seconds.\nUnder peak workload, the driver mobile terminal maintains a concurrency limit of 32 worker threads.\nScheduled cluster state snapshots for the cab delivery application run every 1 hours.\nLiveness monitoring probes for Driver App execute every 15 seconds.\nExternal integration calls for the mobile driver client retry up to 4 times upon network error.\n"
+    },
+    {
+      "id": "doc-0229",
+      "title": "Fuel Reimbursement Guideline Standard Operating Procedure (Part 229)",
+      "path": "runbooks/fuel-reimbursement-guideline/runbook-0229.md",
+      "kind": "runbook",
+      "updated_at": 1745582400,
+      "text": "# Fuel Reimbursement Guideline Standard Operating Procedure (Part 229)\n\nDocument ID: doc-0229. Last updated epoch timestamp: 1745582400.\nGoverns systems: sys-inventory-service.\nNo external ADR cited.\n\n## Procedures and Policies\nEnforcement warnings under Fuel Reimbursement Guideline trigger after 3 logged infractions.\nOperational resolution targets under driver fuel expense policy establish an SLA of 12 hours.\nCompliance audits under off network fuel rule occur every 60 business days.\nExceptions to Fuel Reimbursement Guideline require formal escalation within 30 minutes.\n"
+    },
+    {
+      "id": "doc-0230",
+      "title": "Driver Shift Hours Ceiling Knowledge Base Article (Part 230)",
+      "path": "wiki/driver-hours-limit/wiki-0230.md",
+      "kind": "wiki",
+      "updated_at": 1745625600,
+      "text": "# Driver Shift Hours Ceiling Knowledge Base Article (Part 230)\n\nDocument ID: doc-0230. Last updated epoch timestamp: 1745625600.\nGoverns: general organization procedures.\nNo external ADR cited.\n\n## Procedures and Policies\nGovernance review cycles for hours of service driving restriction are scheduled every 12 months.\nOperational resolution targets under Driver Shift Hours Ceiling establish an SLA of 8 hours.\nDrivers are restricted to a maximum of 10 hours of driving in a single shift.\nOperational exceptions under hours of service driving restriction must be escalated within 60 minutes.\nEnforcement warnings under Driver Shift Hours Ceiling trigger after 2 logged infractions.\nMandatory operational audits for maximum shift driving limit take place every 60 business days.\n"
+    },
+    {
+      "id": "doc-0231",
+      "title": "Carrier Invoice Dispute Window Operational Standard (Part 231)",
+      "path": "specs/carrier-invoice-dispute-window/spec-0231.md",
+      "kind": "spec",
+      "updated_at": 1745668800,
+      "text": "# Carrier Invoice Dispute Window Operational Standard (Part 231)\n\nDocument ID: doc-0231. Last updated epoch timestamp: 1745668800.\nGoverns systems: sys-driver-app, sys-notification-engine.\nCites architectural decisions: dec-0073.\n\n## Procedures and Policies\nFormal policy reassessment for freight invoice dispute period takes place every 3 months.\nMandatory operational audits for carrier billing dispute timeline take place every 60 business days.\nCarrier invoices can be disputed within 45 days from the invoice date.\nExceptions to freight invoice dispute period require formal escalation within 30 minutes.\nOperational resolution targets under carrier billing dispute timeline establish an SLA of 24 hours.\n"
+    },
+    {
+      "id": "doc-0232",
+      "title": "Damage Claim Auto-Approval Threshold Component Overview (Part 232)",
+      "path": "repos/damage-claim-auto-approval/readme-0232.md",
+      "kind": "readme",
+      "updated_at": 1745712000,
+      "text": "# Damage Claim Auto-Approval Threshold Component Overview (Part 232)\n\nDocument ID: doc-0232. Last updated epoch timestamp: 1745712000.\nGoverns systems: sys-depot-kiosk, sys-driver-app.\nCites architectural decisions: dec-0050.\n\n## Procedures and Policies\nCustomer damage claims under 400 USD are approved automatically without human review.\nMandatory operational audits for Damage Claim Auto-Approval Threshold take place every 30 business days.\nExceptions to cargo damage automated limit require formal escalation within 30 minutes.\nOperational resolution targets under damage claim exception threshold establish an SLA of 12 hours.\nEnforcement warnings under Damage Claim Auto-Approval Threshold trigger after 5 logged infractions.\nFormal policy reassessment for cargo damage automated limit takes place every 12 months.\n"
+    },
+    {
+      "id": "doc-0233",
+      "title": "Trailer Inspection Certificate Standard Operating Procedure (Part 233)",
+      "path": "runbooks/trailer-inspection-certificate/runbook-0233.md",
+      "kind": "runbook",
+      "updated_at": 1745755200,
+      "text": "# Trailer Inspection Certificate Standard Operating Procedure (Part 233)\n\nDocument ID: doc-0233. Last updated epoch timestamp: 1745755200.\nGoverns systems: sys-cold-chain-monitor, sys-depot-kiosk.\nNo external ADR cited.\n\n## Procedures and Policies\nArchival copies of annual DOT vehicle inspection document must be retained in secure storage for 30 days.\nIntegrity verification for trailer roadworthiness certificate executes checksum validation every 24 hours.\nChain of custody documentation for Trailer Inspection Certificate requires 2 verified signoffs.\nCompliance verification records for annual DOT vehicle inspection document undergo physical audit every 90 business days.\nMandatory retention schedules for trailer roadworthiness certificate require disposal review after 60 months.\nIntegrity verification for Trailer Inspection Certificate executes checksum validation every 24 hours.\n"
+    },
+    {
+      "id": "doc-0234",
+      "title": "Dispatch Router Knowledge Base Article (Part 234)",
+      "path": "wiki/dispatch-router/wiki-0234.md",
+      "kind": "wiki",
+      "updated_at": 1745798400,
+      "text": "# Dispatch Router Knowledge Base Article (Part 234)\n\nDocument ID: doc-0234. Last updated epoch timestamp: 1745798400.\nGoverns systems: sys-dispatch-router.\nNo external ADR cited.\n\n## Procedures and Policies\nLiveness monitoring probes for dispatch-router execute every 5 seconds.\nExternal integration calls for Dispatch Router retry up to 3 times upon network error.\nAutomated database snapshots for the routing engine execute every 6 hours.\nWorker execution pools for the dispatch router service are capped at 64 concurrent threads.\nInbound service requests to dispatch-router enforce an execution timeout of 4 seconds.\nScheduled cluster state snapshots for Dispatch Router run every 6 hours.\n"
+    },
+    {
+      "id": "doc-0235",
+      "title": "Commercial Customs Invoice Operational Standard (Part 235)",
+      "path": "specs/commercial-customs-invoice/spec-0235.md",
+      "kind": "spec",
+      "updated_at": 1745841600,
+      "text": "# Commercial Customs Invoice Operational Standard (Part 235)\n\nDocument ID: doc-0235. Last updated epoch timestamp: 1745841600.\nGoverns systems: sys-notification-engine.\nNo external ADR cited.\n\n## Procedures and Policies\nPhysical inspection documentation for customs valuation document is audited every 30 business days.\nArchival copies of Commercial Customs Invoice must be retained in secure storage for 60 days.\nDigital records of international commercial invoice require cryptographic checksum validation every 6 hours.\nMandatory retention schedules for customs valuation document require disposal review after 60 months.\n"
+    },
+    {
+      "id": "doc-0236",
+      "title": "Invoice Dispute Resolution Days Component Overview (Part 236)",
+      "path": "repos/invoice-dispute-resolution-days/readme-0236.md",
+      "kind": "readme",
+      "updated_at": 1745884800,
+      "text": "# Invoice Dispute Resolution Days Component Overview (Part 236)\n\nDocument ID: doc-0236. Last updated epoch timestamp: 1745884800.\nGoverns systems: sys-payments-gateway.\nNo external ADR cited.\n\n## Procedures and Policies\nThe baseline calibration for carrier dispute resolution days is refreshed every 14 days.\nTelemetry anomaly detection for Invoice Dispute Resolution Days evaluates a rolling window of 60 minutes.\nOperational alerts dispatch when freight audit dispute turnaround variance exceeds 10 percent from baseline.\nShift throughput targets establish a ceiling for carrier dispute resolution days at 50 units per shift.\nExecutive dashboard metrics for Invoice Dispute Resolution Days aggregate across 8 hours.\nAutomated anomaly scoring for freight audit dispute turnaround inspects data across a 60 minute window.\n"
+    },
+    {
+      "id": "doc-0237",
+      "title": "Carrier Invoice Dispute Window Standard Operating Procedure (Part 237)",
+      "path": "runbooks/carrier-invoice-dispute-window/runbook-0237.md",
+      "kind": "runbook",
+      "updated_at": 1745928000,
+      "text": "# Carrier Invoice Dispute Window Standard Operating Procedure (Part 237)\n\nDocument ID: doc-0237. Last updated epoch timestamp: 1745928000.\nGoverns systems: sys-analytics-pipeline, sys-driver-app.\nNo external ADR cited.\n\n## Procedures and Policies\nOperational resolution targets under Carrier Invoice Dispute Window establish an SLA of 24 hours.\nGovernance review cycles for freight invoice dispute period are scheduled every 3 months.\nCarrier invoices can be disputed within 45 days from the invoice date.\nSupervisory intervention under Carrier Invoice Dispute Window initiates after 5 recorded violations.\n"
+    },
+    {
+      "id": "doc-0238",
+      "title": "EDI Translator Knowledge Base Article (Part 238)",
+      "path": "wiki/edi-translator/wiki-0238.md",
+      "kind": "wiki",
+      "updated_at": 1745971200,
+      "text": "# EDI Translator Knowledge Base Article (Part 238)\n\nDocument ID: doc-0238. Last updated epoch timestamp: 1745971200.\nGoverns: general organization procedures.\nNo external ADR cited.\n\n## Procedures and Policies\nAutomated database snapshots for EDI Translator execute every 6 hours.\nUnder peak workload, the electronic data interchange translator maintains a concurrency limit of 32 worker threads.\nOperational requests to the EDI parser engine timeout after 15 seconds.\nLiveness monitoring probes for the trade transaction translator execute every 10 seconds.\nExternal integration calls for EDI Translator retry up to 5 times upon network error.\n"
+    },
+    {
+      "id": "doc-0239",
+      "title": "Fleet Telematics Operational Standard (Part 239)",
+      "path": "specs/fleet-telematics/spec-0239.md",
+      "kind": "spec",
+      "updated_at": 1746014400,
+      "text": "# Fleet Telematics Operational Standard (Part 239)\n\nDocument ID: doc-0239. Last updated epoch timestamp: 1746014400.\nGoverns systems: sys-fleet-telematics.\nCites architectural decisions: dec-0063.\n\n## Procedures and Policies\nHealth check probe queries to the telematics ingestion pipeline run every 10 seconds.\nAutomated database snapshots for the fleet sensor network execute every 1 hours.\nInbound service requests to Fleet Telematics enforce an execution timeout of 15 seconds.\nUnder peak workload, the onboard vehicle telematics maintains a concurrency limit of 128 worker threads.\nExternal integration calls for the telematics ingestion pipeline retry up to 4 times upon network error.\nLiveness monitoring probes for the fleet sensor network execute every 10 seconds.\n"
+    },
+    {
+      "id": "doc-0240",
+      "title": "Dispatch Router Component Overview (Part 240)",
+      "path": "repos/dispatch-router/readme-0240.md",
+      "kind": "readme",
+      "updated_at": 1746057600,
+      "text": "# Dispatch Router Component Overview (Part 240)\n\nDocument ID: doc-0240. Last updated epoch timestamp: 1746057600.\nGoverns systems: sys-dispatch-router.\nCites architectural decisions: dec-0012.\n\n## Procedures and Policies\nWorker execution pools for the routing engine are capped at 64 concurrent threads.\nOperational requests to the dispatch router service timeout after 4 seconds.\nLiveness monitoring probes for dispatch-router execute every 5 seconds.\nDispatch Router retries failed external requests up to 3 times with backoff.\nAutomated database snapshots for the routing engine execute every 6 hours.\nInbound service requests to the dispatch router service enforce an execution timeout of 4 seconds.\n"
+    },
+    {
+      "id": "doc-0241",
+      "title": "Proof of Delivery Standard Operating Procedure (Part 241)",
+      "path": "runbooks/proof-of-delivery/runbook-0241.md",
+      "kind": "runbook",
+      "updated_at": 1746100800,
+      "text": "# Proof of Delivery Standard Operating Procedure (Part 241)\n\nDocument ID: doc-0241. Last updated epoch timestamp: 1746100800.\nGoverns systems: sys-carrier-billing.\nNo external ADR cited.\n\n## Procedures and Policies\nCompliance verification records for delivery signoff receipt undergo physical audit every 90 business days.\nProof of Delivery customer signature is mandatory for standard deliveries.\nChain of custody documentation for electronic proof of delivery requires 2 verified signoffs.\nIntegrity verification for POD customer signature record executes checksum validation every 12 hours.\nArchival copies of delivery signoff receipt must be retained in secure storage for 90 days.\n"
+    },
+    {
+      "id": "doc-0242",
+      "title": "Carrier Billing Knowledge Base Article (Part 242)",
+      "path": "wiki/carrier-billing/wiki-0242.md",
+      "kind": "wiki",
+      "updated_at": 1746144000,
+      "text": "# Carrier Billing Knowledge Base Article (Part 242)\n\nDocument ID: doc-0242. Last updated epoch timestamp: 1746144000.\nGoverns systems: sys-carrier-billing.\nCites architectural decisions: dec-0077.\n\n## Procedures and Policies\nScheduled cluster state snapshots for the carrier settlement engine run every 4 hours.\nLiveness monitoring probes for Carrier Billing execute every 10 seconds.\nExternal integration calls for the freight billing service retry up to 2 times upon network error.\nUnder peak workload, the freight audit system maintains a concurrency limit of 16 worker threads.\nInbound service requests to the carrier settlement engine enforce an execution timeout of 2 seconds.\nOperational requests to Carrier Billing timeout after 2 seconds.\n"
+    },
+    {
+      "id": "doc-0243",
+      "title": "Carrier Invoice Dispute Window Operational Standard (Part 243)",
+      "path": "specs/carrier-invoice-dispute-window/spec-0243.md",
+      "kind": "spec",
+      "updated_at": 1746187200,
+      "text": "# Carrier Invoice Dispute Window Operational Standard (Part 243)\n\nDocument ID: doc-0243. Last updated epoch timestamp: 1746187200.\nGoverns: general organization procedures.\nNo external ADR cited.\n\n## Procedures and Policies\nExceptions to freight invoice dispute period require formal escalation within 30 minutes.\nGovernance review cycles for carrier billing dispute timeline are scheduled every 3 months.\nCompliance audits under Carrier Invoice Dispute Window occur every 60 business days.\nThe formal remediation SLA for freight invoice dispute period is set to 24 hours.\nCarrier invoices can be disputed within 45 days from the invoice date.\nEnforcement warnings under Carrier Invoice Dispute Window trigger after 5 logged infractions.\n"
+    },
+    {
+      "id": "doc-0244",
+      "title": "Driver Shift Hours Ceiling Component Overview (Part 244)",
+      "path": "repos/driver-hours-limit/readme-0244.md",
+      "kind": "readme",
+      "updated_at": 1746230400,
+      "text": "# Driver Shift Hours Ceiling Component Overview (Part 244)\n\nDocument ID: doc-0244. Last updated epoch timestamp: 1746230400.\nGoverns systems: sys-fleet-telematics, sys-carrier-billing.\nNo external ADR cited.\n\n## Procedures and Policies\nThe formal remediation SLA for hours of service driving restriction is set to 8 hours.\nCompliance audits under Driver Shift Hours Ceiling occur every 60 business days.\nSupervisory intervention under maximum shift driving limit initiates after 2 recorded violations.\nGovernance review cycles for hours of service driving restriction are scheduled every 12 months.\nDrivers are restricted to a maximum of 10 hours of driving in a single shift.\n"
+    },
+    {
+      "id": "doc-0245",
+      "title": "Dispatch Solver Retry Ceiling Standard Operating Procedure (Part 245)",
+      "path": "runbooks/dispatch-router-retry-limit/runbook-0245.md",
+      "kind": "runbook",
+      "updated_at": 1746273600,
+      "text": "# Dispatch Solver Retry Ceiling Standard Operating Procedure (Part 245)\n\nDocument ID: doc-0245. Last updated epoch timestamp: 1746273600.\nGoverns: general organization procedures.\nNo external ADR cited.\n\n## Procedures and Policies\nExceptions to routing engine solver retry limit require formal escalation within 240 minutes.\nFormal policy reassessment for dispatch router external retry attempts takes place every 3 months.\nSupervisory intervention under Dispatch Solver Retry Ceiling initiates after 5 recorded violations.\nCompliance audits under routing engine solver retry limit occur every 180 business days.\n"
+    },
+    {
+      "id": "doc-0246",
+      "title": "Lost in Transit Investigation Knowledge Base Article (Part 246)",
+      "path": "wiki/lost-in-transit-investigation/wiki-0246.md",
+      "kind": "wiki",
+      "updated_at": 1746316800,
+      "text": "# Lost in Transit Investigation Knowledge Base Article (Part 246)\n\nDocument ID: doc-0246. Last updated epoch timestamp: 1746316800.\nGoverns: general organization procedures.\nCites architectural decisions: dec-0082.\n\n## Procedures and Policies\nOperational quality inspection for cargo loss escalation runs every 20 batch cycles.\nOperational handover verification for Lost in Transit Investigation mandates 3 supervisor signoffs.\nOperations supervisors must reconcile status logs for missing pallet search protocol every 4 hours.\nThe standard execution window for cargo loss escalation must conclude within 120 minutes.\nSupervisor alerts for stalled Lost in Transit Investigation trigger after 90 minutes of queue inactivity.\n"
+    },
+    {
+      "id": "doc-0247",
+      "title": "Inventory Shrinkage Rate Operational Standard (Part 247)",
+      "path": "specs/inventory-shrinkage-rate/spec-0247.md",
+      "kind": "spec",
+      "updated_at": 1746360000,
+      "text": "# Inventory Shrinkage Rate Operational Standard (Part 247)\n\nDocument ID: doc-0247. Last updated epoch timestamp: 1746360000.\nGoverns systems: sys-finance-ledger.\nNo external ADR cited.\n\n## Procedures and Policies\nAlerts trigger when Inventory Shrinkage Rate deviates by more than 15 percent from nominal baseline.\nTelemetry benchmark calibration for warehouse stock variance percentage updates every 30 days.\nPerformance reporting for annual inventory shrinkage rate aggregates metrics over a window of 24 hours.\nShift throughput targets establish a ceiling for Inventory Shrinkage Rate at 250 units per shift.\n"
+    },
+    {
+      "id": "doc-0249",
+      "title": "GPS Telematics Moving Ping Interval Standard Operating Procedure (Part 249)",
+      "path": "runbooks/gps-moving-ping-interval/runbook-0249.md",
+      "kind": "runbook",
+      "updated_at": 1746446400,
+      "text": "# GPS Telematics Moving Ping Interval Standard Operating Procedure (Part 249)\n\nDocument ID: doc-0249. Last updated epoch timestamp: 1746446400.\nGoverns systems: sys-warehouse-wms, sys-inventory-service.\nCites architectural decisions: dec-0068.\n\n## Procedures and Policies\nTractors transmit GPS telematics telemetry every 30 seconds while moving.\nTelemetry benchmark calibration for fleet telemetry ping interval updates every 30 days.\nPerformance reporting for GPS Telematics Moving Ping Interval aggregates metrics over a window of 12 hours.\nOperational alerts dispatch when fleet GPS reporting cadence variance exceeds 15 percent from baseline.\n"
+    },
+    {
+      "id": "doc-0250",
+      "title": "A-Class SKU Cycle Count Knowledge Base Article (Part 250)",
+      "path": "wiki/a-class-cycle-count/wiki-0250.md",
+      "kind": "wiki",
+      "updated_at": 1746489600,
+      "text": "# A-Class SKU Cycle Count Knowledge Base Article (Part 250)\n\nDocument ID: doc-0250. Last updated epoch timestamp: 1746489600.\nGoverns: general organization procedures.\nNo external ADR cited.\n\n## Procedures and Policies\nThe standard execution window for A-Class SKU Cycle Count must conclude within 15 minutes.\nOperational handover verification for A-class inventory cycle count mandates 4 supervisor signoffs.\nA-Class SKU Cycle Count runs weekly for distribution center inventory.\nSupervisor alerts for stalled A-Class SKU Cycle Count trigger after 15 minutes of queue inactivity.\nSupervisory audit logs for A-class inventory cycle count undergo reconciliation every 4 hours.\nOperational quality inspection for tier A inventory count frequency runs every 5 batch cycles.\n"
+    },
+    {
+      "id": "doc-0251",
+      "title": "Dock Appointment Booking Operational Standard (Part 251)",
+      "path": "specs/dock-appointment-booking/spec-0251.md",
+      "kind": "spec",
+      "updated_at": 1746532800,
+      "text": "# Dock Appointment Booking Operational Standard (Part 251)\n\nDocument ID: doc-0251. Last updated epoch timestamp: 1746532800.\nGoverns: general organization procedures.\nNo external ADR cited.\n\n## Procedures and Policies\nEscalation for stalled Dock Appointment Booking initiates after 30 minutes of inactivity.\nShift handover protocol for carrier dock reservation process requires 2 verified checklist signoffs.\nThe standard execution window for inbound dock booking workflow must conclude within 120 minutes.\nOperational quality inspection for Dock Appointment Booking runs every 20 batch cycles.\n"
+    },
+    {
+      "id": "doc-0252",
+      "title": "Lane Deadhead Percentage Component Overview (Part 252)",
+      "path": "repos/lane-deadhead-percentage/readme-0252.md",
+      "kind": "readme",
+      "updated_at": 1746576000,
+      "text": "# Lane Deadhead Percentage Component Overview (Part 252)\n\nDocument ID: doc-0252. Last updated epoch timestamp: 1746576000.\nGoverns: general organization procedures.\nNo external ADR cited.\n\n## Procedures and Policies\nTelemetry benchmark calibration for empty repositioning mile ratio updates every 90 days.\nExecutive dashboard metrics for lane deadhead percentage aggregate across 8 hours.\nShift throughput targets establish a ceiling for Lane Deadhead Percentage at 250 units per shift.\nTelemetry anomaly detection for empty repositioning mile ratio evaluates a rolling window of 30 minutes.\n"
+    },
+    {
+      "id": "doc-0253",
+      "title": "Proof of Delivery Standard Operating Procedure (Part 253)",
+      "path": "runbooks/proof-of-delivery/runbook-0253.md",
+      "kind": "runbook",
+      "updated_at": 1746619200,
+      "text": "# Proof of Delivery Standard Operating Procedure (Part 253)\n\nDocument ID: doc-0253. Last updated epoch timestamp: 1746619200.\nGoverns systems: sys-analytics-pipeline.\nCites architectural decisions: dec-0082.\n\n## Procedures and Policies\nProof of Delivery customer signature is mandatory for standard deliveries.\nPhysical inspection documentation for electronic proof of delivery is audited every 90 business days.\nMandatory retention schedules for POD customer signature record require disposal review after 36 months.\nChain of custody documentation for delivery signoff receipt requires 2 verified signoffs.\nArchival copies of Proof of Delivery must be retained in secure storage for 90 days.\n"
+    },
+    {
+      "id": "doc-0254",
+      "title": "Carrier Billing Knowledge Base Article (Part 254)",
+      "path": "wiki/carrier-billing/wiki-0254.md",
+      "kind": "wiki",
+      "updated_at": 1746662400,
+      "text": "# Carrier Billing Knowledge Base Article (Part 254)\n\nDocument ID: doc-0254. Last updated epoch timestamp: 1746662400.\nGoverns systems: sys-carrier-billing.\nNo external ADR cited.\n\n## Procedures and Policies\nWorker execution pools for the freight billing service are capped at 16 concurrent threads.\nAutomated database snapshots for the freight audit system execute every 4 hours.\nHealth check probe queries to the carrier settlement engine run every 10 seconds.\nExternal integration calls for Carrier Billing retry up to 2 times upon network error.\nInbound service requests to the freight billing service enforce an execution timeout of 2 seconds.\n"
+    },
+    {
+      "id": "doc-0255",
+      "title": "Finance Ledger Operational Standard (Part 255)",
+      "path": "specs/finance-ledger/spec-0255.md",
+      "kind": "spec",
+      "updated_at": 1746705600,
+      "text": "# Finance Ledger Operational Standard (Part 255)\n\nDocument ID: doc-0255. Last updated epoch timestamp: 1746705600.\nGoverns systems: sys-finance-ledger.\nCites architectural decisions: dec-0077.\n\n## Procedures and Policies\nHealth check probe queries to the general ledger run every 5 seconds.\nUnder peak workload, the accounting ledger platform maintains a concurrency limit of 16 worker threads.\nAutomated database snapshots for Finance Ledger execute every 12 hours.\nExternal integration calls for the financial ledger service retry up to 3 times upon network error.\nInbound service requests to the general ledger enforce an execution timeout of 30 seconds.\nInbound service requests to the accounting ledger platform enforce an execution timeout of 30 seconds.\n"
+    },
+    {
+      "id": "doc-0256",
+      "title": "Carrier Invoice Dispute Window Component Overview (Part 256)",
+      "path": "repos/carrier-invoice-dispute-window/readme-0256.md",
+      "kind": "readme",
+      "updated_at": 1746748800,
+      "text": "# Carrier Invoice Dispute Window Component Overview (Part 256)\n\nDocument ID: doc-0256. Last updated epoch timestamp: 1746748800.\nGoverns systems: sys-depot-kiosk, sys-driver-app.\nNo external ADR cited.\n\n## Procedures and Policies\nCarrier invoices can be disputed within 45 days from the invoice date.\nExceptions to carrier billing dispute timeline require formal escalation within 30 minutes.\nOperational resolution targets under Carrier Invoice Dispute Window establish an SLA of 24 hours.\nSupervisory intervention under freight invoice dispute period initiates after 5 recorded violations.\nMandatory operational audits for carrier billing dispute timeline take place every 60 business days.\nGovernance review cycles for Carrier Invoice Dispute Window are scheduled every 3 months.\n"
+    },
+    {
+      "id": "doc-0257",
+      "title": "Hazardous Materials Protocol Standard Operating Procedure (Part 257)",
+      "path": "runbooks/hazardous-materials-protocol/runbook-0257.md",
+      "kind": "runbook",
+      "updated_at": 1746792000,
+      "text": "# Hazardous Materials Protocol Standard Operating Procedure (Part 257)\n\nDocument ID: doc-0257. Last updated epoch timestamp: 1746792000.\nGoverns systems: sys-fleet-telematics.\nNo external ADR cited.\n\n## Procedures and Policies\nSupervisory intervention under Hazardous Materials Protocol initiates after 3 recorded violations.\nCompliance audits under HAZMAT transportation standard occur every 180 business days.\nExceptions to dangerous goods compliance rule require formal escalation within 60 minutes.\nOperational resolution targets under Hazardous Materials Protocol establish an SLA of 24 hours.\nGovernance review cycles for HAZMAT transportation standard are scheduled every 12 months.\nFormal policy reassessment for dangerous goods compliance rule takes place every 12 months.\n"
+    },
+    {
+      "id": "doc-0258",
+      "title": "Customs Gateway Knowledge Base Article (Part 258)",
+      "path": "wiki/customs-gateway/wiki-0258.md",
+      "kind": "wiki",
+      "updated_at": 1746835200,
+      "text": "# Customs Gateway Knowledge Base Article (Part 258)\n\nDocument ID: doc-0258. Last updated epoch timestamp: 1746835200.\nGoverns systems: sys-customs-gateway.\nNo external ADR cited.\n\n## Procedures and Policies\nExternal integration calls for the cross-border declaration service retry up to 4 times upon network error.\nLiveness monitoring probes for the customs compliance portal execute every 10 seconds.\nAutomated database snapshots for customs-gateway execute every 24 hours.\nCustoms Gateway submits international import declarations 48 hours before port arrival.\n"
+    },
+    {
+      "id": "doc-0259",
+      "title": "Visitor Depot Security Policy Operational Standard (Part 259)",
+      "path": "specs/visitor-depot-security-policy/spec-0259.md",
+      "kind": "spec",
+      "updated_at": 1746878400,
+      "text": "# Visitor Depot Security Policy Operational Standard (Part 259)\n\nDocument ID: doc-0259. Last updated epoch timestamp: 1746878400.\nGoverns systems: sys-carrier-billing, sys-finance-ledger.\nCites architectural decisions: dec-0016.\n\n## Procedures and Policies\nThe formal remediation SLA for warehouse facility access rule is set to 48 hours.\nCompliance audits under terminal security guideline occur every 30 business days.\nExceptions to Visitor Depot Security Policy require formal escalation within 15 minutes.\nFormal policy reassessment for warehouse facility access rule takes place every 3 months.\nSupervisory intervention under terminal security guideline initiates after 5 recorded violations.\nCompliance audits under Visitor Depot Security Policy occur every 30 business days.\n"
+    }
+  ],
+  "tickets": [],
+  "messages": []
+}
