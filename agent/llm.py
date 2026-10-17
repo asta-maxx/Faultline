@@ -128,9 +128,15 @@ class Gemini:
     BASE = "https://generativelanguage.googleapis.com/v1beta/models"
 
     def generate(self, model, prompt, content, params):
+        cfg = dict(params)
+        if cfg.pop("response_format", None):
+            cfg["response_mime_type"] = "application/json"
+        cfg.pop("reasoning_effort", None)
+        if "max_completion_tokens" in cfg:
+            cfg["maxOutputTokens"] = cfg.pop("max_completion_tokens")
         body = {"systemInstruction": {"parts": [{"text": prompt}]},
                 "contents": [{"role": "user", "parts": [{"text": content}]}],
-                "generationConfig": params}
+                "generationConfig": cfg}
         data = _post(f"{self.BASE}/{model}:generateContent", json=body,
                      headers={"x-goog-api-key": _key("GEMINI_API_KEY")})
         cand = data["candidates"][0]
@@ -184,6 +190,9 @@ def _candidates(role: str) -> list[str]:
     chain = [model_for(role)]
     if role in ROLE_FALLBACK:
         chain.append(model_for(ROLE_FALLBACK[role]))
+    fallback = os.environ.get(f"FAULTLINE_{role.upper()}_FALLBACK_MODEL")
+    if fallback and fallback not in chain:
+        chain.append(fallback)
     return chain
 
 
