@@ -392,6 +392,48 @@ def states(t):
                  "Resolved: a check in a square.")
 
 
+# ---------------------------------------------------------------- footer: provenance of Faultline itself
+def footer(t):
+    """Every claim in Faultline carries its source. So does Faultline: the maker is drawn as a
+    source node that ASSERTS one claim, laid out like the app's evidence panel."""
+    import base64
+
+    w, h = 1200, 300
+    logo = base64.b64encode((OUT / "onereign.jpg").read_bytes()).decode("ascii")
+    b = [markers(t, ["muted"])]
+    # the source node: OneReign's plate, square, hairline, as the graph draws a node
+    px, py, ps = 48, 44, 200
+    b.append(f'<rect x="{px - 0.5}" y="{py - 0.5}" width="{ps + 1}" height="{ps + 1}" fill="none" stroke="{t["rule"]}"/>'
+             f'<image href="data:image/jpeg;base64,{logo}" x="{px}" y="{py}" width="{ps}" height="{ps}" '
+             f'preserveAspectRatio="xMidYMid slice"/>')
+    b.append(text(px, py + ps + 28, "onereign", 12, "ink", t, 400, face="mono"))
+    b.append(text(px + ps, py + ps + 28, "source", 12, "muted", t, 400, "end", "mono"))
+    # ASSERTS: the maker asserts the claim
+    b.append(arrow(px + ps + 8, py + ps / 2, 330, py + ps / 2, t))
+    b.append(edge_label(px + ps + 46, py + ps / 2, "ASSERTS", t))
+    # the claim, as the evidence panel shows one: state, text with its span marked, fields
+    cx = 344
+    b.append(f'<line x1="{cx}" y1="{py}" x2="{cx}" y2="{py + ps}" stroke="{t["live"]}" stroke-width="2"/>')
+    b.append(label(cx + 24, py + 16, "provenance", t) + glyph("live", cx + 133, py + 12, 7, t)
+             + label(cx + 146, py + 16, "current", t, "live"))
+    # The evidence span is marked in the live colour rather than with a box behind it: GitHub draws
+    # these with fallback fonts, so a box sized to the words would drift; a tspan cannot.
+    b.append(f'<text x="{cx + 24}" y="{py + 72}" font-family="{DISPLAY}" font-size="30" font-weight="500" '
+             f'fill="{t["ink"]}">Faultline was <tspan fill="{t["live"]}">built by OneReign</tspan>.</text>')
+    fields = [("source", "OneReign · where possibility becomes inevitable"),
+              ("built", "2026-10 · Graph Hacks 2026 · FalkorDB × WeMakeDevs"),
+              ("confidence", "1.00")]
+    for i, (k, v) in enumerate(fields):
+        y = py + 116 + i * 26
+        b.append(label(cx + 24, y, k, t) + text(cx + 140, y, v, 13, "ink", t, 400, face="mono"))
+    b.append(text(w - 48, h - 24, "Every claim in Faultline carries its source. So does Faultline.", 12, "muted", t, 400,
+                  "end", "mono"))
+    return frame(w, h, t, "\n".join(b), "Built by OneReign",
+                 "Footer. The OneReign logo, a hexagonal emblem with the words OneReign and Where possibility becomes "
+                 "inevitable, is drawn as a source node that ASSERTS a claim: Faultline was built by OneReign. "
+                 "Every claim in Faultline carries its source. So does Faultline.")
+
+
 # ---------------------------------------------------------------- icons (single file each, the app's stroke)
 ICONS = {
     "funnel": '<path d="M3 4h18l-7 8.5V19l-4 2v-8.5z"/>',
@@ -420,7 +462,8 @@ def icon(body):
 
 def main():
     for name, fn in [("hero", hero), ("stack", stack), ("funnel", funnel), ("architecture", architecture),
-                     ("graph-model", graph_model), ("supersedes", supersedes), ("states", states)]:
+                     ("graph-model", graph_model), ("supersedes", supersedes), ("states", states),
+                     ("footer", footer)]:
         for theme, t in THEMES.items():
             (OUT / f"{name}-{theme}.svg").write_text(fn(t), encoding="utf-8", newline="\n")
     for name, body in ICONS.items():

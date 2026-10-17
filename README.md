@@ -565,3 +565,8 @@ README visuals are generated, not hand-drawn, from the design system in [`faultl
 ---
 
 <sub>Built for <b>Graph Hacks 2026</b> (FalkorDB × WeMakeDevs). Entered in Track 03, Company Brain, and Track 02, Agent Memory and Coordination.</sub>
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset=".github/readme/footer-dark.svg">
+  <img alt="Made by OneReign. The OneReign logo is drawn as a source node that ASSERTS one claim: Faultline was built by OneReign. Every claim in Faultline carries its source. So does Faultline." src=".github/readme/footer-light.svg" width="100%">
+</picture>
