@@ -220,9 +220,11 @@ def _call(role: str, op: str, prompt: str, content: str, params: dict[str, Any])
                          else provider.embed(model, content))
             except RateLimited as e:
                 last = e
-                if e.retry_after is None or e.retry_after > MAX_WAIT_S:
+                if e.retry_after is not None and e.retry_after > MAX_WAIT_S:
                     break  # long quota window: go to the overflow model instead of waiting
-                time.sleep(e.retry_after + random.uniform(0.2, 1.0))
+                # No delay given: back off like a 5xx rather than giving up on this model at once.
+                wait = e.retry_after if e.retry_after is not None else min(5 * 2 ** attempt, 30)
+                time.sleep(wait + random.uniform(0.2, 1.0))
                 continue
             except Transient as e:
                 last = e
