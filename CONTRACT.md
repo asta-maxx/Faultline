@@ -347,7 +347,13 @@ POST /conflicts/{id}/resolve
   -> {"ok": true, "conflict": Conflict}
 
 POST /conflicts/{id}/draft
-  -> {"correction": str, "owner": Person, "ticket": {"title","body"}}
+  -> {"correction": str, "owner": {"id","name","role"}, "ticket": {"title","body"}}
+  # 422 when no Person OWNS a system downstream of either side (always so for folder workspaces)
+
+POST /conflicts/{id}/dismiss                       # v7
+  body {"rationale": str, "dismissed_by": str}
+  -> {"ok": true, "conflict": Conflict}
+  # 404 unknown conflict; 409 if it is not open; 422 if rationale or dismissed_by is empty
 
 GET  /stats
   -> Stats
@@ -383,6 +389,15 @@ type Conflict = {
   // v5, optional: the RESOLVED_AS edge, null unless status is "resolved"
   resolution?: { winner_claim_id: string; rationale: string; resolved_at: number; resolved_by: string } | null
 }
+
+// v7, GET /conflicts/{id} only: the §7.4 precedent for this conflict's Entity. `found` is
+// false when nothing about the Entity has been settled. When a settled winner is one of this
+// conflict's claims, the Adjudicator would not have re-flagged the pair.
+type Precedent = {
+  found: boolean
+  settled: { conflict_id: string; winner_id: string; winner_text: string; settled_at: number }[]
+}
+// ConflictDetailResponse: { conflict: Conflict, path: GraphPath, precedent?: Precedent }
 
 type GraphPath = {
   nodes: { id: string; label: string; type: string; state?: "live"|"contradicted"|"superseded"; at?: number }[]

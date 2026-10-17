@@ -214,7 +214,7 @@ def main() -> int:
     print(f"stage 2  graph collapse       {len(s2):>5}   {shared} shared-Entity pairs - 2 CONTRADICTS"
           f" - 1 in a Conflict (k-3)")
     print(f"stage 3  prefilter            {len(s3):>5}   shared predicate AND (object differs OR polarity differs)")
-    print(f"stage 4  LLM judgement     <= {len(s3):>5}   upper bound; Adjudicator not built, 0 model calls made")
+    print(f"stage 4  LLM judgement     <= {len(s3):>5}   upper bound; this demo makes no model calls (the Adjudicator is agent/adjudicator.py)")
     print(f"\n         {naive} -> {len(s2)} is {naive / len(s2):.1f}x;  {naive} -> {len(s3)} is {naive / len(s3):.1f}x\n")
 
     ok = len(s3) == EXPECTED_PREFILTERED

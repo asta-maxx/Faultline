@@ -92,3 +92,34 @@ def test_sources_are_honest(api, tmp_path, monkeypatch):
     r = api.post(f"/api/workspaces/{WID}/audit")
     assert r.status_code == 422 and "No readable source" in r.json()["detail"]
     assert api.get("/api/audits/run-does-not-exist").status_code == 404
+
+
+def test_audit_left_running_by_a_restart_reads_as_failed(api):
+    # A run the registry still calls "running" but no thread in this process owns.
+    registry.save_run({"run_id": "run-orphan-test", "workspace_id": WID, "status": "running", "stage": "EXTRACTING CLAIMS",
+                       "current": "a.md", "error": None, "summary": None, "started_at": 1, "ended_at": None,
+                       "stages": [{"name": "EXTRACTING CLAIMS", "state": "active", "count": 3, "unit": "claims",
+                                   "detail": None, "started_at": 1, "ended_at": None}]})
+    run = api.get("/api/audits/run-orphan-test").json()
+    assert run["status"] == "failed" and "restarted" in run["error"]
+    assert run["stages"][0]["state"] == "failed"
+    assert registry.get_run("run-orphan-test")["status"] == "failed"  # persisted, not only reported
+
+
+def test_dismiss_route_and_mcp_workspace(api):
+    assert api.post("/api/conflicts/nope/dismiss", json={"rationale": "r", "dismissed_by": "b"}).status_code == 404
+    import asyncio
+
+    from fastmcp import Client
+
+    from agent.mcp_tools import mcp
+
+    async def call():
+        async with Client(mcp) as c:
+            own = (await c.call_tool("find_candidates", {"workspace": WID})).data
+            bad = (await c.call_tool("blast_radius", {"claim_id": "x", "workspace": "_registry"})).data
+            return own, bad
+
+    own, bad = asyncio.run(call())
+    assert own["naive_pair_count"] == 0  # the empty pytest workspace, not northwind
+    assert "not a valid workspace id" in bad["error"]

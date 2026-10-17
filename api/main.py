@@ -50,6 +50,11 @@ class ResolveBody(BaseModel):
     resolved_by: str
 
 
+class DismissBody(BaseModel):
+    rationale: str
+    dismissed_by: str
+
+
 class WorkspaceBody(BaseModel):
     name: str
 
@@ -67,7 +72,7 @@ def _errors(fn, *args, **kwargs):
         raise HTTPException(status_code=404, detail=str(e)) from e
     except service.Invalid as e:
         raise HTTPException(status_code=422, detail=str(e)) from e
-    except workspaces.Conflict as e:
+    except (workspaces.Conflict, service.Conflicting) as e:
         raise HTTPException(status_code=409, detail=str(e)) from e
 
 
@@ -121,6 +126,10 @@ else:
     def resolve_conflict(conflict_id: str, body: ResolveBody, workspace: str | None = None):
         return _errors(service.resolve, conflict_id, body.winner_claim_id, body.rationale, body.resolved_by,
                        tenant=_tenant(workspace))
+
+    @api.post("/conflicts/{conflict_id}/dismiss")
+    def dismiss_conflict(conflict_id: str, body: DismissBody, workspace: str | None = None):
+        return _errors(service.dismiss, conflict_id, body.rationale, body.dismissed_by, tenant=_tenant(workspace))
 
     @api.post("/conflicts/{conflict_id}/draft")
     def draft_correction(conflict_id: str, workspace: str | None = None):

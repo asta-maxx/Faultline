@@ -18,7 +18,10 @@ WORKDIR /app
 
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
-    PORT=8000
+    PORT=8000 \
+    FAULTLINE_CACHE_DIR=/cache
+# FAULTLINE_CACHE_DIR: the LLM cache goes to the volume compose and Railway mount at /cache,
+# not /app/cache, which would vanish on every redeploy.
 
 # Install runtime utilities
 RUN apt-get update && apt-get install -y --no-install-recommends \
@@ -46,4 +49,5 @@ COPY --from=web-builder /app/web/dist /app/web/dist
 
 EXPOSE 8000
 
-CMD ["uvicorn", "api.main:app", "--host", "0.0.0.0", "--port", "8000"]
+# Railway injects PORT; locally it stays 8000.
+CMD ["sh", "-c", "exec uvicorn api.main:app --host 0.0.0.0 --port ${PORT:-8000}"]

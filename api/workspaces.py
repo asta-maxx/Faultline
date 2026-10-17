@@ -4,6 +4,7 @@ workspace's data in its own graph, faultline:{workspace_id}."""
 from __future__ import annotations
 
 import os
+import time
 from pathlib import Path
 
 from agent import audit
@@ -127,4 +128,12 @@ def get_audit(run_id: str) -> dict:
     run = registry.get_run(run_id)
     if not run:
         raise NotFound(f"audit {run_id!r} not found")
+    if run["status"] == "running" and run_id not in audit._running.values():
+        # No thread in this process owns it: the server restarted while it ran.
+        run.update(status="failed", error="The server restarted while this audit was running. Run it again.",
+                   ended_at=run.get("ended_at") or int(time.time()), stage=None, current=None)
+        for s in run["stages"]:
+            if s["state"] == "active":
+                s["state"] = "failed"
+        registry.save_run(run)
     return run

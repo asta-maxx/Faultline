@@ -165,3 +165,36 @@ def test_resolve_writes_resolved_as_and_rescores(graph, fake_judge):
     assert c["resolution"]["winner_claim_id"] == winner and c["resolution"]["resolved_by"] == "R. Menon"
     assert {cl["id"]: cl["state"] for cl in c["claims"]}[winner] == "live"
     assert service.stats(TENANT)["conflicts_resolved"] == 1
+
+
+def test_precedent_and_dismiss(graph, fake_judge):
+    if not service.rows(graph, "MATCH (k:Conflict) RETURN count(k) AS n")[0]["n"]:
+        adjudicator.adjudicate(TENANT, workers=1)
+    listing = service.list_conflicts(None, 50, tenant=TENANT)["conflicts"]
+
+    # The resolved direct conflict (previous test) is precedent for nothing else here: each
+    # conflict in this graph is about a different Entity, so precedent is found only for itself.
+    sup = next(c for c in listing if c["kind"] == "superseded")
+    assert service.get_conflict(sup["id"], tenant=TENANT)["precedent"] == {"found": False, "settled": []}
+
+    # Resolving it makes it precedent for any other conflict about the same Entity.
+    winner = next(cl["id"] for cl in sup["claims"] if cl["state"] == "live")
+    service.resolve(sup["id"], winner, "ADR-2 supersedes ADR-1.", "R. Menon", tenant=TENANT)
+    with pytest.raises(service.Conflicting):  # a settled conflict cannot be resolved or dismissed again
+        service.resolve(sup["id"], winner, "again", "R. Menon", tenant=TENANT)
+    with pytest.raises(service.Conflicting):
+        service.dismiss(sup["id"], "x", "y", tenant=TENANT)
+    graph.query("CREATE (:Conflict {id: 'conflict-twin', blast_radius: 1.0, status: 'open', kind: 'direct', found_at: 1})")
+    graph.query("MATCH (k:Conflict {id: 'conflict-twin'}), (a:Claim {id: 'c-1'}), (b:Claim {id: 'c-7'}) "
+                "CREATE (k)-[:INVOLVES {side: 'a'}]->(a), (k)-[:INVOLVES {side: 'b'}]->(b)")
+    twin = service.get_conflict("conflict-twin", tenant=TENANT)["precedent"]
+    assert twin["found"] and twin["settled"][0]["conflict_id"] == sup["id"]
+    assert twin["settled"][0]["winner_id"] == winner and twin["settled"][0]["settled_at"] > 0
+
+    # Dismiss: refused without a reason, then the conflict leaves the open queue.
+    und = next(c for c in listing if c["kind"] == "undocumented")
+    with pytest.raises(service.Invalid):
+        service.dismiss(und["id"], " ", "R. Menon", tenant=TENANT)
+    out = service.dismiss(und["id"], "Same rule, different wording.", "R. Menon", tenant=TENANT)
+    assert out["conflict"]["status"] == "dismissed"
+    assert und["id"] not in {c["id"] for c in service.list_conflicts("open", 50, tenant=TENANT)["conflicts"]}
