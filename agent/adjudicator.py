@@ -31,7 +31,7 @@ import threading
 import time
 from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass, field
-from typing import Any
+from typing import Any, Callable
 
 from falkordb import Graph
 
@@ -179,7 +179,9 @@ def classify(g: Graph, a_src: list[dict], b_src: list[dict]) -> tuple[str, dict[
 
 
 # ------------------------------------------------------------------ run
-def adjudicate(tenant: str = "northwind", workers: int = 2) -> Stats:
+def adjudicate(tenant: str = "northwind", workers: int = 2,
+               on_event: Callable[[Stats, str], None] | None = None) -> Stats:
+    """on_event(stats, label) is called after every judgement, for live progress (the audit screen)."""
     g = get_graph(tenant)
     st = Stats()
     s2 = candidate_collapse(g, FLOOR)
@@ -225,6 +227,8 @@ def adjudicate(tenant: str = "northwind", workers: int = 2) -> Stats:
                 st.judged_live += 1
             st.models[r.model] = st.models.get(r.model, 0) + 1
             st.verdicts[verdict["verdict"]] = st.verdicts.get(verdict["verdict"], 0) + 1
+        if on_event:
+            on_event(st, f'{p["entity"]}: {p["a_obj"]} vs {p["b_obj"]}')
         if verdict["verdict"] != "contradicts" or verdict["confidence"] < FLOOR:
             return
 
@@ -240,6 +244,8 @@ def adjudicate(tenant: str = "northwind", workers: int = 2) -> Stats:
         if created and created[0][0]:
             with st.lock:
                 st.conflicts_written += 1
+            if on_event:
+                on_event(st, f'{p["entity"]}: {p["a_obj"]} vs {p["b_obj"]} contradict')
 
     with ThreadPoolExecutor(max_workers=workers) as pool:
         list(pool.map(one, sorted(groups.items())))

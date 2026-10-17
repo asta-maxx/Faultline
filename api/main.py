@@ -18,7 +18,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
 from agent.mcp_tools import mcp
-from api import service
+from api import service, workspaces
 from infra.app_patch.health import health_router
 from infra.app_patch.static_mount import mount_spa
 
@@ -50,6 +50,16 @@ class ResolveBody(BaseModel):
     resolved_by: str
 
 
+class WorkspaceBody(BaseModel):
+    name: str
+
+
+class SourceBody(BaseModel):
+    kind: str
+    location: str
+    token: str | None = None
+
+
 def _errors(fn, *args, **kwargs):
     try:
         return fn(*args, **kwargs)
@@ -57,6 +67,15 @@ def _errors(fn, *args, **kwargs):
         raise HTTPException(status_code=404, detail=str(e)) from e
     except service.Invalid as e:
         raise HTTPException(status_code=422, detail=str(e)) from e
+    except workspaces.Conflict as e:
+        raise HTTPException(status_code=409, detail=str(e)) from e
+
+
+def _tenant(workspace: str | None) -> str:
+    """?workspace=<id> on the §9 endpoints (CONTRACT §9b); the default tenant when absent."""
+    if workspace in (None, ""):
+        return "northwind"
+    return _errors(workspaces.require, workspace)["id"]
 
 
 if FIXTURE_MODE:
@@ -86,24 +105,55 @@ if FIXTURE_MODE:
 else:
 
     @api.get("/stats")
-    def get_stats():
-        return service.stats()
+    def get_stats(workspace: str | None = None):
+        return service.stats(_tenant(workspace))
 
     @api.get("/conflicts")
-    def list_conflicts(status: str | None = None, limit: int = Query(default=50, ge=1, le=200)):
-        return service.list_conflicts(status, limit)
+    def list_conflicts(status: str | None = None, limit: int = Query(default=50, ge=1, le=200),
+                       workspace: str | None = None):
+        return service.list_conflicts(status, limit, tenant=_tenant(workspace))
 
     @api.get("/conflicts/{conflict_id}")
-    def get_conflict(conflict_id: str):
-        return _errors(service.get_conflict, conflict_id)
+    def get_conflict(conflict_id: str, workspace: str | None = None):
+        return _errors(service.get_conflict, conflict_id, tenant=_tenant(workspace))
 
     @api.post("/conflicts/{conflict_id}/resolve")
-    def resolve_conflict(conflict_id: str, body: ResolveBody):
-        return _errors(service.resolve, conflict_id, body.winner_claim_id, body.rationale, body.resolved_by)
+    def resolve_conflict(conflict_id: str, body: ResolveBody, workspace: str | None = None):
+        return _errors(service.resolve, conflict_id, body.winner_claim_id, body.rationale, body.resolved_by,
+                       tenant=_tenant(workspace))
 
     @api.post("/conflicts/{conflict_id}/draft")
-    def draft_correction(conflict_id: str):
-        return _errors(service.draft, conflict_id)
+    def draft_correction(conflict_id: str, workspace: str | None = None):
+        return _errors(service.draft, conflict_id, tenant=_tenant(workspace))
+
+    # Workspaces, sources and audits (CONTRACT §9b)
+    @api.get("/workspaces")
+    def list_workspaces():
+        return workspaces.list_workspaces()
+
+    @api.post("/workspaces")
+    def create_workspace(body: WorkspaceBody):
+        return _errors(workspaces.create_workspace, body.name)
+
+    @api.get("/workspaces/{workspace_id}/sources")
+    def list_sources(workspace_id: str):
+        return _errors(workspaces.list_sources, workspace_id)
+
+    @api.post("/workspaces/{workspace_id}/sources")
+    def add_source(workspace_id: str, body: SourceBody):
+        return _errors(workspaces.add_source, workspace_id, body.kind, body.location, body.token)
+
+    @api.delete("/workspaces/{workspace_id}/sources/{source_id}")
+    def delete_source(workspace_id: str, source_id: str):
+        return _errors(workspaces.delete_source, workspace_id, source_id)
+
+    @api.post("/workspaces/{workspace_id}/audit")
+    def start_audit(workspace_id: str):
+        return _errors(workspaces.start_audit, workspace_id)
+
+    @api.get("/audits/{run_id}")
+    def get_audit(run_id: str):
+        return _errors(workspaces.get_audit, run_id)
 
     @api.post("/reingest")
     def reingest(x_reingest_token: str | None = Header(default=None)):

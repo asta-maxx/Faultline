@@ -408,6 +408,64 @@ type Stats = {
 
 ---
 
+### 9b. Workspaces, sources and audits (v6)
+
+A workspace is one FalkorDB graph, `faultline:{workspace_id}`: the multigraph is the isolation, there is no tenant property anywhere. `workspace_id` is a slug of the name (`[a-z0-9-]`). No auth, no accounts: a workspace is created and used at once.
+
+Workspace, source and audit records live in one more graph in the same instance, **`faultline:_registry`**. Its labels (`Workspace`, `Source`, `AuditRun`) and edges (`HAS_SOURCE`, `RAN`) exist only there and never appear in a workspace graph; §5 still governs every workspace graph. The registry is not a second database: same FalkorDB, one more graph.
+
+The §9 conflict and stats endpoints take an optional `?workspace=<id>` (default `northwind`).
+
+```
+GET    /api/workspaces                      -> [Workspace]
+POST   /api/workspaces          {name}       -> Workspace            409 if the id exists
+GET    /api/workspaces/{id}/sources         -> [Source]
+POST   /api/workspaces/{id}/sources  {kind, location, token?} -> Source   422 if a folder is missing or outside FAULTLINE_SOURCE_ROOT
+DELETE /api/workspaces/{id}/sources/{source_id} -> {ok: true}
+POST   /api/workspaces/{id}/audit           -> {run_id}             409 if an audit is running, 422 if no readable source
+GET    /api/audits/{run_id}                 -> AuditRun
+```
+
+```ts
+type Workspace = {
+  id: string; name: string; graph: string      // graph = "faultline:{id}"
+  sources: number; documents: number; claims: number
+  conflicts: number                            // open conflicts
+  last_audit: number | null                    // epoch s, end of the latest finished audit
+  latest_run: { run_id: string; status: "running" | "done" | "failed"; started_at: number } | null
+                                               // the most recent audit of any status; open /audit/{run_id} for it
+}
+
+type Source = {
+  id: string; kind: "folder" | "git"; location: string
+  docs: number | null                          // readable files found when scanned; null if never scanned
+  claims: number | null                        // claims extracted from it by the latest audit
+  status: "ready" | "unsupported" | "missing"  // "unsupported": git cloning is not implemented
+  message: string | null                       // plain-language reason for any status other than "ready"
+  has_token: boolean                           // a token was supplied; the token itself is never stored
+  added_at: number; last_read_at: number | null
+}
+
+type AuditRun = {
+  run_id: string; workspace_id: string
+  status: "running" | "done" | "failed"
+  stage: string | null                         // name of the active stage
+  stages: {
+    name: "READING SOURCES" | "EXTRACTING CLAIMS" | "BUILDING GRAPH" | "COLLAPSING CANDIDATES" | "JUDGING PAIRS"
+    state: "pending" | "active" | "done" | "failed"
+    count: number | null; unit: string          // documents, claims, possible pairs, candidate pairs, pairs judged
+    detail: string | null                       // e.g. "202 after prefilter", "20 contradictions"
+    started_at: number | null; ended_at: number | null
+  }[]
+  current: string | null                       // file or pair being processed right now
+  summary: { documents: number; claims: number; pairs_compared: number; judged: number; contradictions: number } | null
+  error: string | null
+  started_at: number; ended_at: number | null
+}
+```
+
+Stage counts: documents read; claims kept; `n·(n−1)/2` possible pairs once the claims are in the graph; pairs sharing an Entity (§7.1); pairs judged. Folder sources read `.md`, `.markdown` and `.txt` files under the folder. A file's document id is its file name without extension when that is unique, its title is the first `#` heading or the file name, `updated_at` is the file's modification time.
+
 ## 10. Fixtures — Dev B starts against these, today
 
 Allen writes these before anything else. They are the real shapes, not sketches.

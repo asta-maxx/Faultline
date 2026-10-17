@@ -327,6 +327,22 @@ def harmonise(entity_id: str, claims: list[dict], rep: Report) -> None:
             c["predicate_raw"], c["predicate"] = c["predicate"], p
 
 
+def harmonise_all(claims: list[dict], rep: Report, workers: int = 3) -> None:
+    """Phase 3 over every entity with two or more claims."""
+    by_entity: dict[str, list[dict]] = {}
+    for c in claims:
+        by_entity.setdefault(c["entity_id"], []).append(c)
+    with ThreadPoolExecutor(max_workers=workers) as pool:
+        list(pool.map(lambda kv: harmonise(kv[0], kv[1], rep), [kv for kv in by_entity.items() if len(kv[1]) > 1]))
+
+
+def assign_claim_ids(claims: list[dict]) -> None:
+    """Deterministic ids: same source + span + subject + predicate + object + polarity -> same claim id."""
+    for c in claims:
+        c["id"] = str(uuid.uuid5(uuid.NAMESPACE_URL, "faultline/claim/" + "|".join(
+            str(c[k]) for k in ("source_id", "evidence_span", "subject_ref", "predicate", "object", "polarity"))))
+
+
 # ------------------------------------------------------------------ load
 def load_graph(tenant: str, sources: list[dict], claims: list[dict], entities: dict[str, dict]) -> None:
     from graph.connection import get_graph
@@ -369,19 +385,13 @@ def run(corpus_path: Path, tenant: str, workers: int) -> dict:
         claims = [c for batch in pool.map(lambda s: extract_source(s, rep), sources) for c in batch]
     t1 = time.perf_counter()
 
-    for c in claims:  # deterministic ids: same source + span + subject + predicate -> same claim id
-        c["id"] = str(uuid.uuid5(uuid.NAMESPACE_URL, "faultline/claim/" + "|".join(
-            str(c[k]) for k in ("source_id", "evidence_span", "subject_ref", "predicate", "object", "polarity"))))
+    assign_claim_ids(claims)
     entities, _, fallbacks = resolve_entities(claims, rep)
     merged = consolidate(claims, entities, rep)
     near = near_duplicates({e["id"]: e["name"] for e in entities.values()})
     t2 = time.perf_counter()
 
-    by_entity: dict[str, list[dict]] = {}
-    for c in claims:
-        by_entity.setdefault(c["entity_id"], []).append(c)
-    with ThreadPoolExecutor(max_workers=workers) as pool:
-        list(pool.map(lambda kv: harmonise(kv[0], kv[1], rep), [kv for kv in by_entity.items() if len(kv[1]) > 1]))
+    harmonise_all(claims, rep, workers)
     t3 = time.perf_counter()
 
     rep.kept = len(claims)
