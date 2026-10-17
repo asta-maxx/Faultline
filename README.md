@@ -537,11 +537,12 @@ README visuals are generated, not hand-drawn: `python .github/readme/build.py` w
 | Northwind generator | Verified | 312 docs, 400 tickets, 2,000 messages, 14 planted conflicts; 22 tests in `data/` pass |
 | Structural seed | Verified | `data.seed --reset` loads 2,826 nodes and 823 edges in under a second; `--merge` re-run keeps the same counts |
 | Generator determinism | Partly | the corpus is identical across runs, but `governed_systems` order in `ground_truth.json` changes per run (built from a Python `set`) |
-| Claim extraction (Surveyor) | In progress | `agent/surveyor.py` writes to `faultline:minicorpus`; not yet run on Northwind |
-| Adjudicator, blast-radius ranking, Reconciler | Not started | |
-| HTTP API | Partly live | `/api/health` reads FalkorDB; conflicts and stats still serve `fixtures/` |
+| Claim extraction (Surveyor) | Verified on the Northwind demo slice | 100 sources, 339 of 340 claims kept (1 span not literal), 79 entities after consolidation; all 14 planted contradictions extracted, 12 reach stage 3 |
+| Adjudicator, blast-radius ranking | Verified on the demo slice | funnel 57,291 → 1,666 → 202 pairs, one judgement per disagreement; 20 conflicts; 13 of 14 planted contradictions surfaced, 11 with the right kind (`agent.northwind_eval`) |
+| Reconciler (`/resolve`, `/draft`) | Built | `/resolve` covered by tests; `/draft` not yet called against the live graph |
+| HTTP API | Live | every §9 endpoint reads `faultline:northwind`; `FAULTLINE_FIXTURES=1` serves `fixtures/` |
 | Web UI | Built | Vite + React + Cytoscape app in `web/`, reading the API |
-| MCP tools | Not started | |
+| MCP tools | Built | the six §8 tools at `/mcp`, answering against the live graph |
 | Docker Compose, Railway deploy | Written, not run here | `infra/`; see [Docker Compose and deploy files](#run-it-locally) |
 
 ---
