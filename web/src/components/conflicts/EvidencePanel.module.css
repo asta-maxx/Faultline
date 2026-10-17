@@ -164,14 +164,6 @@
   overflow-wrap: anywhere;
 }
 
-.actions {
-  display: flex;
-  align-items: center;
-  gap: var(--space-3);
-  padding: var(--space-3) var(--space-6);
-  border-top: 1px solid var(--rule);
-}
-
 /* Sources sit on a common baseline when the two claim texts differ in length. */
 .claim > footer {
   margin-top: auto;

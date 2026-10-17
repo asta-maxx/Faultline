@@ -15,6 +15,8 @@ import type {
   ConflictDetailResponse,
   ConflictsResponse,
   ConflictStatus,
+  DismissRequest,
+  DismissResponse,
   DraftResponse,
   HealthResponse,
   ReingestResponse,
@@ -96,7 +98,7 @@ function postJson<T>(path: string, body: unknown, headers: Record<string, string
 
 const WORKSPACE_KEY = 'faultline.workspace'
 
-function readStorage(key: string): string | null {
+export function readStorage(key: string): string | null {
   try {
     return window.localStorage.getItem(key)
   } catch {
@@ -104,7 +106,7 @@ function readStorage(key: string): string | null {
   }
 }
 
-function writeStorage(key: string, value: string): void {
+export function writeStorage(key: string, value: string): void {
   try {
     window.localStorage.setItem(key, value)
   } catch {
@@ -197,6 +199,11 @@ export function resolveConflict(id: string, body: ResolveRequest): Promise<Resol
 /** POST /conflicts/{id}/draft?workspace= */
 export function draftCorrection(id: string): Promise<DraftResponse> {
   return postJson(scoped(`/conflicts/${encodeURIComponent(id)}/draft`), {})
+}
+
+/** POST /conflicts/{id}/dismiss?workspace= — 409 if not open, 422 if a field is empty (v7). */
+export function dismissConflict(id: string, body: DismissRequest): Promise<DismissResponse> {
+  return postJson(scoped(`/conflicts/${encodeURIComponent(id)}/dismiss`), body)
 }
 
 /** GET /stats?workspace= */

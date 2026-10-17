@@ -8,13 +8,13 @@ If you are an AI assistant reading this: this is the authoritative spec. Do not 
 
 ## 1. What we are building
 
-**Faultline** finds where an organisation's documented knowledge contradicts itself, ranks each conflict by what is downstream of it, and repairs it.
+**Faultline** finds where an organisation's documented knowledge contradicts itself, ranks each conflict by what is downstream of it, drafts the correction and routes it to the owner of the most critical system downstream, and records the resolution in the graph (`RESOLVED_AS`). It does not edit the source documents itself.
 
 It is **not** a chatbot and has no "ask your docs" input. The user opens it and sees a ranked queue of conflicts the system found on its own.
 
 Built for Graph Hacks 2026 (FalkorDB × WeMakeDevs). Entering Track 03 (Company Brain) and Track 02 (Agent Memory and Coordination). Deadline Sunday 18 Oct, we submit 20:00 IST.
 
-**The core mechanic, which everything else serves:** naive contradiction detection is O(n²) — ~1,800 claims is ~1.7M LLM comparisons. We only compare claims that share a subject `Entity`, which collapses it to ~340. Remove FalkorDB and the product is not slower, it is impossible. Protect this property in every design decision.
+**The core mechanic, which everything else serves:** naive contradiction detection is O(n²) — ~1,800 claims is ~1.6M LLM comparisons. We only compare claims that share a subject `Entity`. Measured on the Northwind demo slice: 339 claims make 57,291 pairs, the collapse leaves 1,666, the prefilter 202, and 159 are judged. Remove FalkorDB and the product is not slower, it is impossible. Protect this property in every design decision.
 
 ---
 
@@ -30,9 +30,9 @@ Built for Graph Hacks 2026 (FalkorDB × WeMakeDevs). Entering Track 03 (Company 
 | Graph view | Cytoscape.js + dagre layout |
 | Local | docker-compose: falkordb + app |
 | Deploy | Railway, 2 services, frontend served from FastAPI |
-| LLM | **Groq free tier for extraction** (measured ~0.9 s/call); **Gemini free tier for judging** (measured ~22 s/call, so parallelise) |
+| LLM | **Groq free tier for extraction** (measured ~0.9 s/call); **Gemini free tier for judging** (measured median ~3 s/call, but the daily quota runs out after about 30 calls, so judging overflows to Groq) |
 
-Model names move fast and the documented defaults went stale within days — pin exact versions, never `*-latest` aliases, and verify against a live key rather than a model list. Extraction runs thousands of calls and must use the fast provider; judging runs hundreds and can afford the slow one. Both must run concurrently (10–20 workers) — serial extraction at 22 s/call does not finish.
+Model names move fast and the documented defaults went stale within days — pin exact versions, never `*-latest` aliases, and verify against a live key rather than a model list. Extraction runs hundreds to thousands of calls and uses the provider with the larger quota; judging runs one call per disagreement. The binding limit is quota, not latency: Groq's free tier allows `gpt-oss-120b` 8,000 tokens per minute, so more workers only queue. Defaults: `agent.ingest` 3 workers, `agent.adjudicator` 2, a workspace audit 3 for extraction and 2 for judging.
 
 **Zero budget.** The scarce resource is requests per day, not money. Every provider sits behind one interface, swappable by env var (`GEMINI_API_KEY`, `GROQ_API_KEY`). Everyone on the team registers their own free key — never share one, or a single quota serves four people and runs dry without anyone knowing why.
 
@@ -43,13 +43,17 @@ Model names move fast and the documented defaults went stale within days — pin
 ## 3. Repo layout and ownership
 
 ```
-/graph      schema, Cypher library, algorithms      Allen only
-/agent      Surveyor, Adjudicator, Reconciler, MCP  Allen only
-/web        Vite app                                Dev B
-/data       Northwind generator, ingest             Dev C
-/infra      docker-compose, Dockerfile, deploy      Dev C
-/fixtures   mock JSON (section 10)                  Allen writes, B consumes
-CONTRACT.md                                         Allen writes, all read
+/graph      schema, Cypher library, prefilter, workspace registry (registry.py)   Allen only
+/agent      Surveyor, Northwind ingest (ingest.py), Adjudicator, folder audits,   Allen only
+            MCP tools
+/api        FastAPI app: §9 endpoints and the Reconciler (service.py),            Allen
+            §9b workspaces (workspaces.py)
+/web        Vite app                                                              Dev B, Allen
+/data       Northwind generator, structural seed, run files                       Dev C
+/infra      docker-compose, Dockerfile, deploy                                    Dev C
+/fixtures   mock JSON (section 10)                                                Allen writes, B consumes
+/faultline-design-system  tokens, mark, type and brand rules                      source for /web and README visuals
+CONTRACT.md                                                                       Allen writes, all read
 ```
 
 Short-lived branches. Allen reviews every merge. Nobody writes outside their folders.
@@ -63,7 +67,7 @@ Short-lived branches. Allen reviews every merge. Nobody writes outside their fol
 | Who | Needs | From | Workaround until it lands |
 | --- | --- | --- | --- |
 | Everyone | this file | Allen | — (it's here) |
-| Allen | FalkorDB running | nobody | `docker run -p 6379:6379 falkordb/falkordb` — 10 seconds, do not wait on /infra |
+| Allen | FalkorDB running | nobody | `docker run -d --name faultline-falkordb -p 6380:6379 falkordb/falkordb` — host port 6380 by convention, since 6379 is often another project's Redis; 10 seconds, do not wait on /infra |
 | Allen | a corpus | Dev C | hand-written 20-doc fixture, in `/fixtures/mini-corpus.json` |
 | Dev B | API responses | Allen | `/fixtures/*.json` — exact shapes, section 10 |
 | Dev C | graph schema | Allen | section 5, frozen |
@@ -111,6 +115,8 @@ Everything else runs in parallel off this file. If Allen is blocked, the project
 | `DERIVED_FROM` | Claim → Message\|Ticket | — |
 | `INVOLVES` | Conflict → Claim | `side` (`"a"`\|`"b"`) |
 | `RESOLVED_AS` | Conflict → Claim | `rationale` (str), `resolved_at` (int), `resolved_by` (str) |
+
+`DERIVED_FROM` is part of the schema, but the pipeline does not write it: a claim extracted from a `Message` or `Ticket` is linked to it by `ASSERTS`, exactly like a document's claim.
 
 ### Constraints and indexes — run once at startup
 
@@ -169,9 +175,9 @@ Rules the extractor must follow:
 - `evidence_span` must be a literal substring of the source document. If it is not, drop the claim.
 - `subject_ref` is a slug; the ingest maps it to exactly one `Entity`.
 
-### The three-stage funnel
+### The four-stage funnel
 
-This is the product. Two of the three stages cost nothing.
+This is the product. Two of the four stages cost nothing: stage 1 is counted, never enumerated, and only stage 4 calls a model.
 
 | Stage | Mechanism | Order of magnitude |
 | --- | --- | --- |
@@ -184,7 +190,7 @@ This is the product. Two of the three stages cost nothing.
 
 Stage 3 runs in Python with no model call. Instrument all four numbers and surface them in `/stats` — they are the headline of the demo and the proof that FalkorDB is load-bearing.
 
-**LLM response caching is mandatory, not an optimisation.** Hash the input (prompt + content + model), cache the response to disk under `/cache`, never pay for the same call twice. Extraction will be re-run many times while tuning prompts; without this you burn a day's free quota by Friday. Build the cache before the first real extraction run. `/cache` is gitignored.
+**LLM response caching is mandatory, not an optimisation.** Hash the input (model, operation, prompt, content and parameters), cache the response to disk (`cache/` at the repo root, `/cache` in the Docker image, `FAULTLINE_CACHE_DIR` overrides), never pay for the same call twice. Extraction will be re-run many times while tuning prompts; without this you burn a day's free quota by Friday. Build the cache before the first real extraction run. `/cache` is gitignored.
 
 ---
 
@@ -275,7 +281,7 @@ ORDER BY k.found_at DESC
 LIMIT 5
 ```
 
-The Adjudicator calls this **before** judging a pair. If precedent exists and the claims are unchanged, it does not re-flag. If a resolved conflict reappears with changed text, it escalates instead of duplicating.
+The Adjudicator calls this **before** judging a pair. If a settled winner is one of the two claims, the pair is not judged and not re-flagged. A disagreement that already has a `Conflict` is skipped before this check. There is no escalation step: a claim whose text changed is a new claim and is judged as a new pair. `agent.ingest` and a workspace audit both rebuild their graph, so precedent lasts only as long as the graph. `GET /conflicts/{id}` returns the settled conflicts about the same Entity as `precedent` (§9, v7), excluding the conflict itself and dated by `RESOLVED_AS.resolved_at` rather than `found_at`.
 
 ### 7.5 Traversal path for the UI
 
@@ -291,11 +297,15 @@ RETURN c, d, s, dec, sup, src
 LIMIT 40
 ```
 
+This query sees only `Document` sources, and `DERIVED_FROM` is never written, so on its own it misses claims asserted by a message or ticket. `GET /conflicts/{id}` (`build_path` in `api/service.py`) adds the claims' `Entity`, every source that `ASSERTS` either claim, the `SUPERSEDES` edges between the decisions it returns, and the routed owner with `OWNS` edges, still capped at 40 nodes (§9).
+
 ---
 
 ## 8. MCP tool signatures
 
-All tools return JSON. Errors return `{"error": "<message>"}` with HTTP 200 — the agent handles them, not the transport.
+Served by FastMCP from the API process over streamable HTTP at `/mcp/` (`/mcp` redirects there). Every tool also takes an optional `workspace: str = "northwind"` argument, not repeated below, and reads `faultline:{workspace}`; an id that is not a workspace slug returns an error.
+
+All tools return JSON. Errors return `{"error": "<message>"}` as a normal tool result — the agent handles them, not the transport.
 
 ```
 find_candidates(entity_id: str | null, floor: float = 0.65, limit: int = 200)
@@ -326,6 +336,12 @@ route_owner(conflict_id: str)
       "reason": str}
 ```
 
+Notes on the live tools:
+
+- `find_candidates` counts the **unjudged** pairs (§7.1, which excludes pairs already joined by `CONTRADICTS` or a `Conflict`), so its `collapsed_pair_count` and `prefiltered_pair_count` shrink as the Adjudicator works. `/stats` counts **all** shared-Entity pairs and stays at the corpus's funnel.
+- `current_claim` starts from the decisions cited by documents that assert a claim about the entity, walks `SUPERSEDES` to the decisions nothing supersedes, and returns the most recently decided of them. Its `chain_depth` is the number of decisions that one supersedes, directly or through the chain, which is also the length of `superseded`. That is not §7.2's `chain_depth`, the distance from one given start decision.
+- `precedent_for` returns the settled conflict whose winner is `a_id` or `b_id` if there is one, otherwise the newest settled conflict about `a_id`'s entity.
+
 ---
 
 ## 9. HTTP API
@@ -347,7 +363,13 @@ POST /conflicts/{id}/resolve
   -> {"ok": true, "conflict": Conflict}
 
 POST /conflicts/{id}/draft
-  -> {"correction": str, "owner": Person, "ticket": {"title","body"}}
+  -> {"correction": str, "owner": {"id","name","role"}, "ticket": {"title","body"}}
+  # 422 when no Person OWNS a system downstream of either side (always so for folder workspaces)
+
+POST /conflicts/{id}/dismiss                       # v7
+  body {"rationale": str, "dismissed_by": str}
+  -> {"ok": true, "conflict": Conflict}
+  # 404 unknown conflict; 409 if it is not open; 422 if rationale or dismissed_by is empty
 
 GET  /stats
   -> Stats
@@ -382,7 +404,20 @@ type Conflict = {
   judgement?: { method: string; confidence: number; evidence_span: string } | null
   // v5, optional: the RESOLVED_AS edge, null unless status is "resolved"
   resolution?: { winner_claim_id: string; rationale: string; resolved_at: number; resolved_by: string } | null
+  // v7, optional: set by POST /dismiss, null unless status is "dismissed". Stored on the Conflict
+  // node as dismiss_rationale, dismissed_by and dismissed_at (epoch s): the only Conflict
+  // properties beyond §5, written only on dismissal.
+  dismissal?: { rationale: string; dismissed_by: string; dismissed_at: number } | null
 }
+
+// v7, GET /conflicts/{id} only: the §7.4 precedent for this conflict's Entity. `found` is
+// false when nothing about the Entity has been settled. When a settled winner is one of this
+// conflict's claims, the Adjudicator would not have re-flagged the pair.
+type Precedent = {
+  found: boolean
+  settled: { conflict_id: string; winner_id: string; winner_text: string; settled_at: number }[]
+}
+// ConflictDetailResponse: { conflict: Conflict, path: GraphPath, precedent?: Precedent }
 
 type GraphPath = {
   nodes: { id: string; label: string; type: string; state?: "live"|"contradicted"|"superseded"; at?: number }[]
@@ -406,6 +441,15 @@ type Stats = {
 
 **v5 addition, optional:** a `GraphPath` node may carry `at` (int, epoch seconds): its own §5 date (`Document.updated_at`, `Decision.decided_at`, `Message.sent_at`, `Ticket.closed_at`), and for a `Claim` the date of the source that asserts it. `System`, `Entity` and `Person` have no date in §5 and never carry `at`. The path also includes the claims' `Entity` (with `ABOUT` edges) and the conflict's routed owner (with `OWNS` edges to systems in the path); still capped at 40 nodes.
 
+**Behaviour of the live API** (`api/main.py`, `api/service.py`):
+
+- `GET /conflicts`: `status` defaults to every status (`all` or an empty value mean the same); `limit` defaults to 50, minimum 1, maximum 200. `total` counts every conflict with that status, not only the returned page.
+- `POST /conflicts/{id}/resolve`: 404 for an unknown conflict; 409 if it is not open; 422 if `winner_claim_id` is not one of its two claims, or `rationale` or `resolved_by` is empty. On success the conflict's `blast_radius` becomes the losing claim's (§7.3).
+- `POST /conflicts/{id}/draft`: 404 for an unknown conflict; 422 when there is no owner to route to. It makes one judge-model call (cached) and writes nothing to the graph.
+- `POST /reingest` (served at `/api/reingest`): 503 when `REINGEST_TOKEN` is not set on the server; 403 when the `X-Reingest-Token` header is missing or wrong. The job re-runs `agent.ingest` and `agent.adjudicator`, which rebuilds the graph.
+- `Stats.judged_pair_count` is the number of stage-3 pairs whose judgement is in the LLM cache **on the machine serving the API**, not a count of calls made. On a machine without the cache, it is lower than the number the funnel actually judged. `/stats` is cached for 10 s.
+- With `FAULTLINE_FIXTURES=1` only `GET /stats`, `GET /conflicts` and `GET /conflicts/{id}` are served, from `fixtures/`; the write endpoints and §9b are not registered.
+
 ---
 
 ### 9b. Workspaces, sources and audits (v6)
@@ -414,7 +458,7 @@ A workspace is one FalkorDB graph, `faultline:{workspace_id}`: the multigraph is
 
 Workspace, source and audit records live in one more graph in the same instance, **`faultline:_registry`**. Its labels (`Workspace`, `Source`, `AuditRun`) and edges (`HAS_SOURCE`, `RAN`) exist only there and never appear in a workspace graph; §5 still governs every workspace graph. The registry is not a second database: same FalkorDB, one more graph.
 
-The §9 conflict and stats endpoints take an optional `?workspace=<id>` (default `northwind`).
+The §9 conflict and stats endpoints, including resolve, dismiss and draft, take an optional `?workspace=<id>` (default `northwind`); an unknown or malformed id is a 404. The `northwind` workspace is registered automatically whenever the registry is read and `faultline:northwind` exists without a `Workspace` record.
 
 ```
 GET    /api/workspaces                      -> [Workspace]
@@ -440,7 +484,7 @@ type Source = {
   id: string; kind: "folder" | "git"; location: string
   docs: number | null                          // readable files found when scanned; null if never scanned
   claims: number | null                        // claims extracted from it by the latest audit
-  status: "ready" | "unsupported" | "missing"  // "unsupported": git cloning is not implemented
+  status: "ready" | "unsupported" | "missing"  // "unsupported": only git sources added before v8
   message: string | null                       // plain-language reason for any status other than "ready"
   has_token: boolean                           // a token was supplied; the token itself is never stored
   added_at: number; last_read_at: number | null
@@ -464,7 +508,15 @@ type AuditRun = {
 }
 ```
 
+**Git sources (v8).** `POST …/sources {kind: "git", location, token?}` clones the repository when it is added: shallow (latest commit), symlinks checked out as plain files, LFS objects not fetched, at most `FAULTLINE_GIT_TIMEOUT_S` seconds (default 120) and `FAULTLINE_GIT_MAX_MB` (default 200) on disk. The URL must be `https://` on a host in `FAULTLINE_GIT_HOSTS` (default `github.com,gitlab.com,bitbucket.org`) and carry no credentials. A failed clone is a 422 with git's own message and no source is created. The token, when given, is passed to that one clone through the environment and never stored or logged; `has_token` records only that one was given. An audit fetches the latest commit again for public repositories; when that fails (a private repository, whose token is gone) it reads the copy cloned when the source was added and says so in the READING SOURCES detail. Nothing in a repository is executed: only `.md`, `.markdown` and `.txt` files are read, and symlinks are never followed.
+
+**Folder sources** read a folder on the machine running the API, so they work only when you run Faultline yourself; a hosted deployment cannot see a visitor's computer. `FAULTLINE_ALLOW_FOLDERS=0` refuses them with a 422 that says so (the hosted demo sets it); `FAULTLINE_SOURCE_ROOT` confines them when allowed.
+
 Stage counts: documents read; claims kept; `n·(n−1)/2` possible pairs once the claims are in the graph; pairs sharing an Entity (§7.1); pairs judged. Folder sources read `.md`, `.markdown` and `.txt` files under the folder. A file's document id is its file name without extension when that is unique, its title is the first `#` heading or the file name, `updated_at` is the file's modification time.
+
+Error cases not shown above: every `{id}` route returns 404 for an unknown or malformed workspace id. `POST /workspaces` returns 422 when the name has no letter or digit. `POST .../sources` returns 422 for an empty location or a `kind` other than `folder` or `git`; when `FAULTLINE_SOURCE_ROOT` is unset, any existing folder on the server is accepted. `DELETE .../sources/{source_id}` and `GET /audits/{run_id}` return 404 when not found. A folder with no readable files is accepted as a source and fails the audit in READING SOURCES.
+
+An audit **rebuilds the workspace graph from scratch** (sources, claims, entities, then the funnel), so conflicts resolved or dismissed in that workspace before a re-audit are not kept. A run still marked `running` when no server thread owns it (the server restarted mid-audit) is reported and saved as `failed`.
 
 ## 10. Fixtures — Dev B starts against these, today
 
@@ -477,7 +529,9 @@ Allen writes these before anything else. They are the real shapes, not sketches.
 /fixtures/mini-corpus.json   20 docs, for Allen's extraction before C's generator lands
 ```
 
-B builds entirely against these until Friday night. **If the live API disagrees with a fixture, the API is wrong and Allen fixes it** — not the frontend. That rule is what makes integration 20 minutes instead of four hours.
+Current state: the live API is the default, and these files are served only when the API runs with `FAULTLINE_FIXTURES=1` (three endpoints, §9). The numbers in `stats.json`, and the copy embedded in `conflicts.json`, are placeholders, not measurements (`fixtures/README.md`). `mini-corpus.json` holds 20 documents, 3 messages and 1 ticket, with 7 planted contradictions as an answer key. They predate v5 and v7, so they carry none of the optional `judgement`, `resolution` or `precedent` fields.
+
+B built against these until the live API landed. **If the live API disagrees with a fixture, the API is wrong and Allen fixes it** — not the frontend. That rule is what makes integration 20 minutes instead of four hours.
 
 ---
 
@@ -490,7 +544,7 @@ B builds entirely against these until Friday night. **If the live API disagrees 
 5. Confidence floor 0.65. Nothing below it enters the graph.
 6. `evidence_span` must be a literal substring of its source, always. Drop any claim where it is not.
 7. Every LLM call is cached to disk by input hash. No exceptions — free-tier quota is the binding constraint.
-8. `CONTRADICTS.method` records the model that judged the pair, e.g. `"gemini-2.0-flash"`. Provenance is what this product is about; our own edges should carry it too.
+8. `CONTRADICTS.method` records the model that judged the pair, e.g. `"gemini-3.5-flash"`. Provenance is what this product is about; our own edges should carry it too.
 9. Colour never carries meaning alone — every state has a glyph and a word.
 10. Secrets in env vars. The repo goes public at submission.
 11. This file is updated **before** the code that changes it.

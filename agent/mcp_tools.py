@@ -18,8 +18,17 @@ from graph.prefilter import prefilter
 from graph.queries import blast_radius as _blast_radius
 from graph.queries import candidate_collapse, naive_pair_count, precedent, rows
 
-TENANT = "northwind"
+TENANT = "northwind"  # default workspace; every tool takes `workspace` to target another
 mcp = FastMCP("faultline")
+
+
+def _graph(workspace: str):
+    """The workspace's own graph, faultline:{workspace}. Ids are slugs; anything else is refused."""
+    from graph.registry import valid_id
+
+    if not valid_id(workspace):
+        raise ValueError(f"workspace {workspace!r} is not a valid workspace id")
+    return get_graph(workspace)
 
 
 def _safe(fn):
@@ -35,9 +44,10 @@ def _safe(fn):
 
 @mcp.tool
 @_safe
-def find_candidates(entity_id: str | None = None, floor: float = 0.65, limit: int = 200) -> dict:
+def find_candidates(entity_id: str | None = None, floor: float = 0.65, limit: int = 200,
+                    workspace: str = TENANT) -> dict:
     """Stage-3 claim pairs not yet judged (§7.1 collapse, then the prefilter), optionally for one entity."""
-    g = get_graph(TENANT)
+    g = _graph(workspace)
     s2 = candidate_collapse(g, floor)
     s3 = prefilter(s2)
     pairs = [p for p in s3 if entity_id in (None, p["entity_id"])][:limit]
@@ -47,9 +57,9 @@ def find_candidates(entity_id: str | None = None, floor: float = 0.65, limit: in
 
 @mcp.tool
 @_safe
-def judge_pair(a_id: str, b_id: str) -> dict:
+def judge_pair(a_id: str, b_id: str, workspace: str = TENANT) -> dict:
     """Ask the judge model whether two claims contradict. Cached; writes nothing."""
-    g = get_graph(TENANT)
+    g = _graph(workspace)
     a, b = adjudicator._claim(g, a_id), adjudicator._claim(g, b_id)
     entity = rows(g, "MATCH (:Claim {id: $id})-[:ABOUT]->(e:Entity) RETURN e.name AS name", {"id": a_id})
     verdict, _ = adjudicator.judge(a, b, entity[0]["name"] if entity else "")
@@ -58,9 +68,9 @@ def judge_pair(a_id: str, b_id: str) -> dict:
 
 @mcp.tool
 @_safe
-def blast_radius(claim_id: str) -> dict:
+def blast_radius(claim_id: str, workspace: str = TENANT) -> dict:
     """§7.3: what sits downstream of a claim, scored exactly as the contract writes it."""
-    g = get_graph(TENANT)
+    g = _graph(workspace)
     if not rows(g, "MATCH (c:Claim {id: $id}) RETURN c.id AS id", {"id": claim_id}):
         return {"error": f"claim {claim_id!r} not found"}
     return _blast_radius(g, claim_id)
@@ -82,9 +92,9 @@ ORDER BY old.decided_at DESC
 
 @mcp.tool
 @_safe
-def current_claim(entity_id: str) -> dict:
+def current_claim(entity_id: str, workspace: str = TENANT) -> dict:
     """§7.2 by traversal: the decision nothing supersedes, reached from the decisions cited about this entity."""
-    g = get_graph(TENANT)
+    g = _graph(workspace)
     heads = [h for h in rows(g, CURRENT, {"entity_id": entity_id}) if h["id"]]
     if not heads:
         return {"current_decision": None, "chain_depth": 0, "superseded": []}
@@ -96,9 +106,9 @@ def current_claim(entity_id: str) -> dict:
 
 @mcp.tool
 @_safe
-def precedent_for(a_id: str, b_id: str) -> dict:
+def precedent_for(a_id: str, b_id: str, workspace: str = TENANT) -> dict:
     """§7.4: has a conflict about this entity already been settled, and for which claim?"""
-    g = get_graph(TENANT)
+    g = _graph(workspace)
     ent = rows(g, "MATCH (:Claim {id: $id})-[:ABOUT]->(e:Entity) RETURN e.id AS id", {"id": a_id})
     found = precedent(g, ent[0]["id"]) if ent else []
     hit = next((r for r in found if r["winner_id"] in (a_id, b_id)), found[0] if found else None)
@@ -109,11 +119,12 @@ def precedent_for(a_id: str, b_id: str) -> dict:
 
 @mcp.tool
 @_safe
-def route_owner(conflict_id: str) -> dict:
+def route_owner(conflict_id: str, workspace: str = TENANT) -> dict:
     """Who should fix it: the owner of the most critical system downstream of either side, with the path."""
     from api import service
 
-    c = service.get_conflict(conflict_id, TENANT)
+    _graph(workspace)
+    c = service.get_conflict(conflict_id, workspace)
     owner = c["conflict"]["owner"]
     path = [{"id": n["id"], "label": n["label"], "type": n["type"]} for n in c["path"]["nodes"]
             if n["type"] in ("claim", "document", "system", "person")]

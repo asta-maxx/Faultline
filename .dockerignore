@@ -1,0 +1,21 @@
+# Build context for infra/Dockerfile: only source goes in. Everything here is local state,
+# generated output (the image regenerates data/out itself) or secrets.
+.git
+.github
+.venv
+**/__pycache__
+**/*.pyc
+.pytest_cache
+.claude
+.impeccable
+.env
+.env*
+!.env.example
+cache
+data/out
+data/incoming
+scratch
+*.rdb
+web/node_modules
+web/dist
+data/clones

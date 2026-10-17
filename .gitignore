@@ -25,4 +25,6 @@ data/incoming/
 # Output data directory (preserve ground_truth.json)
 data/out/*
 !data/out/ground_truth.json
-
+
+# Git sources cloned for workspace audits
+data/clones/

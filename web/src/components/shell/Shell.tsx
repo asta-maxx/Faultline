@@ -70,6 +70,19 @@ export function Shell(props: ShellProps) {
           />
         </nav>
 
+        <a
+          className={styles.newWorkspace}
+          href="/setup"
+          aria-current={route.name === 'setup' && route.workspace === null ? 'page' : undefined}
+          onClick={(e) => {
+            e.preventDefault()
+            navigate({ name: 'setup', workspace: null })
+          }}
+        >
+          <Icon name="plus" size={16} />
+          <span>New workspace</span>
+        </a>
+
         <section className={styles.group} aria-label="Corpus">
           <h2 className="cap">Corpus</h2>
           <dl>

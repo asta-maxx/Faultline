@@ -30,18 +30,24 @@ class Invalid(Exception):
     pass
 
 
+class Conflicting(Exception):
+    """The request is valid but the record is in the wrong state for it (HTTP 409)."""
+
+
 # ------------------------------------------------------------------ Conflict
 CONFLICTS = """
 MATCH (k:Conflict)
 WHERE $status IS NULL OR k.status = $status
-RETURN k.id AS id, k.kind AS kind, k.status AS status, k.blast_radius AS blast_radius, k.found_at AS found_at
+RETURN k.id AS id, k.kind AS kind, k.status AS status, k.blast_radius AS blast_radius, k.found_at AS found_at,
+       k.dismissed_by AS dismissed_by, k.dismiss_rationale AS dismiss_rationale, k.dismissed_at AS dismissed_at
 ORDER BY k.blast_radius DESC, k.id
 LIMIT $limit
 """
 
 CONFLICT = """
 MATCH (k:Conflict {id: $id})
-RETURN k.id AS id, k.kind AS kind, k.status AS status, k.blast_radius AS blast_radius, k.found_at AS found_at
+RETURN k.id AS id, k.kind AS kind, k.status AS status, k.blast_radius AS blast_radius, k.found_at AS found_at,
+       k.dismissed_by AS dismissed_by, k.dismiss_rationale AS dismiss_rationale, k.dismissed_at AS dismissed_at
 """
 
 SIDES = """
@@ -138,6 +144,10 @@ def build_conflict(g: Graph, k: dict) -> dict:
         # Optional in CONTRACT §9 v5: the judgement behind CONTRADICTS, and the RESOLVED_AS record.
         "judgement": judged[0] if judged else None,
         "resolution": resolution,
+        # v7: who dismissed it and why, null unless status is "dismissed"
+        "dismissal": ({"rationale": k.get("dismiss_rationale") or "", "dismissed_by": k.get("dismissed_by") or "",
+                       "dismissed_at": int(k["dismissed_at"])}
+                      if k["status"] == "dismissed" and k.get("dismissed_at") else None),
     }
 
 
@@ -156,7 +166,27 @@ def get_conflict(conflict_id: str, tenant: str = "northwind") -> dict:
     if not found:
         raise NotFound(f"conflict {conflict_id!r} not found")
     conflict = build_conflict(g, found[0])
-    return {"conflict": conflict, "path": build_path(g, conflict)}
+    return {"conflict": conflict, "path": build_path(g, conflict), "precedent": precedent_for(g, conflict)}
+
+
+# §7.4's question, with the RESOLVED_AS date: what has already been settled about this Entity?
+PRECEDENT = """
+MATCH (k:Conflict {status: 'resolved'})-[:INVOLVES]->(:Claim)-[:ABOUT]->(e:Entity {id: $entity_id})
+MATCH (k)-[r:RESOLVED_AS]->(winner:Claim)
+RETURN DISTINCT k.id AS conflict_id, winner.id AS winner_id, winner.text AS winner_text,
+       r.resolved_at AS settled_at
+ORDER BY settled_at DESC
+LIMIT 5
+"""
+
+
+def precedent_for(g: Graph, conflict: dict) -> dict:
+    """CONTRACT §9 v7 Precedent: settled conflicts about the same Entity, newest first."""
+    settled = [r for r in rows(g, PRECEDENT, {"entity_id": conflict["entity"]["id"]})
+               if r["conflict_id"] != conflict["id"]]
+    for r in settled:
+        r["settled_at"] = int(r["settled_at"] or 0)
+    return {"found": bool(settled), "settled": settled}
 
 
 # ------------------------------------------------------------------ GraphPath
@@ -300,11 +330,32 @@ SET r.rationale = $rationale, r.resolved_at = $at, r.resolved_by = $by,
 """
 
 
+def dismiss(conflict_id: str, rationale: str, dismissed_by: str, tenant: str = "northwind") -> dict:
+    """An open conflict judged not to be one. The reason, who and when are kept on the Conflict
+    (§5 v7), and the Adjudicator never re-flags a pair that a Conflict already involves."""
+    g = get_graph(tenant)
+    found = rows(g, CONFLICT, {"id": conflict_id})
+    if not found:
+        raise NotFound(f"conflict {conflict_id!r} not found")
+    if found[0]["status"] != "open":
+        raise Conflicting(f"conflict {conflict_id!r} is {found[0]['status']}, not open")
+    if not rationale.strip() or not dismissed_by.strip():
+        raise Invalid("rationale and dismissed_by are both required")
+    g.query("MATCH (k:Conflict {id: $id}) SET k.status = 'dismissed', k.dismissed_by = $by, "
+            "k.dismiss_rationale = $rationale, k.dismissed_at = $at",
+            {"id": conflict_id, "by": dismissed_by.strip(), "rationale": rationale.strip(), "at": int(time.time())})
+    _stats_cache.pop(tenant, None)
+    return {"ok": True, "conflict": get_conflict(conflict_id, tenant)["conflict"]}
+
+
 def resolve(conflict_id: str, winner_claim_id: str, rationale: str, resolved_by: str,
             tenant: str = "northwind") -> dict:
     g = get_graph(tenant)
     if not rows(g, CONFLICT, {"id": conflict_id}):
         raise NotFound(f"conflict {conflict_id!r} not found")
+    state = rows(g, CONFLICT, {"id": conflict_id})[0]["status"]
+    if state != "open":
+        raise Conflicting(f"conflict {conflict_id!r} is {state}, not open")
     sides = _sides(g, conflict_id)
     if winner_claim_id not in {s["id"] for s in sides}:
         raise Invalid(f"winner_claim_id {winner_claim_id!r} is not one of this conflict's two claims")

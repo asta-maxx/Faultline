@@ -45,6 +45,14 @@ export interface Conflict {
   judgement?: Judgement | null
   /** v5, optional: the RESOLVED_AS edge; null unless status is "resolved". */
   resolution?: Resolution | null
+  /** v7, optional: who dismissed it and why; null unless status is "dismissed". */
+  dismissal?: Dismissal | null
+}
+
+export interface Dismissal {
+  rationale: string
+  dismissed_by: string
+  dismissed_at: number
 }
 
 export interface Judgement {
@@ -132,9 +140,24 @@ export interface ConflictsResponse {
   stats: Stats
 }
 
+/** v7, GET /conflicts/{id} only: what has already been settled about this conflict's Entity (§7.4). */
+export interface Precedent {
+  found: boolean
+  settled: PrecedentEntry[]
+}
+
+export interface PrecedentEntry {
+  conflict_id: string
+  winner_id: string
+  winner_text: string
+  settled_at: number // epoch seconds
+}
+
 export interface ConflictDetailResponse {
   conflict: Conflict
   path: GraphPath
+  /** v7, optional: absent from fixtures and older APIs. */
+  precedent?: Precedent
 }
 
 export interface ResolveRequest {
@@ -144,6 +167,17 @@ export interface ResolveRequest {
 }
 
 export interface ResolveResponse {
+  ok: true
+  conflict: Conflict
+}
+
+/** v7 */
+export interface DismissRequest {
+  rationale: string
+  dismissed_by: string
+}
+
+export interface DismissResponse {
   ok: true
   conflict: Conflict
 }

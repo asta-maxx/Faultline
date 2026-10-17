@@ -17,7 +17,7 @@ import uuid
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
 
-from agent import surveyor
+from agent import gitsource, surveyor
 from agent.adjudicator import FLOOR, Stats, adjudicate
 from graph import registry
 from graph.connection import get_graph
@@ -42,7 +42,21 @@ class AuditError(Exception):
 
 # ------------------------------------------------------------------ folders
 def folder_files(folder: Path) -> list[Path]:
-    return sorted(p for p in folder.rglob("*") if p.is_file() and p.suffix.lower() in SUFFIXES)
+    """Readable documents under folder. Symlinks are never followed (a cloned repository could
+    point one at a server file) and nothing under .git is read."""
+    root = folder.resolve()
+    out = []
+    for p in folder.rglob("*"):
+        if p.suffix.lower() not in SUFFIXES or p.is_symlink() or ".git" in p.relative_to(folder).parts:
+            continue
+        # Resolving catches a file reached through a symlinked directory that leaves the folder.
+        if p.is_file() and p.resolve().is_relative_to(root):
+            out.append(p)
+    return sorted(out)
+
+
+def readable(s: dict) -> bool:
+    return s["kind"] in ("folder", "git") and s["status"] == "ready"
 
 
 def _kind(rel: str) -> str:
@@ -123,9 +137,8 @@ class Run:
 # ------------------------------------------------------------------ start
 def start(workspace_id: str) -> str:
     sources = registry.list_sources(workspace_id)
-    folders = [s for s in sources if s["kind"] == "folder" and s["status"] == "ready"]
-    if not folders:
-        raise AuditError("No readable source. Add a folder source first; git sources are not read yet.")
+    if not any(readable(s) for s in sources):
+        raise AuditError("No readable source. Add a Git repository or a folder first.")
     with _lock:
         if workspace_id in _running:
             raise AuditError(f"An audit is already running for this workspace: {_running[workspace_id]}")
@@ -157,26 +170,47 @@ def _work(run: Run, sources: list[dict]) -> None:
 def _pipeline(run: Run, sources: list[dict]) -> None:
     ws = run.data["workspace_id"]
 
-    # 1. Read every folder source.
+    # 1. Read every source: folders in place, git repositories from a fresh clone of the latest
+    # commit, or from the copy cloned when the source was added if that fails (a private
+    # repository's token is never kept).
     run.begin(0)
     docs: list[dict] = []
     owner: dict[str, str] = {}  # document id -> source id
     taken: set[str] = set()
-    skipped = [s for s in sources if not (s["kind"] == "folder" and s["status"] == "ready")]
+    notes: list[str] = []
+    skipped = [s for s in sources if not readable(s)]
+    if skipped:
+        notes.append(f"{len(skipped)} source(s) not read")
     for s in sources:
-        if s["kind"] != "folder" or s["status"] != "ready":
+        if not readable(s):
             continue
-        folder = Path(s["location"])
+        if s["kind"] == "git":
+            folder = gitsource.checkout_path(ws, s["id"])
+            run.progress(0, len(docs), current=f"fetching {s['location']}")
+            try:
+                gitsource.clone(s["location"], folder)
+            except gitsource.GitError:
+                if folder.is_dir():
+                    notes.append(f"{s['location']}: read the copy cloned when it was added")
+                else:
+                    registry.update_source(s["id"], status="missing",
+                                           message="The clone is gone and the repository could not be fetched again. "
+                                                   "Remove it and add it again (with a token if it is private).")
+                    notes.append(f"{s['location']}: not read")
+                    continue
+        else:
+            folder = Path(s["location"])
         if not folder.is_dir():
             registry.update_source(s["id"], status="missing", message=f"Folder not found at audit time: {folder}")
             continue
         for d in read_folder(folder, taken):
             docs.append(d)
             owner[d["id"]] = s["id"]
-            run.progress(0, len(docs), current=f'{folder.name}/{d["path"]}')
+            label = s["location"].rsplit("/", 1)[-1] if s["kind"] == "git" else folder.name
+            run.progress(0, len(docs), current=f'{label}/{d["path"]}')
     if not docs:
-        raise AuditError("The folder sources contain no .md, .markdown or .txt files.")
-    run.end(0, len(docs), detail=f"{len(skipped)} source(s) not read: git cloning is not implemented" if skipped else None)
+        raise AuditError("The sources contain no .md, .markdown or .txt files.")
+    run.end(0, len(docs), detail="; ".join(notes) or None)
 
     # 2. Extract claims, one cached call per document.
     run.begin(1)

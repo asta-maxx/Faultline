@@ -10,16 +10,20 @@ docker compose -f infra/docker-compose.yml up -d
 curl -f http://localhost:8000/health
 ```
 
-Expected response:
+Compose keeps the graph in the named volume `faultline_falkor_data`, so a fresh stack starts empty and `/health` reports `"nodes": 0, "edges": 0` (HTTP 200) until a `dump.rdb` is restored (`infra/RAILWAY.md`, section 4) or the graph is seeded.
+
+Expected response after restoring the demo RDB:
 ```json
 {
   "ok": true,
   "graph": "faultline:northwind",
-  "nodes": 2826,
-  "edges": 823,
+  "nodes": 3264,
+  "edges": 1567,
   "falkor": "up"
 }
 ```
+
+A structure-only `python -m data.seed --reset` gives `"nodes": 2826, "edges": 823` and an empty conflict queue.
 
 ---
 
@@ -60,7 +64,7 @@ Expected response:
 | `GOVERNS` | Document → System | — |
 | `AUTHORED` | Person → Document\|Decision | — |
 | `OWNS` | Person → System | — |
-| `DERIVED_FROM` | Claim → Message\|Ticket | — |
+| `DERIVED_FROM` | Claim → Message\|Ticket | — (in the schema; the pipeline does not write it, message and ticket claims link through `ASSERTS`) |
 | `INVOLVES` | Conflict → Claim | `side` (`"a"`\|`"b"`) |
 | `RESOLVED_AS` | Conflict → Claim | `rationale` (str), `resolved_at` (int), `resolved_by` (str) |
 
@@ -75,16 +79,30 @@ $$\text{blast\_radius} = \left(\sum_{s \in \text{systems}} (4 - s.\text{tier})\r
 Where:
 - Tier 1 weighs 3, Tier 2 weighs 2, Tier 3 weighs 1 (`sum(4 - s.tier)` over distinct governed systems).
 - `doc_count`: Count of distinct sources asserting the claim (`Document`, `Message`, `Ticket`).
-- `citing_decisions`: Count of distinct decisions cited by governing documents.
-- `Conflict.blast_radius`: Prior to resolution, computed as $\max(\text{blast\_radius}_A, \text{blast\_radius}_B)$.
+- `citing_decisions`: Count of distinct decisions cited (`CITES`) by any source that asserts the claim. Only documents carry `CITES`, so in practice these are the asserting documents' decisions.
+- Systems are the distinct systems governed (`GOVERNS`) by any asserting source, each counted once; the sum is done in Python, never with `sum(DISTINCT ...)` in Cypher.
+- `Conflict.blast_radius`: Prior to resolution, computed as $\max(\text{blast\_radius}_A, \text{blast\_radius}_B)$, never the sum. After resolution it is recomputed as the blast radius of the losing claim.
+
+Exactly as computed in `graph/queries.py`:
+
+```python
+tier_weight  = sum(4 - s["tier"] for s in systems if s["id"])   # int
+system_count = len([s for s in systems if s["id"]])
+blast_radius = (tier_weight * 2.0) + doc_count + (citing_decisions * 1.5)
+```
 
 ---
 
 ## 5. Contradiction Funnel (CONTRACT §6)
 
+Measured on `faultline:northwind`, the Northwind demo slice (60 documents, 20 tickets, 20 messages, 339 claims):
+
 | Stage | Mechanism | Measured Pairs |
-| :--- | :--- | :--- |
-| **1. All possible pairs** | `n*(n-1)/2`, never computed | TBD from Allen's RDB |
-| **2. Graph collapse** | Shared `Entity` traversal (7.1) | TBD from Allen's RDB |
-| **3. Deterministic prefilter** | Shared `predicate` AND (differing `object` OR opposite `polarity`) | TBD from Allen's RDB |
-| **4. LLM judgement** | Adjudicator | TBD from Allen's RDB |
+| :--- | :--- | ---: |
+| **1. All possible pairs** | `n*(n-1)/2`, counted, never enumerated | 57,291 |
+| **2. Graph collapse** | Shared `Entity` traversal (7.1) | 1,666 |
+| **3. Deterministic prefilter** | Shared `predicate` AND (differing `object` OR opposite `polarity`) | 202 |
+| **4. LLM judgement** | Adjudicator, one cached call per disagreement | 159 judged |
+| **Result** | `CONTRADICTS` edge and an open `Conflict` | 20 conflicts |
+
+16 of the 20 conflicts correspond to 13 of the 14 planted contradictions (11 with the correct kind); 4 are false positives (3 from over-merged ticket "Incident" entities, 1 judge error). 12 planted contradictions reach stage 3 as the planted pair itself (claims from both planted source documents); 13 surface because a conflict can also pair one planted-source claim with a distractor document that restates the other value. The planted set was also the development set, so these numbers are optimistic.

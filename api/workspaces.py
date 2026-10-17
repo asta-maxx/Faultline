@@ -4,9 +4,10 @@ workspace's data in its own graph, faultline:{workspace_id}."""
 from __future__ import annotations
 
 import os
+import time
 from pathlib import Path
 
-from agent import audit
+from agent import audit, gitsource
 from api.service import Invalid, NotFound
 from graph import registry
 from graph.connection import get_graph
@@ -85,6 +86,9 @@ def add_source(workspace_id: str, kind: str, location: str, token: str | None) -
     if not location:
         raise Invalid("Enter a folder path or a repository URL.")
     if kind == "folder":
+        if os.environ.get("FAULTLINE_ALLOW_FOLDERS", "1") == "0":
+            raise Invalid("Folder sources are turned off on this server: it cannot see your computer's files. "
+                          "Add a Git repository instead, or run Faultline yourself to audit a local folder.")
         folder = Path(location).expanduser().resolve()
         root = _source_root()
         if root and root != folder and root not in folder.parents:
@@ -97,12 +101,18 @@ def add_source(workspace_id: str, kind: str, location: str, token: str | None) -
             "message": None if n else "No .md, .markdown or .txt files in this folder.",
         })
     if kind == "git":
-        # Honesty guard: the URL is saved, nothing is cloned, and the token is not kept.
+        try:
+            url = gitsource.validate_url(location)
+            sid = registry.new_source_id()
+            dest = gitsource.checkout_path(workspace_id, sid)
+            gitsource.clone(url, dest, token or None)  # the token lives only for this call
+        except gitsource.GitError as e:
+            raise Invalid(str(e)) from e
+        n = len(audit.folder_files(dest))
         return registry.add_source(workspace_id, {
-            "kind": "git", "location": location, "docs": None, "status": "unsupported", "has_token": bool(token),
-            "message": "Saved, not read: cloning git repositories is not implemented yet."
-                       + (" The token was not stored." if token else ""),
-        })
+            "kind": "git", "location": url, "docs": n, "status": "ready", "has_token": bool(token),
+            "message": None if n else "Cloned, but it has no .md, .markdown or .txt files.",
+        }, sid=sid)
     raise Invalid("kind must be 'folder' or 'git'.")
 
 
@@ -110,6 +120,7 @@ def delete_source(workspace_id: str, source_id: str) -> dict:
     require(workspace_id)
     if not registry.delete_source(workspace_id, source_id):
         raise NotFound(f"source {source_id!r} not found in workspace {workspace_id!r}")
+    gitsource.remove(workspace_id, source_id)
     return {"ok": True}
 
 
@@ -127,4 +138,12 @@ def get_audit(run_id: str) -> dict:
     run = registry.get_run(run_id)
     if not run:
         raise NotFound(f"audit {run_id!r} not found")
+    if run["status"] == "running" and run_id not in audit._running.values():
+        # No thread in this process owns it: the server restarted while it ran.
+        run.update(status="failed", error="The server restarted while this audit was running. Run it again.",
+                   ended_at=run.get("ended_at") or int(time.time()), stage=None, current=None)
+        for s in run["stages"]:
+            if s["state"] == "active":
+                s["state"] = "failed"
+        registry.save_run(run)
     return run

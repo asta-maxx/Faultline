@@ -17,6 +17,7 @@ export type IconName =
   | 'pending'
   | 'arrow-right'
   | 'close'
+  | 'plus'
 
 export const ICON_PATHS: Record<IconName, string> = {
   claim: 'M5 4h14v16H5z M8.5 8.5h7 M8.5 12h7 M8.5 15.5h4',
@@ -39,6 +40,7 @@ export const ICON_PATHS: Record<IconName, string> = {
   pending: 'M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18z',
   'arrow-right': 'M4 12h15 M13.5 6.5 19 12l-5.5 5.5',
   close: 'M6 6l12 12 M18 6 6 18',
+  plus: 'M12 5v14 M5 12h14',
 }
 
 export const STATE_ICON: Record<ClaimState, IconName> = {

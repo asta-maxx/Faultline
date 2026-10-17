@@ -1,10 +1,17 @@
-import type { Conflict, ConflictClaim } from '../../types'
+import type { Conflict, ConflictClaim, Precedent } from '../../types'
 import { confidence, isoDate } from '../../lib/format'
 import { Icon, StateMark } from '../Icon'
 import { sides } from '../../lib/conflict'
+import { ConflictActions, type Outcome } from './ConflictActions'
 import styles from './EvidencePanel.module.css'
 
-export function EvidencePanel({ conflict }: { conflict: Conflict }) {
+interface Props {
+  conflict: Conflict
+  precedent: Precedent | undefined
+  onSettled: (conflict: Conflict, outcome: Outcome) => void
+}
+
+export function EvidencePanel({ conflict, precedent, onSettled }: Props) {
   const [a, b] = sides(conflict)
   // v5: the CONTRADICTS edge that produced this conflict. Absent or null means no badge.
   const judgement = conflict.judgement ?? null
@@ -22,18 +29,7 @@ export function EvidencePanel({ conflict }: { conflict: Conflict }) {
         ) : null}
         {b ? <ClaimBlock claim={b} /> : <MissingSide side="B" />}
       </div>
-      {/* Inert until the Reconciler lands: no handlers by design. */}
-      <div className={styles.actions}>
-        <button type="button" className="btn btn-primary">
-          Draft correction
-        </button>
-        <button type="button" className="btn">
-          {conflict.owner ? `Assign to ${conflict.owner.name}` : 'Assign owner'}
-        </button>
-        <button type="button" className="btn">
-          Dismiss
-        </button>
-      </div>
+      <ConflictActions conflict={conflict} precedent={precedent} onSettled={onSettled} />
     </section>
   )
 }
