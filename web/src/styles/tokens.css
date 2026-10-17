@@ -1,0 +1,85 @@
+/* Faultline — generated from tokens.json
+   Dark is the product default. Light is for README, blog post and print. */
+
+:root {
+  /* Color — dark (default) */
+  --surface-base: #0B0C0E;
+  --surface-raised: #15171A;
+  --surface-sunken: #060708;
+  --ink: #E8E3D9;
+  --ink-muted: #9A948A;
+  --rule: #262A2F;
+  --state-live: #C9873A;
+  --state-contradicted: #D4685C;
+  --state-superseded: #5A5F66;
+  --state-resolved: #6E8F6B;
+  color-scheme: dark;
+
+  /* Type */
+  --font-display: Spectral, "Iowan Old Style", Georgia, serif;
+  --font-ui: "IBM Plex Sans", system-ui, -apple-system, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+
+  /* Spacing */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-12: 48px;
+
+  /* Radius — square by default */
+  --radius-none: 0px;
+  --radius-sm: 2px;
+  --radius-full: 999px;
+}
+
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) {
+    --surface-base: #E8E3D9;
+    --surface-raised: #F2EEE7;
+    --surface-sunken: #DCD5C7;
+    --ink: #1A1714;
+    --ink-muted: #5C564C;
+    --rule: #CEC6B6;
+    --state-live: #8A5415;
+    --state-contradicted: #8E3B32;
+    --state-superseded: #9A9388;
+    --state-resolved: #3D5C3A;
+    color-scheme: light;
+  }
+}
+
+:root[data-theme="light"] {
+  --surface-base: #E8E3D9;
+  --surface-raised: #F2EEE7;
+  --surface-sunken: #DCD5C7;
+  --ink: #1A1714;
+  --ink-muted: #5C564C;
+  --rule: #CEC6B6;
+  --state-live: #8A5415;
+  --state-contradicted: #8E3B32;
+  --state-superseded: #9A9388;
+  --state-resolved: #3D5C3A;
+  color-scheme: light;
+}
+
+/* Type scale */
+.display-xl { font: 500 52px/56px var(--font-display); letter-spacing: -0.02em; text-wrap: balance; }
+.display    { font: 500 34px/40px var(--font-display); letter-spacing: -0.01em; text-wrap: balance; }
+.heading    { font: 600 21px/28px var(--font-display); text-wrap: balance; }
+.body       { font: 400 15px/24px var(--font-ui); }
+.body-sm    { font: 400 13px/20px var(--font-ui); }
+.label      { font: 600 11px/16px var(--font-ui); letter-spacing: 0.08em; text-transform: uppercase; }
+.mono       { font: 400 13px/20px var(--font-mono); font-variant-numeric: tabular-nums; }
+.mono-sm    { font: 400 11px/16px var(--font-mono); font-variant-numeric: tabular-nums; }
+
+/* Fonts (Google Fonts is the only host the artifact CSP allows)
+   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Spectral:wght@500;600&family=IBM+Plex+Sans:wght@400;600&family=JetBrains+Mono:wght@400&display=swap"> */
+
+body {
+  background: var(--surface-base);
+  color: var(--ink);
+  font: 400 15px/24px var(--font-ui);
+}

@@ -1,0 +1,109 @@
+.queue {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  border-right: 1px solid var(--rule);
+  background: var(--surface-base);
+}
+
+.head {
+  display: flex;
+  align-items: center;
+  height: 44px;
+  padding: 0 var(--space-6);
+  border-bottom: 1px solid var(--rule);
+  flex: none;
+}
+
+.list {
+  overflow-y: auto;
+  min-height: 0;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: 76px minmax(0, 1fr);
+  gap: var(--space-4);
+  width: 100%;
+  padding: var(--space-4) var(--space-6) var(--space-4) calc(var(--space-6) - 3px);
+  border-left: 3px solid transparent;
+  border-bottom: 1px solid var(--rule);
+  text-align: left;
+  transition: background-color 150ms ease-out;
+}
+.row:hover {
+  background: color-mix(in srgb, var(--surface-raised) 60%, transparent);
+}
+.row[aria-current='true'] {
+  border-left-color: var(--state-live);
+  background: var(--surface-raised);
+}
+
+.score {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding-top: 2px;
+}
+
+.scoreValue {
+  font: 500 30px/32px var(--font-display);
+  font-variant-numeric: tabular-nums lining-nums;
+  color: var(--state-live);
+}
+
+.bar {
+  display: block;
+  width: 64px;
+  height: 4px;
+  background: var(--rule);
+}
+.bar span {
+  display: block;
+  height: 100%;
+  background: var(--state-live);
+}
+
+.body {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-2);
+  min-width: 0;
+}
+
+.claims {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font: 500 15px/21px var(--font-display);
+  color: var(--ink);
+}
+
+.vs {
+  font: 400 12px/21px var(--font-mono);
+  color: var(--ink-muted);
+}
+
+.meta {
+  display: flex;
+  flex-wrap: nowrap;
+  white-space: nowrap;
+  overflow: hidden;
+  font: 400 11px/16px var(--font-mono);
+  color: var(--ink-muted);
+}
+
+.top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  width: 100%;
+}
+
+.found {
+  font: 400 11px/16px var(--font-mono);
+  color: var(--ink-muted);
+  white-space: nowrap;
+}
