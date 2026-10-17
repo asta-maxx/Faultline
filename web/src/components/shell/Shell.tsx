@@ -1,4 +1,6 @@
 import type { ReactNode } from 'react'
+// Bundled into /assets so the API's static mount serves it in production.
+import logoUrl from '../../assets/faultline.svg'
 import type { ConflictKind, ConflictsResponse, HealthResponse, Stats, Workspace } from '../../types'
 import { navigate, type Route } from '../../lib/router'
 import type { Async } from '../../lib/useAsync'
@@ -38,7 +40,7 @@ export function Shell(props: ShellProps) {
               navigate({ name: 'conflicts', conflictId: null })
             }}
           >
-            <img src="/faultline.svg" width={32} height={32} alt="" />
+            <img src={logoUrl} width={32} height={32} alt="" />
             <span>Faultline</span>
           </a>
           <WorkspaceSwitcher currentId={workspaceId} workspaces={workspaces} onSwitch={onSwitchWorkspace} />
