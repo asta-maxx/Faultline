@@ -5,6 +5,8 @@ Models are chosen per role by env var, as "provider:model":
     FAULTLINE_EXTRACT_MODEL           default groq:openai/gpt-oss-120b
     FAULTLINE_EXTRACT_OVERFLOW_MODEL  default groq:openai/gpt-oss-20b   (Groq quotas are per model)
     FAULTLINE_JUDGE_MODEL             default gemini:gemini-3.5-flash
+    FAULTLINE_JUDGE_OVERFLOW_MODEL    default groq:openai/gpt-oss-120b    (Gemini free tier is ~30 calls/day)
+    FAULTLINE_CONSOLIDATE_MODEL       default gemini:gemini-3.5-flash     (one call over the whole entity catalogue)
     FAULTLINE_EMBED_MODEL             default gemini:gemini-embedding-001
 
 Defaults are pinned versions, never "*-latest" aliases: an alias can change the model
@@ -34,9 +36,11 @@ ROLE_DEFAULTS = {
     "extract": "groq:openai/gpt-oss-120b",
     "extract_overflow": "groq:openai/gpt-oss-20b",
     "judge": "gemini:gemini-3.5-flash",
+    "judge_overflow": "groq:openai/gpt-oss-120b",
+    "consolidate": "gemini:gemini-3.5-flash",
     "embed": "gemini:gemini-embedding-001",
 }
-ROLE_FALLBACK = {"extract": "extract_overflow"}
+ROLE_FALLBACK = {"extract": "extract_overflow", "judge": "judge_overflow"}
 
 
 def _load_dotenv(path: Path = Path(__file__).resolve().parent.parent / ".env") -> None:
@@ -130,7 +134,7 @@ class Gemini:
     def generate(self, model, prompt, content, params):
         body = {"systemInstruction": {"parts": [{"text": prompt}]},
                 "contents": [{"role": "user", "parts": [{"text": content}]}],
-                "generationConfig": params}
+                "generationConfig": self._config(params)}
         data = _post(f"{self.BASE}/{model}:generateContent", json=body,
                      headers={"x-goog-api-key": _key("GEMINI_API_KEY")})
         cand = data["candidates"][0]
@@ -138,6 +142,17 @@ class Gemini:
         if not parts:
             raise RuntimeError(f"gemini returned no text (finishReason={cand.get('finishReason')})")
         return "".join(p.get("text", "") for p in parts if not p.get("thought"))
+
+    @staticmethod
+    def _config(params: dict[str, Any]) -> dict[str, Any]:
+        """Callers pass OpenAI-style params so one role can fall back across providers.
+        Translate the ones Gemini names differently; drop Groq-only ones."""
+        cfg = {k: v for k, v in params.items() if k not in ("response_format", "max_completion_tokens", "reasoning_effort")}
+        if (params.get("response_format") or {}).get("type") == "json_object":
+            cfg["responseMimeType"] = "application/json"
+        if "max_completion_tokens" in params:
+            cfg["maxOutputTokens"] = params["max_completion_tokens"]
+        return cfg
 
     def embed(self, model, text):
         data = _post(f"{self.BASE}/{model}:embedContent", json={"content": {"parts": [{"text": text}]}},

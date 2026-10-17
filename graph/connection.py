@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import os
 from functools import lru_cache
+from urllib.parse import quote
 
 from falkordb import FalkorDB, Graph
 
@@ -12,7 +13,14 @@ DEFAULT_TENANT = "northwind"
 
 
 def falkor_url() -> str:
-    return os.environ.get("FALKOR_URL", DEFAULT_FALKOR_URL)
+    """FALKOR_URL, with FALKOR_PASSWORD added when the URL carries no credentials of its own
+    (docker-compose and Railway set the password separately from the host)."""
+    url = os.environ.get("FALKOR_URL", DEFAULT_FALKOR_URL)
+    password = os.environ.get("FALKOR_PASSWORD")
+    if password and "@" not in url.split("://", 1)[-1]:
+        scheme, _, rest = url.partition("://")
+        url = f"{scheme}://:{quote(password, safe='')}@{rest}"
+    return url
 
 
 def graph_name(tenant_id: str = DEFAULT_TENANT) -> str:

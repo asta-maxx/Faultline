@@ -210,41 +210,218 @@ Colour never carries meaning alone: every state has a glyph and a word.
 
 ## <img src=".github/readme/icon-terminal.svg" width="22" height="22" alt=""> Run it locally
 
-**Prerequisites:** Docker, [uv](https://docs.astral.sh/uv/), Python 3.12.
+**Prerequisites:** Docker, [uv](https://docs.astral.sh/uv/), Python 3.12, Node.js 20+.
 
-**1. Start FalkorDB.** On a clean machine, use the default port:
+The app has three parts: **FalkorDB** (the graph), the **API** (FastAPI, port 8000) and the **web UI** (Vite, port 5173). The conflict and stats endpoints still serve the JSON in `fixtures/`, so the UI works even before FalkorDB holds any data. Only `/api/health` (also at `/health`) talks to FalkorDB: it reports the node and edge counts of `faultline:northwind`, and returns HTTP 503 if FalkorDB is unreachable.
 
-```bash
-docker run -p 6379:6379 falkordb/falkordb
-```
+### First-time setup
 
-**Port 6379 already taken** (another project's Redis, for example)? Run FalkorDB on 6380 and point `FALKOR_URL` at it:
+Do this once per machine.
+
+**1. Create the FalkorDB container.** This repo uses host port **6380**, because 6379 is often taken by another project's Redis:
 
 ```bash
 docker run -d --name faultline-falkordb -p 6380:6379 falkordb/falkordb
-export FALKOR_URL=redis://localhost:6380          # PowerShell: $env:FALKOR_URL = "redis://localhost:6380"
 ```
 
-If `FALKOR_URL` points at a plain Redis by mistake, the connection fails immediately with a clear message instead of an "unknown command" error later.
+`docker run` creates a new container, so run it only once. If it says the name `faultline-falkordb` is already in use, the container exists already. Skip to [Every time after](#every-time-after).
 
-**2. Install dependencies.**
+**2. Add your keys.** Copy `.env.example` to `.env`, fill in your own [free keys](#free-api-keys), and set:
 
 ```bash
-uv sync
+FALKOR_URL=redis://localhost:6380
 ```
 
-**3. Add your keys.** Copy `.env.example` to `.env` and fill in your own [free keys](#free-api-keys). Every `.env*` file except `.env.example` is gitignored.
+Every `.env*` file except `.env.example` is gitignored.
+
+The API and the `graph` scripts don't read `.env` themselves (only `agent/llm.py` does), so the commands below pass it explicitly with `uv run --env-file .env`. Without that flag, `FALKOR_URL` falls back to port 6379 and `/api/health` reports `"falkor": "down"`.
+
+**3. Install dependencies.**
+
+```bash
+uv sync                    # Python
+cd web && npm ci && cd ..  # web UI
+```
 
 **4. Create the schema** (idempotent; safe to re-run):
 
 ```bash
-uv run python -m graph.schema
+uv run --env-file .env python -m graph.schema
 ```
 
-**5. Run the funnel on the synthetic graph:**
+**5. Load the Northwind demo data.** This is the synthetic company the demo runs on. Both commands take `--seed` (default 42) and produce the same company every time. Only `data.seed` is needed for the graph; `data.generate` writes the text files that the Surveyor and the [run files](#developer-checks) read.
 
 ```bash
-uv run python -m graph.collapse_demo
+uv run --env-file .env python -m data.generate          # writes the corpus to data/out/
+uv run --env-file .env python -m data.seed --reset      # loads the structural graph into faultline:northwind
+```
+
+`data.generate` takes under a second and writes the text corpus (`data/out/corpus.json`, `data/out/corpus/`, `data/out/graph_seed.cypher`, about 2.6 MB) plus `data/out/ground_truth.json`, the 14 planted contradictions. Everything in `data/out/` except `ground_truth.json` is gitignored.
+
+`data.seed` does not read `data/out/`. It re-runs the generator in memory, applies the schema, and loads only the structural graph: `Person`, `System`, `Decision`, `Document`, `Ticket` and `Message` nodes, joined by `OWNS`, `AUTHORED`, `SUPERSEDES`, `GOVERNS` and `CITES`. It never creates `Claim`, `Entity` or `Conflict` nodes; those come from the Surveyor. It checks every count against the generator and fails loudly on a mismatch:
+
+```text
+Seeding structural graph for tenant 'northwind' (reset=True)...
+Structural graph 'faultline:northwind' successfully seeded in 0.315 s:
+  Nodes:
+    - Person      : 60
+    - System      : 14
+    - Decision    : 40
+    - Document    : 312
+    - Ticket      : 400
+    - Message     : 2000
+  Edges:
+    - OWNS        : 14
+    - AUTHORED    : 352
+    - SUPERSEDES  : 26
+    - GOVERNS     : 323
+    - CITES       : 108
+```
+
+The three modes of `data.seed`:
+
+| Command | Does | Use it when |
+| --- | --- | --- |
+| `--reset` | deletes `faultline:northwind`, then loads it fresh | first load, or to start clean |
+| `--merge` | `MERGE`s the structural nodes and edges into whatever is there, keeping existing `Claim`, `Entity` and `ASSERTS` data; safe to re-run | after the Surveyor has written claims into the same graph |
+| no flag | `CREATE`s into the existing graph | only on an empty graph; on a seeded graph it fails with `unique constraint violation on node of type Person` |
+
+`--merge` exists because the Surveyor's loader deletes its target graph and recreates `Document`, `Message` and `Ticket` nodes with the same ids. So the order is: run the Surveyor first, then `data.seed --merge` to add people, systems, decisions and the edges between them without duplicating any document. `--reset` and `--merge` can't be combined. `--tenant` (default `northwind`) and `--seed` (default 42) are the other flags.
+
+**6. Confirm it worked.** With the API running (step 2 below), open <http://localhost:8000/api/health>. Before seeding, `nodes` and `edges` are `0`. After seeding:
+
+```json
+{"ok": true, "graph": "faultline:northwind", "nodes": 2826, "edges": 823, "falkor": "up"}
+```
+
+Without the API running, the same check works in one line:
+
+```bash
+uv run --env-file .env python -c "from fastapi.testclient import TestClient; from api.main import app; r = TestClient(app).get('/api/health'); print(r.status_code, r.json())"
+```
+
+It prints a `StarletteDeprecationWarning` about `httpx` first; that is harmless.
+
+**7. Build claims and conflicts.** This is the real pipeline: extraction, entity resolution, judging. It spends free LLM quota, but every call is cached under `cache/`, so a re-run only pays for calls that have not been answered yet. If a quota runs out mid-run, wait for it to reset and run the same command again.
+
+```bash
+uv run --env-file .env python -m agent.ingest          # Surveyor on the demo slice, then data.seed --merge
+uv run --env-file .env python -m agent.adjudicator     # stages 2-4: writes CONTRADICTS and Conflict
+uv run --env-file .env python -m agent.northwind_eval  # scores the result against the 14 planted contradictions
+```
+
+`agent.ingest` replaces `faultline:northwind` with sources and claims, then adds the structural graph on top with Dev C's merge mode, so it does not need step 5 first. The demo slice is documents `doc-0001` to `doc-0060`, the first 20 tickets, and 20 messages: the 4 planted ones plus the first 16 that pass Dev C's strict message filter. `--scope day1` runs every document and ticket instead, which takes hours on the free tier.
+
+Then continue with the steps below.
+
+### Every time after
+
+**You need two terminals.** The API and the web UI are separate servers, and each one keeps running in its terminal until you press `Ctrl+C`. In VS Code, `Ctrl+Shift+5` splits the terminal so both are visible.
+
+| Where | Runs | Port | Stays open? |
+| --- | --- | --- | --- |
+| any terminal | FalkorDB (in Docker) | 6380 | no, returns at once |
+| terminal 1 | API (FastAPI) | 8000 | yes, until `Ctrl+C` |
+| terminal 2 | web UI (Vite) | 5173 | yes, until `Ctrl+C` |
+
+**1. Start FalkorDB.** This reuses the container from setup, along with its data, and returns immediately:
+
+```bash
+docker start faultline-falkordb
+```
+
+**2. Terminal 1: start the API.** Run this from the repo root and leave it running:
+
+```bash
+uv run --env-file .env uvicorn api.main:app --reload --port 8000
+```
+
+Check it at <http://localhost:8000/api/health>. Port 8000 is the API only, so <http://localhost:8000/> returns `404 Not Found` in this setup. That is expected.
+
+**3. Terminal 2: start the web UI.** Open a new terminal and leave this running too:
+
+```bash
+cd web
+npm run dev
+```
+
+Wait for `Local: http://localhost:5173/`, then open **<http://localhost:5173>**. This is the app. Vite forwards `/api/*` to port 8000, so if the API in terminal 1 isn't running, the page loads with an empty queue.
+
+**To stop:** press `Ctrl+C` in each terminal, then run `docker stop faultline-falkordb`.
+
+**After a `git pull`:** run `uv sync` if `pyproject.toml` or `uv.lock` changed, and run `cd web && npm ci` if `web/package-lock.json` changed. Both commands are safe to run any time.
+
+**Re-seeding is not an every-time step.** The graph is saved inside the container, so `docker stop` and `docker start` keep it. Re-run `data.seed --reset` only when:
+
+- `/api/health` shows `"nodes": 0` (for example, after you recreated the container),
+- a pull changed anything under `data/` that affects the generated graph, or
+- you want to throw away experiments and start clean.
+
+If the Surveyor has written claims into `faultline:northwind`, use `data.seed --merge` instead, so the claims survive.
+
+<details>
+<summary><b>One terminal instead (API serves the built UI)</b></summary>
+
+Build the UI once, and the API serves it at <http://localhost:8000/>:
+
+```bash
+cd web && npm run build && cd ..
+uv run --env-file .env uvicorn api.main:app --port 8000
+```
+
+The trade-off: UI edits don't show up until you run `npm run build` again and restart the API. The two-terminal setup updates the browser as you edit. Delete `web/dist` to make port 8000 API-only again.
+
+</details>
+
+<details>
+<summary><b>Troubleshooting</b></summary>
+
+| Symptom | Fix |
+| --- | --- |
+| `Conflict. The container name "/faultline-falkordb" is already in use` | The container already exists. Use `docker start faultline-falkordb` instead of `docker run`. |
+| `port is already allocated` on 6380 | Another container holds the port. Run `docker ps` to find it. |
+| `address already in use` on 8000 or 5173 | An earlier server is still running. Stop it, or pick another port (`--port 8001`, plus the proxy target in `web/vite.config.ts`). |
+| `/api/health` says `"falkor": "down"` (HTTP 503) | The API started without `--env-file .env`, so it is looking at port 6379. Restart it with the command above. |
+| UI loads but lists no conflicts | The API isn't running. Start it in terminal 1. |
+| `404 Not Found` at `http://localhost:8000/` | Expected: port 8000 is the API. Open <http://localhost:5173> for the UI. |
+| Unknown-command errors from FalkorDB | `FALKOR_URL` points at a plain Redis. Point it at port 6380. |
+| `/api/health` says `"nodes": 0` | FalkorDB is up but the graph is empty. Run `data.seed --reset` (step 5 of setup). |
+| `data.seed` fails with `unique constraint violation on node of type Person` | The graph is already seeded. Add `--reset` to start clean, or `--merge` to keep existing claims. |
+| `git status` shows `data/out/ground_truth.json` modified after `data.generate` | Only the order of `governed_systems` lists changed (see [Status](#status)). Run `git checkout -- data/out/ground_truth.json`. |
+
+</details>
+
+### Developer checks
+
+These need FalkorDB running and, for the cache proof, your API keys.
+
+**Run the tests.** `pytest` is not a project dependency yet, so `uv run --with pytest` pulls it in for the run:
+
+```bash
+uv run --env-file .env --with pytest pytest data -q
+```
+
+```text
+......................                                                   [100%]
+22 passed in 1.63s
+```
+
+The 22 tests live in `data/`: the generator (volumes, planted conflicts, determinism), the message filter, and two seed integration tests. The seed tests write to their own graphs (`faultline:test_northwind_seed`, `faultline:test_northwind_merge`) and delete them afterwards, so they never touch `faultline:northwind`. They are skipped if FalkorDB is unreachable, so keep `--env-file .env` or they look at port 6379 and skip. There are no Python tests outside `data/` yet. For the web UI, `cd web && npm run build` type-checks and builds, and `npm run lint` runs oxlint.
+
+**Rebuild the Surveyor run files.** `data/runs/` holds committed inputs for the Surveyor, cut from `data/out/corpus.json`, so run `data.generate` first:
+
+| File | Contents | Rebuild with |
+| --- | --- | --- |
+| `sample.json` | 15 documents, 15 tickets | `uv run python -m data.runs.build_runs --sample` |
+| `day1.json` | all 312 documents, all 400 tickets | `uv run python -m data.runs.build_runs --day1` |
+| `day2.json` | day 1 plus the 221 messages that pass the filter | `uv run python -m data.runs.build_runs --day2 --filtered` |
+
+With no flags, `build_runs` rebuilds `sample.json` and `day1.json`. The rebuilt files match the committed ones byte for byte. `uv run python -m data.message_filter` prints how many of the 2,000 messages carry a decision phrase or a number with a unit: 221 strict, 423 if count nouns are included too (the `build_runs --include-counts` option).
+
+**Run the funnel on the synthetic graph:**
+
+```bash
+uv run --env-file .env python -m graph.collapse_demo
 ```
 
 ```text
@@ -259,11 +436,11 @@ check floor=0.8: stage2 falkor 20 / oracle 20, stage3 falkor 7 / oracle 7 -> MAT
 ALL CHECKS PASSED
 ```
 
-**6. Prove the LLM cache.** Run each command twice. The second run must print `cached=True` and make no HTTP call.
+**Prove the LLM cache.** Run each command twice. The second run must print `cached=True` and make no HTTP call.
 
 ```bash
-uv run python -m agent.cache_proof gemini:gemini-3.5-flash
-uv run python -m agent.cache_proof groq:openai/gpt-oss-120b
+uv run --env-file .env python -m agent.cache_proof gemini:gemini-3.5-flash
+uv run --env-file .env python -m agent.cache_proof groq:openai/gpt-oss-120b
 ```
 
 <details>
@@ -271,7 +448,7 @@ uv run python -m agent.cache_proof groq:openai/gpt-oss-120b
 
 | Variable | Default | Purpose |
 | --- | --- | --- |
-| `FALKOR_URL` | `redis://localhost:6379` | FalkorDB connection |
+| `FALKOR_URL` | `redis://localhost:6379` | FalkorDB connection; set to `redis://localhost:6380` per the setup above |
 | `GEMINI_API_KEY` | none | extraction, judging, embeddings |
 | `GROQ_API_KEY` | none | extraction overflow when Gemini is rate-limited |
 | `FAULTLINE_EXTRACT_MODEL` | `gemini:gemini-3.5-flash` | `provider:model` |
@@ -281,6 +458,33 @@ uv run python -m agent.cache_proof groq:openai/gpt-oss-120b
 | `FAULTLINE_CACHE_DIR` | `./cache` | LLM response cache |
 
 Model defaults are pinned versions, never `*-latest` aliases. An alias can change the model behind an unchanged cache key, and behind the provenance recorded in `CONTRADICTS.method`.
+
+`FALKOR_PASSWORD` and `REINGEST_TOKEN` are in `.env.example` for the compose and Railway setups. No Python code reads either yet: the connection uses `FALKOR_URL` alone, and there is no `/reingest` endpoint.
+
+</details>
+
+<details>
+<summary><b>Docker Compose and deploy files (<code>infra/</code>)</b></summary>
+
+`infra/` is an alternative to the steps above, aimed at running the whole stack in containers and deploying it. The steps above are the tested path for local work; `infra/` was read for this section, not run.
+
+| File | What it is |
+| --- | --- |
+| `docker-compose.yml` | Two services. `falkordb` runs `falkordb/falkordb:latest` with a named volume `faultline_falkor_data` and an optional `FALKOR_PASSWORD`. `app` builds `infra/Dockerfile`, publishes `${PORT:-8000}`, and connects to `redis://falkordb:6379` on the compose network. |
+| `Dockerfile` | Two stages. Node 22 runs `npm ci` and `npm run build` in `web/`; Python 3.12-slim installs the project and runs `uvicorn api.main:app` on port 8000, serving the API and the built UI together. |
+| `Makefile`, `justfile` | `up`, `down`, `build` (compose), `seed` and `reset` (`python -m data.seed`), `test` (`pytest -v`), `dump`. |
+| `scripts/dump_graph.sh` | Runs `BGSAVE` in the container named `faultline-falkordb` and copies `dump.rdb` to `data/dump.rdb` (gitignored). Needs bash; Git Bash works. |
+| `scripts/check_secrets.py` | Fails if `.env` is tracked or if a key-shaped string appears under `data/` or `infra/`. |
+| `RAILWAY.md` | Deploy runbook: a public app service and a private FalkorDB service with a volume, plus how to load `dump.rdb` into it. |
+| `app_patch/` | The live health router and the SPA static mount that `api/main.py` imports. |
+
+How it differs from the 6380 setup:
+
+- **Port.** Compose publishes FalkorDB on host port **6379** unless `FALKOR_PORT` is set. 6379 is often taken by another project's Redis, so set `FALKOR_PORT=6380` first.
+- **Container name.** Compose names its FalkorDB container `faultline-falkordb`, the same name as the container from [First-time setup](#first-time-setup). The two can't exist at once; remove the manual one before `docker compose up`, or skip compose.
+- **Data.** Compose keeps the graph in the named volume `faultline_falkor_data`, not inside the container, so it starts empty and needs its own seed.
+- **Password.** Setting `FALKOR_PASSWORD` makes FalkorDB require it, but the app only reads `FALKOR_URL`. Put the password in the URL too (`redis://:<password>@falkordb:6379`), or `/health` reports `"falkor": "down"`.
+- **`make seed`, `make test`.** These call bare `python` and `pytest`, not `uv run`, and `make` doesn't load `.env`. `just` does load `.env`, but still needs `pytest` installed. In this repo, the `uv run --env-file .env ...` commands above do the same jobs.
 
 </details>
 
@@ -303,10 +507,13 @@ Free-tier limits and model availability change; check each provider's rate-limit
 
 ```text
 graph/        schema, Cypher library, prefilter, funnel demo   Allen
-agent/        providers, LLM cache; Surveyor/Adjudicator next   Allen
+agent/        providers, LLM cache, Surveyor, Adjudicator,      Allen
+              ingest driver, Northwind scorer, MCP tools (§8)
+api/          FastAPI app: live §9 endpoints from the graph     Allen (Dev C's health router)
+              (FAULTLINE_FIXTURES=1 serves fixtures/ instead)
 web/          Vite + React + TS app                             Dev B
-data/         Northwind generator, ingest                       Dev C
-infra/        docker-compose, Dockerfile, deploy                Dev C
+data/         Northwind generator, seed, run files, tests       Dev C
+infra/        compose, Dockerfile, Railway guide, health patch  Dev C
 fixtures/     API-shaped mock JSON + 20-doc mini corpus         Allen writes, Dev B consumes
 CONTRACT.md   the interface everyone codes against              Allen
 .github/readme/  README visuals and their generator (build.py)
@@ -327,9 +534,15 @@ README visuals are generated, not hand-drawn: `python .github/readme/build.py` w
 | Stage 3 prefilter | Verified | matches a brute-force oracle at floors 0.65 and 0.80 |
 | LLM providers + disk cache | Verified | live Gemini and Groq calls, both served from disk on repeat |
 | Fixtures for the UI | Verified | strict shape check against the contract's TypeScript types |
-| Claim extraction (Surveyor) | Not started | next |
+| Northwind generator | Verified | 312 docs, 400 tickets, 2,000 messages, 14 planted conflicts; 22 tests in `data/` pass |
+| Structural seed | Verified | `data.seed --reset` loads 2,826 nodes and 823 edges in under a second; `--merge` re-run keeps the same counts |
+| Generator determinism | Partly | the corpus is identical across runs, but `governed_systems` order in `ground_truth.json` changes per run (built from a Python `set`) |
+| Claim extraction (Surveyor) | In progress | `agent/surveyor.py` writes to `faultline:minicorpus`; not yet run on Northwind |
 | Adjudicator, blast-radius ranking, Reconciler | Not started | |
-| HTTP API, MCP tools, web UI, deploy | In progress elsewhere | owned by Dev B and Dev C |
+| HTTP API | Partly live | `/api/health` reads FalkorDB; conflicts and stats still serve `fixtures/` |
+| Web UI | Built | Vite + React + Cytoscape app in `web/`, reading the API |
+| MCP tools | Not started | |
+| Docker Compose, Railway deploy | Written, not run here | `infra/`; see [Docker Compose and deploy files](#run-it-locally) |
 
 ---
 

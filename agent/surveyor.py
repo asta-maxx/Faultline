@@ -7,9 +7,13 @@ Three LLM phases, all on the extract role (Groq) and all through the disk cache:
   1. extract    one call per source, concurrent. Output is validated in Python and every
                 rejected claim is kept with a reason: schema, low_confidence,
                 span_not_literal, duplicate.
-  2. resolve    one call over every distinct subject: aliases collapse to exactly one
-                Entity per real subject (§5). A deterministic pass then flags any
-                near-duplicate entities that survived.
+  2. resolve    claims are assigned to canonical entities in batches of 30 against a
+                running catalogue (Groq's per-request cap rules out one global call).
+     consolidate one call over the finished catalogue, every entity shown with its
+                predicates and values, folds together entities that are the same subject.
+                Batches cannot see across each other, so this is where split subjects
+                (one rule under two names) are caught. A deterministic pass then flags
+                any near-duplicate entities that survived.
   3. harmonise  one call per entity with 2+ claims, concurrent: claims about the same
                 aspect get the same predicate. Stage 3 of the funnel only fires on a
                 shared predicate, so this is what makes claims comparable.
@@ -91,6 +95,21 @@ Return JSON only:
 Every claim number must appear in "assign"."""
 
 RESOLVE_BATCH = 30  # Groq free tier caps one request at 8,000 tokens including the completion budget
+
+CONSOLIDATE_PROMPT = """You merge duplicate subjects in an entity catalogue built by a contradiction detector.
+Claims were assigned to entities in separate batches, so one real subject often ended up under two
+or more entities: "Carrier Billing Policy" and "Carrier Invoice Dispute Window", or a system under
+its own name and under one of its components. Only claims that share an entity are ever compared,
+so a subject split across entities hides every contradiction inside it.
+
+Each entity is listed with the predicates and values its claims assert. Two entities are the same
+subject when their claims constrain the same thing: the same rule, limit, window, schedule or
+behaviour of the same system, even if the names differ. Merging two that are different costs one
+cheap comparison; leaving a split subject unmerged hides a contradiction for good. When in doubt,
+merge. Keep apart entities that only share a broad theme.
+
+Return JSON only: {"merge": {"<entity id to fold>": "<entity id it folds into>"}}.
+List only entities that change. Every id must come from the catalogue."""
 
 HARMONISE_PROMPT = """You normalise predicates for claims that are all about one subject.
 Claims that assert the SAME aspect of the subject must share one identical snake_case predicate,
@@ -254,6 +273,44 @@ def near_duplicates(entities: dict[str, str]) -> list[tuple]:
     return hits
 
 
+def consolidate(claims: list[dict], entities: dict[str, dict], rep: Report) -> int:
+    """Fold entities the batched resolver split. Rewrites c["entity_id"]; returns merges applied."""
+    by_entity: dict[str, list[dict]] = {}
+    for c in claims:
+        by_entity.setdefault(c["entity_id"], []).append(c)
+    lines = []
+    for eid in sorted(by_entity):
+        e = entities[eid]
+        facts = sorted({f'{c["predicate"]}={c["object"][:40]}' for c in by_entity[eid]})[:8]
+        lines.append(f'{eid} | {e["name"]} ({e["type"]}) | ' + "; ".join(facts))
+    try:
+        r = llm.generate("consolidate", CONSOLIDATE_PROMPT, "\n".join(lines),
+                         temperature=0, response_format={"type": "json_object"})
+    except Exception as e:  # the run continues unconsolidated, and says so
+        with rep.lock:
+            rep.failed_sources.append(("consolidate", f"{type(e).__name__}: {str(e)[:160]}"))
+        return 0
+    with rep.lock:
+        rep.calls["cached" if r.cached else "live"] += 1
+    merge = {slugify(k): slugify(str(v)) for k, v in (json.loads(r.value).get("merge") or {}).items()}
+
+    def root(eid: str, seen: frozenset = frozenset()) -> str:
+        nxt = merge.get(eid)
+        if not nxt or nxt == eid or nxt not in by_entity or nxt in seen:
+            return eid
+        return root(nxt, seen | {eid})
+
+    applied = 0
+    for eid in list(by_entity):
+        target = root(eid)
+        if target != eid:
+            applied += 1
+            for c in by_entity[eid]:
+                c["entity_id"] = target
+            entities.pop(eid, None)
+    return applied
+
+
 # ------------------------------------------------------------------ phase 3
 def harmonise(entity_id: str, claims: list[dict], rep: Report) -> None:
     listing = "\n".join(f'{i}. predicate={c["predicate"]} object="{c["object"]}" text="{c["text"]}"'
@@ -315,7 +372,9 @@ def run(corpus_path: Path, tenant: str, workers: int) -> dict:
     for c in claims:  # deterministic ids: same source + span + subject + predicate -> same claim id
         c["id"] = str(uuid.uuid5(uuid.NAMESPACE_URL, "faultline/claim/" + "|".join(
             str(c[k]) for k in ("source_id", "evidence_span", "subject_ref", "predicate", "object", "polarity"))))
-    entities, near, fallbacks = resolve_entities(claims, rep)
+    entities, _, fallbacks = resolve_entities(claims, rep)
+    merged = consolidate(claims, entities, rep)
+    near = near_duplicates({e["id"]: e["name"] for e in entities.values()})
     t2 = time.perf_counter()
 
     by_entity: dict[str, list[dict]] = {}
@@ -328,6 +387,7 @@ def run(corpus_path: Path, tenant: str, workers: int) -> dict:
     rep.kept = len(claims)
     load_graph(tenant, sources, claims, entities)
     return {"sources": sources, "claims": claims, "entities": entities, "near": near, "fallbacks": fallbacks,
+            "merged": merged,
             "report": rep,
             "timing": {"extract": t1 - t0, "resolve": t2 - t1, "harmonise": t3 - t2}, "corpus": corpus}
 

@@ -23,7 +23,7 @@ Built for Graph Hacks 2026 (FalkorDB × WeMakeDevs). Entering Track 03 (Company 
 | Layer | Choice |
 | --- | --- |
 | Agent + API | Python 3.12, FastAPI |
-| Extraction | Graphiti onto FalkorDB |
+| Extraction | Surveyor (`agent/surveyor.py`): constrained JSON extraction written directly onto FalkorDB, no Graphiti, no embeddings |
 | Graph client | `falkordb-py`, raw Cypher, **no ORM** |
 | MCP | FastMCP (same process as API) |
 | Frontend | Vite + React + TypeScript (**not** Next.js) |
@@ -330,6 +330,8 @@ route_owner(conflict_id: str)
 
 ## 9. HTTP API
 
+Every endpoint except `/health` is served under the `/api` prefix (`GET /api/conflicts`, and so on), so the SPA can own the `/conflicts` and `/resolved` routes in the browser. `/health` is served at both `/health` and `/api/health`.
+
 ```
 GET  /health
   -> {"ok": bool, "graph": str, "nodes": int, "edges": int, "falkor": "up"|"down"}
@@ -376,10 +378,14 @@ type Conflict = {
   }[]
   impact: { doc_count: number; system_count: number; systems: string[] }
   owner: { id: string; name: string; role: string } | null
+  // v5, optional: the CONTRADICTS edge between the two claims, null if none
+  judgement?: { method: string; confidence: number; evidence_span: string } | null
+  // v5, optional: the RESOLVED_AS edge, null unless status is "resolved"
+  resolution?: { winner_claim_id: string; rationale: string; resolved_at: number; resolved_by: string } | null
 }
 
 type GraphPath = {
-  nodes: { id: string; label: string; type: string; state?: "live"|"contradicted"|"superseded" }[]
+  nodes: { id: string; label: string; type: string; state?: "live"|"contradicted"|"superseded"; at?: number }[]
   edges: { source: string; target: string; type: string }[]
 }
 
@@ -396,7 +402,9 @@ type Stats = {
 }
 ```
 
-`node.type` in `GraphPath` is the node label lowercased (`claim`, `document`, `decision`, `system`, `person`, `message`, `ticket`). B maps those to icons.
+`node.type` in `GraphPath` is the node label lowercased (`claim`, `entity`, `document`, `decision`, `system`, `person`, `message`, `ticket`). B maps those to icons.
+
+**v5 addition, optional:** a `GraphPath` node may carry `at` (int, epoch seconds): its own §5 date (`Document.updated_at`, `Decision.decided_at`, `Message.sent_at`, `Ticket.closed_at`), and for a `Claim` the date of the source that asserts it. `System`, `Entity` and `Person` have no date in §5 and never carry `at`. The path also includes the claims' `Entity` (with `ABOUT` edges) and the conflict's routed owner (with `OWNS` edges to systems in the path); still capped at 40 nodes.
 
 ---
 
