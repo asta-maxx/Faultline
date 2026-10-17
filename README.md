@@ -1,6 +1,6 @@
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset=".github/readme/hero-dark.svg">
-  <img alt="Faultline: finds where an organisation's documented knowledge contradicts itself, ranks every conflict by what sits downstream of it, and repairs it." src=".github/readme/hero-light.svg" width="100%">
+  <img alt="Faultline. Your company disagrees with itself; Faultline finds where. Beside the wordmark, the path behind one answer: a runbook's 30 minutes contradicts a policy's 15 minutes, and the policy cites ADR-88, which supersedes ADR-41." src=".github/readme/hero-light.svg" width="100%">
 </picture>
 
 <picture>
@@ -12,7 +12,7 @@ Every organisation's runbooks, wikis, specs and chat history disagree with each 
 
 **Faultline finds those contradictions on its own.** It's not a chatbot, and there's no "ask your docs" box. You open it and see a ranked queue of conflicts, each with the evidence, the traversal path that proves it, what sits downstream of it, and who owns the fix.
 
-Comparing every claim with every other claim is O(n²): about 1,800 claims means about 1.7 million comparisons. Faultline only compares claims that share a subject node in the graph. **Without FalkorDB the product isn't just slower, it's impossible.** Everything below serves that one property.
+Comparing every claim with every other claim is O(n²): the 339 claims of the Northwind demo already make 57,291 pairs, and 1,800 claims would make about 1.7 million. Faultline only compares claims that share a subject node in the graph. **Without FalkorDB the product isn't just slower, it's impossible.** Everything below serves that one property.
 
 <table>
 <tr>
@@ -37,19 +37,20 @@ Comparing every claim with every other claim is O(n²): about 1,800 claims means
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset=".github/readme/funnel-dark.svg">
-  <img alt="The four-stage funnel, measured on a 40-claim synthetic graph: 780 possible pairs, 56 after the graph collapse, 12 after the deterministic prefilter, at most 12 LLM calls." src=".github/readme/funnel-light.svg" width="100%">
+  <img alt="The funnel, measured on faultline:northwind: 57,291 possible pairs, 1,666 after the graph collapse, 202 after the deterministic prefilter, 159 judged by the model, 20 contradictions." src=".github/readme/funnel-light.svg" width="100%">
 </picture>
 
 Two of the four stages cost nothing. Only stage 4 calls a model, and every call it makes is cached to disk.
 
 | Stage | Mechanism | Cost | Measured* |
 | --- | --- | --- | ---: |
-| 1. All possible pairs | `n·(n−1)/2`, counted, never enumerated | none | 780 |
-| 2. **Graph collapse** | claims sharing an `Entity` node, [Cypher §7.1](#71-candidate-collapse) | one query | 56 |
-| 3. **Deterministic prefilter** | same `predicate` AND (different `object` OR opposite `polarity`) | pure Python | 12 |
-| 4. LLM judgement | Adjudicator, with precedent checked first | cached calls | ≤ 12 |
+| 1. All possible pairs | `n·(n−1)/2`, counted, never enumerated | none | 57,291 |
+| 2. **Graph collapse** | claims sharing an `Entity` node, [Cypher §7.1](#71-candidate-collapse) | one query | 1,666 |
+| 3. **Deterministic prefilter** | same `predicate` AND (different `object` OR opposite `polarity`) | pure Python | 202 |
+| 4. LLM judgement | Adjudicator: precedent first, one cached call per disagreement | cached calls | 159 |
+| Result | `CONTRADICTS` edge and an open `Conflict` | | 20 |
 
-<sub>*Measured on the 40-claim, 12-entity synthetic graph by `python -m graph.collapse_demo`. Each stage-2 and stage-3 pair is checked against an independent brute-force oracle at two confidence floors. Stage 4 is an upper bound until the Adjudicator lands. Real-corpus numbers replace these once ingest runs; we never tune data to hit a target.</sub>
+<sub>*Measured on `faultline:northwind`: the Northwind demo slice of 60 documents, 20 tickets and 20 messages, 339 claims (`GET /api/stats`). 16 of the 20 conflicts correspond to 13 of the 14 contradictions planted in the corpus (11 with the correct kind); the other 4 are false positives. The planted set was also the development set, so these numbers are optimistic. The funnel logic itself is checked against an independent brute-force oracle on a 40-claim synthetic graph (`python -m graph.collapse_demo`). We never tune data to hit a target.</sub>
 
 ---
 
@@ -201,7 +202,7 @@ A tier 1 system weighs 3, tier 2 weighs 2, tier 3 weighs 1. Systems are summed i
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset=".github/readme/states-dark.svg">
-  <img alt="Claim states. Live: a check in a circle. Contradicted: a cross in a circle. Superseded: a double chevron in a circle." src=".github/readme/states-light.svg" width="100%">
+  <img alt="Claim states. Live: a check in a circle. Contradicted: a cross in a circle. Superseded: a double chevron in a circle. Resolved: a check in a square." src=".github/readme/states-light.svg" width="100%">
 </picture>
 
 Colour never carries meaning alone: every state has a glyph and a word.
@@ -516,12 +517,13 @@ data/         Northwind generator, seed, run files, tests       Dev C
 infra/        compose, Dockerfile, Railway guide, health patch  Dev C
 fixtures/     API-shaped mock JSON + 20-doc mini corpus         Allen writes, Dev B consumes
 CONTRACT.md   the interface everyone codes against              Allen
+faultline-design-system/  tokens, mark, type and brand rules: the source for web/ and these visuals
 .github/readme/  README visuals and their generator (build.py)
 ```
 
 [CONTRACT.md](CONTRACT.md) is the source of truth for every node label, edge type, field and endpoint shape. If the live API ever disagrees with a fixture, the API is wrong.
 
-README visuals are generated, not hand-drawn: `python .github/readme/build.py` writes every diagram in two themes, *Strata Light* and *Strata Dark*, and the README switches between them with `<picture>`.
+README visuals are generated, not hand-drawn, from the design system in [`faultline-design-system/`](faultline-design-system/README.md): its tokens, its mark, its type. `python .github/readme/build.py` writes every diagram in the system's dark and light palettes, and the README switches between them with `<picture>`. GitHub shows SVGs as images, which cannot load web fonts, so Spectral, IBM Plex Sans and JetBrains Mono fall back to Georgia and the platform's sans and mono there. The web app loads the real faces.
 
 ---
 

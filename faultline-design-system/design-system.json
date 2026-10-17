@@ -1,0 +1,39 @@
+{
+  "v": 3,
+  "layout": "files",
+  "createdOnFiles": { "v": 1, "at": "2026-10-14T19:20:00Z" },
+  "title": "Faultline",
+  "namespace": "Faultline",
+  "libraries": [],
+  "sections": {},
+  "groups": ["Logos"],
+  "assetGroups": {
+    "Logos": {
+      "name": "Logos",
+      "tile": "l",
+      "order": ["faultline-mark-paper.svg", "faultline-mark-ink.svg"],
+      "files": {
+        "faultline-mark-paper.svg": {
+          "name": "faultline-mark-paper.svg",
+          "blob": "61a29f5a5d1d6418ed819b548b35ee05",
+          "size": 778,
+          "type": "image/svg+xml"
+        },
+        "faultline-mark-ink.svg": {
+          "name": "faultline-mark-ink.svg",
+          "blob": "69d59c31a49e8828fe3c5f49dd30d602",
+          "size": 758,
+          "type": "image/svg+xml"
+        }
+      }
+    }
+  },
+  "blobs": {},
+  "docs": { "readme": "project/README.md", "sections": [] },
+  "lastChange": {
+    "by": "Allen",
+    "at": "2026-10-14T19:20:00Z",
+    "via": "chat",
+    "note": "Initial identity for Graph Hacks: mark, palette, type, motif."
+  }
+}
