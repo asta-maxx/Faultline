@@ -2,7 +2,9 @@ import { useEffect, useState } from 'react'
 import type { Conflict, ConflictsResponse, HealthResponse } from '../../types'
 import type { Async } from '../../lib/useAsync'
 import { navigate } from '../../lib/router'
-import { refreshWorkspaceData, useWorkspace } from '../../lib/api'
+import { readStorage, refreshWorkspaceData, useWorkspace, writeStorage } from '../../lib/api'
+import { count } from '../../lib/format'
+import { Icon } from '../Icon'
 import { nextAfter, rankConflicts } from '../../lib/conflict'
 import { ConflictQueue, type SettledNote } from './ConflictQueue'
 import { Workspace } from './Workspace'
@@ -44,7 +46,9 @@ export function ConflictsScreen({ open, selectedId, health }: Props) {
   }
 
   return (
-    <div className={styles.screen}>
+    <div className={styles.page}>
+      {ws.id === DEMO_WORKSPACE && conflicts && conflicts.length > 0 ? <DemoBanner open={conflicts.length} /> : null}
+      <div className={styles.screen}>
       {conflicts ? (
         <ConflictQueue
           conflicts={conflicts}
@@ -59,6 +63,46 @@ export function ConflictsScreen({ open, selectedId, health }: Props) {
         <div />
       )}
       {selectedId ? <Workspace key={selectedId} conflictId={selectedId} health={health} onSettled={onSettled} /> : <div />}
+      </div>
     </div>
+  )
+}
+
+const DEMO_WORKSPACE = 'northwind'
+const BANNER_KEY = 'faultline.demo_banner_dismissed'
+
+/** First visit to the sample workspace: say what it is and where to go next. Dismissal is remembered. */
+function DemoBanner({ open }: { open: number }) {
+  const [dismissed, setDismissed] = useState(() => readStorage(BANNER_KEY) === '1')
+  if (dismissed) return null
+  return (
+    <aside className={styles.banner} aria-label="About this workspace">
+      <p className={styles.bannerText}>
+        <strong>Sample company.</strong> Northwind Logistics is generated data; Faultline found{' '}
+        {open === 1 ? 'this contradiction' : `these ${count(open)} contradictions`} on its own.
+      </p>
+      <a
+        className="link"
+        href="/setup"
+        onClick={(e) => {
+          e.preventDefault()
+          navigate({ name: 'setup', workspace: null })
+        }}
+      >
+        Audit your own repository <Icon name="arrow-right" size={14} />
+      </a>
+      <button
+        type="button"
+        className={styles.bannerClose}
+        aria-label="Dismiss"
+        title="Dismiss"
+        onClick={() => {
+          writeStorage(BANNER_KEY, '1')
+          setDismissed(true)
+        }}
+      >
+        <Icon name="close" size={14} />
+      </button>
+    </aside>
   )
 }

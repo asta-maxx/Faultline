@@ -117,7 +117,7 @@ function SourceTable({ sources, workspaceId }: { sources: Async<Source[]>; works
     return (
       <p className="notice">
         <strong>This workspace has no sources.</strong>
-        Its graph was built some other way, or nothing has been added yet. Add a folder to audit it from here.
+        Its graph was built some other way, or nothing has been added yet. Add a Git repository or a folder to audit it from here.
       </p>
     )
   }
@@ -144,8 +144,8 @@ function SourceTable({ sources, workspaceId }: { sources: Async<Source[]>; works
                 {s.location}
               </p>
               {s.message ? <p className={styles.message}>{s.message}</p> : null}
-              {s.has_token && !s.message ? (
-                <p className={styles.message}>Token received but not stored: cloning is not implemented.</p>
+              {s.has_token && !s.message && s.status === 'ready' ? (
+                <p className={styles.message}>Cloned with a token. The token was not stored.</p>
               ) : null}
             </td>
             <td className={`${styles.num} ${styles.numCol}`}>

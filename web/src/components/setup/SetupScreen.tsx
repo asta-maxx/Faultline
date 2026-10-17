@@ -1,6 +1,7 @@
 import { useState, type FormEvent } from 'react'
 import type { Source, SourceKind } from '../../types'
 import {
+  ApiError,
   addSource,
   createWorkspace,
   errorText,
@@ -14,12 +15,15 @@ import {
 } from '../../lib/api'
 import { navigate } from '../../lib/router'
 import { useAsync } from '../../lib/useAsync'
-import { count, plural } from '../../lib/format'
+import { plural } from '../../lib/format'
 import { Icon } from '../Icon'
 import { SourceStatusMark } from '../sources/SourceStatusMark'
 import styles from './SetupScreen.module.css'
 
-const TOKEN_NOT_STORED = 'Token received but not stored: cloning is not implemented.'
+const TOKEN_USED = 'Cloned with a token. The token was not stored.'
+
+/** A failed add: the server's own words, and which kind of source it was for. */
+type SourceError = { kind: SourceKind; status: number | null; detail: string }
 
 /**
  * Connect sources. With no workspace (reached from NEW WORKSPACE) the column
@@ -30,12 +34,12 @@ const TOKEN_NOT_STORED = 'Token received but not stored: cloning is not implemen
 export function SetupScreen({ workspaceId }: { workspaceId: string | null }) {
   const ws = useWorkspace()
   const [name, setName] = useState('')
-  const [kind, setKind] = useState<SourceKind>('folder')
+  const [kind, setKind] = useState<SourceKind>('git')
   const [location, setLocation] = useState('')
   const [token, setToken] = useState('')
   const [busy, setBusy] = useState(false)
   const [nameError, setNameError] = useState<string | null>(null)
-  const [sourceError, setSourceError] = useState<string | null>(null)
+  const [sourceError, setSourceError] = useState<SourceError | null>(null)
   const [auditError, setAuditError] = useState<string | null>(null)
   const [last, setLast] = useState<{ workspace: string; source: Source } | null>(null)
   const [removeErrors, setRemoveErrors] = useState<Record<string, string>>({})
@@ -93,7 +97,11 @@ export function SetupScreen({ workspaceId }: { workspaceId: string | null }) {
       setToken('')
       refreshWorkspaceData()
     } catch (err) {
-      setSourceError(errorText(err))
+      setSourceError(
+        err instanceof ApiError
+          ? { kind, status: err.status, detail: err.detail }
+          : { kind, status: null, detail: errorText(err) },
+      )
     }
     setBusy(false)
   }
@@ -179,7 +187,7 @@ export function SetupScreen({ workspaceId }: { workspaceId: string | null }) {
               Source
             </span>
             <div className={styles.segmented} role="radiogroup" aria-labelledby="setup-kind">
-              {(['folder', 'git'] as const).map((k) => (
+              {(['git', 'folder'] as const).map((k) => (
                 <button
                   key={k}
                   type="button"
@@ -208,6 +216,7 @@ export function SetupScreen({ workspaceId }: { workspaceId: string | null }) {
               onChange={(e) => setLocation(e.target.value)}
               autoComplete="off"
               spellCheck={false}
+              placeholder={kind === 'git' ? 'https://github.com/owner/repo' : undefined}
             />
           </div>
 
@@ -227,25 +236,28 @@ export function SetupScreen({ workspaceId }: { workspaceId: string | null }) {
                   spellCheck={false}
                 />
               </div>
-              <p className={styles.caveat}>
-                <Icon name="conflict" size={16} />
-                <span>
-                  Cloning git repositories is not implemented. The URL is saved, but nothing from it is read or
-                  audited. A token is accepted but not stored.
-                </span>
+              <p className={styles.hint}>
+                Faultline clones the repository (latest commit only) and reads its .md, .markdown and .txt files.
+                Nothing in it is run. A token is used for this one clone and never stored, so a private repository
+                needs it again to be read again.
               </p>
             </>
-          ) : null}
+          ) : (
+            <p className={styles.caveat}>
+              Folder sources read a folder on the computer running Faultline's API. That works when you run
+              Faultline yourself. On the hosted demo the server cannot see your computer, so use a Git repository.
+            </p>
+          )}
 
           <div className={styles.addRow}>
             <button type="submit" className="btn btn-primary" disabled={!canAdd}>
-              Add source
+              {busy && kind === 'git' ? 'Cloning…' : 'Add source'}
             </button>
             <div className={styles.addResult} aria-live="polite">
-              {sourceError ? (
-                <p className={styles.error} role="alert">
-                  {sourceError}
-                </p>
+              {busy && kind === 'git' ? (
+                <p className={styles.hint}>Cloning the repository. Large repositories can take a minute.</p>
+              ) : sourceError ? (
+                <AddError error={sourceError} />
               ) : lastHere ? (
                 <AddResult source={lastHere} />
               ) : null}
@@ -271,7 +283,7 @@ export function SetupScreen({ workspaceId }: { workspaceId: string | null }) {
                       {s.location}
                     </p>
                     {s.message ? <p className={styles.message}>{s.message}</p> : null}
-                    {s.has_token && !s.message ? <p className={styles.message}>{TOKEN_NOT_STORED}</p> : null}
+                    {s.has_token && !s.message && s.status === 'ready' ? <p className={styles.message}>{TOKEN_USED}</p> : null}
                     {removeErrors[s.id] ? <p className={styles.error}>{removeErrors[s.id]}</p> : null}
                   </div>
                   <span className={styles.docs}>{s.docs === null ? 'not scanned' : plural(s.docs, 'document')}</span>
@@ -317,18 +329,39 @@ export function SetupScreen({ workspaceId }: { workspaceId: string | null }) {
 function AddResult({ source: s }: { source: Source }) {
   if (s.status === 'ready') {
     return (
-      <p className={styles.added}>
-        Added <span className={styles.mono}>{s.location}</span>
-        {s.docs !== null ? ` · ${count(s.docs)} readable ${s.docs === 1 ? 'file' : 'files'} found` : ''}
-        {s.message ? <span className={styles.message}>{s.message}</span> : null}
-      </p>
+      <div className={styles.added}>
+        <p className={styles.addedRow}>
+          <span className={styles.docs}>{s.docs === null ? 'not scanned' : plural(s.docs, 'document')}</span>
+          <span className="dot" />
+          <SourceStatusMark status={s.status} />
+        </p>
+        <p className={styles.addedLocation}>{s.location}</p>
+        {s.message ? <p className={styles.message}>{s.message}</p> : null}
+        {s.has_token && !s.message ? <p className={styles.message}>{TOKEN_USED}</p> : null}
+      </div>
     )
   }
   return (
     <div className={styles.notRead}>
       <SourceStatusMark status={s.status} />
       {s.message ? <p>{s.message}</p> : null}
-      {s.has_token && !s.message ? <p>{TOKEN_NOT_STORED}</p> : null}
+    </div>
+  )
+}
+
+/** The server's message as it came, then what to do about it. No source was created. */
+function AddError({ error: e }: { error: SourceError }) {
+  return (
+    <div role="alert" className={styles.failed}>
+      <p className={styles.error}>
+        {e.status !== null ? `${e.status} · ` : ''}
+        {e.detail}
+      </p>
+      {e.kind === 'git' && e.status === 422 ? (
+        <p className={styles.hint}>
+          Nothing was added. Check the URL, add a token for a private repository, or use a smaller repository.
+        </p>
+      ) : null}
     </div>
   )
 }

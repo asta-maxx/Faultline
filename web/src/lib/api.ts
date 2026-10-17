@@ -98,7 +98,7 @@ function postJson<T>(path: string, body: unknown, headers: Record<string, string
 
 const WORKSPACE_KEY = 'faultline.workspace'
 
-function readStorage(key: string): string | null {
+export function readStorage(key: string): string | null {
   try {
     return window.localStorage.getItem(key)
   } catch {
@@ -106,7 +106,7 @@ function readStorage(key: string): string | null {
   }
 }
 
-function writeStorage(key: string, value: string): void {
+export function writeStorage(key: string, value: string): void {
   try {
     window.localStorage.setItem(key, value)
   } catch {
