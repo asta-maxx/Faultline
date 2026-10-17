@@ -1,11 +1,12 @@
 import { useCallback, useMemo, useState } from 'react'
-import type { HealthResponse } from '../../types'
+import type { Conflict, HealthResponse } from '../../types'
 import { getConflict, useWorkspace } from '../../lib/api'
 import type { Async } from '../../lib/useAsync'
 import { useAsync } from '../../lib/useAsync'
 import { buildGraphModel } from '../../lib/graphModel'
 import { count, isoDate, score } from '../../lib/format'
 import { EvidencePanel } from './EvidencePanel'
+import type { Outcome } from './ConflictActions'
 import { TraversalGraph } from '../graph/TraversalGraph'
 import { GraphLegend } from '../graph/GraphLegend'
 import { NodeInspector } from '../graph/NodeInspector'
@@ -14,9 +15,10 @@ import styles from './Workspace.module.css'
 interface Props {
   conflictId: string
   health: Async<HealthResponse>
+  onSettled: (conflict: Conflict, outcome: Outcome) => void
 }
 
-export function Workspace({ conflictId, health }: Props) {
+export function Workspace({ conflictId, health, onSettled }: Props) {
   const ws = useWorkspace()
   const detail = useAsync(() => getConflict(conflictId), `${ws.key}:${conflictId}`)
   // The inspected node lives in the URL (?node=<id>) so a view can be shared.
@@ -89,7 +91,7 @@ export function Workspace({ conflictId, health }: Props) {
         ) : null}
       </div>
 
-      <EvidencePanel conflict={conflict} />
+      <EvidencePanel conflict={conflict} precedent={detail.data.precedent} onSettled={onSettled} />
     </section>
   )
 }

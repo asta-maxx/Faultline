@@ -1,16 +1,25 @@
 import type { Conflict } from '../../types'
 import { count, plural, relativeAge, score } from '../../lib/format'
-import { sides } from '../../lib/conflict'
+import { rankConflicts, sides } from '../../lib/conflict'
+import { navigate } from '../../lib/router'
 import styles from './ConflictQueue.module.css'
+
+/** The last conflict this session resolved or dismissed. */
+export interface SettledNote {
+  outcome: 'resolved' | 'dismissed'
+  entity: string
+  conflictId: string
+}
 
 interface QueueProps {
   conflicts: Conflict[]
   selectedId: string | null
+  settled: SettledNote | null
   onSelect: (id: string) => void
 }
 
-export function ConflictQueue({ conflicts, selectedId, onSelect }: QueueProps) {
-  const ranked = [...conflicts].sort((a, b) => b.blast_radius - a.blast_radius)
+export function ConflictQueue({ conflicts, selectedId, settled, onSelect }: QueueProps) {
+  const ranked = rankConflicts(conflicts)
   const max = ranked.reduce((m, c) => Math.max(m, c.blast_radius), 0)
 
   return (
@@ -21,6 +30,31 @@ export function ConflictQueue({ conflicts, selectedId, onSelect }: QueueProps) {
           <span className="dot">sorted by blast radius</span>
         </p>
       </header>
+      <p className={styles.settled} role="status" hidden={!settled}>
+        {settled ? (
+          settled.outcome === 'resolved' ? (
+            <>
+              Resolved <b>{settled.entity}</b>. It is listed under{' '}
+              <a
+                className="link"
+                href="/resolved"
+                onClick={(e) => {
+                  if (e.metaKey || e.ctrlKey || e.shiftKey || e.button !== 0) return
+                  e.preventDefault()
+                  navigate({ name: 'resolved' })
+                }}
+              >
+                Resolved
+              </a>
+              .
+            </>
+          ) : (
+            <>
+              Dismissed <b>{settled.entity}</b>. It no longer appears in this queue.
+            </>
+          )
+        ) : null}
+      </p>
       {ranked.length === 0 ? (
         <p className="notice">
           <strong>No open conflicts.</strong>

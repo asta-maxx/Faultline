@@ -1,9 +1,12 @@
-import { useEffect } from 'react'
-import type { ConflictsResponse, HealthResponse } from '../../types'
+import { useEffect, useState } from 'react'
+import type { Conflict, ConflictsResponse, HealthResponse } from '../../types'
 import type { Async } from '../../lib/useAsync'
 import { navigate } from '../../lib/router'
-import { ConflictQueue } from './ConflictQueue'
+import { refreshWorkspaceData, useWorkspace } from '../../lib/api'
+import { nextAfter, rankConflicts } from '../../lib/conflict'
+import { ConflictQueue, type SettledNote } from './ConflictQueue'
 import { Workspace } from './Workspace'
+import type { Outcome } from './ConflictActions'
 import styles from './ConflictsScreen.module.css'
 
 interface Props {
@@ -13,10 +16,18 @@ interface Props {
 }
 
 export function ConflictsScreen({ open, selectedId, health }: Props) {
+  const ws = useWorkspace()
   const conflicts = open.status === 'ready' ? open.data.conflicts : null
-  const top = conflicts?.length
-    ? conflicts.reduce((best, c) => (c.blast_radius > best.blast_radius ? c : best))
-    : null
+  const top = conflicts?.length ? rankConflicts(conflicts)[0] : null
+  // What the last resolve or dismiss did, shown above the queue. Set only after the API answered 2xx.
+  const [settled, setSettled] = useState<(SettledNote & { workspace: string }) | null>(null)
+
+  const onSettled = (conflict: Conflict, outcome: Outcome) => {
+    const next = conflicts ? nextAfter(conflicts, conflict.id) : null
+    setSettled({ workspace: ws.id, outcome, entity: conflict.entity.name, conflictId: conflict.id })
+    refreshWorkspaceData()
+    navigate({ name: 'conflicts', conflictId: next?.id ?? null }, true)
+  }
 
   // With nothing selected, open the highest-ranked conflict.
   useEffect(() => {
@@ -38,12 +49,16 @@ export function ConflictsScreen({ open, selectedId, health }: Props) {
         <ConflictQueue
           conflicts={conflicts}
           selectedId={selectedId}
-          onSelect={(id) => navigate({ name: 'conflicts', conflictId: id })}
+          settled={settled?.workspace === ws.id ? settled : null}
+          onSelect={(id) => {
+            setSettled(null)
+            navigate({ name: 'conflicts', conflictId: id })
+          }}
         />
       ) : (
         <div />
       )}
-      {selectedId ? <Workspace key={selectedId} conflictId={selectedId} health={health} /> : <div />}
+      {selectedId ? <Workspace key={selectedId} conflictId={selectedId} health={health} onSettled={onSettled} /> : <div />}
     </div>
   )
 }

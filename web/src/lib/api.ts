@@ -15,6 +15,8 @@ import type {
   ConflictDetailResponse,
   ConflictsResponse,
   ConflictStatus,
+  DismissRequest,
+  DismissResponse,
   DraftResponse,
   HealthResponse,
   ReingestResponse,
@@ -197,6 +199,11 @@ export function resolveConflict(id: string, body: ResolveRequest): Promise<Resol
 /** POST /conflicts/{id}/draft?workspace= */
 export function draftCorrection(id: string): Promise<DraftResponse> {
   return postJson(scoped(`/conflicts/${encodeURIComponent(id)}/draft`), {})
+}
+
+/** POST /conflicts/{id}/dismiss?workspace= — 409 if not open, 422 if a field is empty (v7). */
+export function dismissConflict(id: string, body: DismissRequest): Promise<DismissResponse> {
+  return postJson(scoped(`/conflicts/${encodeURIComponent(id)}/dismiss`), body)
 }
 
 /** GET /stats?workspace= */
