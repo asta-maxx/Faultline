@@ -10,3 +10,19 @@ dump.rdb
 !.env.example
 
 /.omc
+
+# Pipeline cache and scratch
+cache/
+scratch/
+
+# Database dumps
+data/dump.rdb
+*.rdb
+
+# Incoming raw data
+data/incoming/
+
+# Output data directory (preserve ground_truth.json)
+data/out/*
+!data/out/ground_truth.json
+
