@@ -45,32 +45,36 @@ This document specifies the production deployment architecture for the **Faultli
    - Mount a Railway Volume at Mount Path: `/var/lib/falkordb/data`.
    - Recommended volume size: 5 GB+.
 4. **Environment Variable Names**:
-   - `FALKORDB_PASSWORD` (Optional authentication string).
+   - `FALKOR_PASSWORD` (Optional authentication password).
 
 ---
 
 ## 3. App Service Configuration (Public)
 
 ### Service Settings
-1. **Service Type**: Deploy from GitHub Repo (`devc/data-infra` or `main`).
+1. **Service Type**: Deploy from GitHub Repo (`devc/deploy-all` or `main`).
 2. **Build Settings**:
-   - **Dockerfile Path**: `infra/Dockerfile`
+   - **RAILWAY_DOCKERFILE_PATH**: `infra/Dockerfile`
    - **Build Context**: `/` (repository root)
 3. **Networking**:
    - Generate a Public Domain (e.g. `faultline-production.up.railway.app`).
-   - Target Port: `8000` (or Railway dynamic `$PORT`).
+   - Target Port: `8000` (mapped to Railway dynamic `$PORT`).
+   - Healthcheck Path: `/health`
 4. **Volume Mount**:
-   - Mount a volume at Mount Path: `/cache` (for agent LLM and prefilter response cache).
+   - Mount a volume at Mount Path: `/cache` (for LLM disk cache).
 5. **Environment Variable Names (Names Only — No Plaintext Secrets)**:
    - `FALKOR_URL`
-   - `FALKORDB_PASSWORD`
+   - `FALKOR_PASSWORD`
+   - `REINGEST_TOKEN`
+   - `GROQ_API_KEY`
    - `GEMINI_API_KEY`
    - `PORT`
+   - `RAILWAY_DOCKERFILE_PATH`
 
 ### Private-Network `FALKOR_URL` Format
-In the App service settings, set `FALKOR_URL` to reference the private FalkorDB service over Railway private mesh:
+In the App service settings, set `FALKOR_URL` to reference the private FalkorDB service over Railway private network:
 ```text
-redis://${FALKORDB_PASSWORD:+:$FALKORDB_PASSWORD@}falkordb.railway.internal:6379
+redis://${FALKOR_PASSWORD:+:$FALKOR_PASSWORD@}falkordb.railway.internal:6379
 ```
 Or without password:
 ```text
